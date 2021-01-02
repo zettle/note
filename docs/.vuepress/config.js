@@ -1,0 +1,39 @@
+module.exports = {
+    // base: '/bolg-note/',
+    base: '/',
+    port: 8090,
+    dest: './dist', // 目录是相对于项目根目录来的
+    repo: 'https://gitee.com/huangzetao/bolg-note',  // 代码仓库
+    title: '笔记本',
+    description: '主要记录平时自己的一些博客以及学习历程，基于vuepress搭建',
+    themeConfig: {
+        sidebarDepth: 0, // 这样就不会提取##到左边菜单栏了
+        nav: [
+            { text: '主页', link: '/' },
+            { text: '前端', link: '/front/' },
+            { text: 'nodeJS', link: '/node/' },
+            { text: '服务器', link: '/server/' }
+        ],
+        sidebar: {
+            '/front/': [
+                {
+                    title: '微信小程序',
+                    children: [
+                        '/front/wxmini/学习笔记',
+                    ]
+                }
+            ],
+            '/node/': [
+            ],
+            '/server/': [
+                {
+                    title: 'nginx100讲',
+                    children: [
+                        '/server/nginx100讲/001-nginx简介.md',
+                    ]
+                }
+            ]
+        },
+        lastUpdated: '最后更新时间'
+    }
+};
