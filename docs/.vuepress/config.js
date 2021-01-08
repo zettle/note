@@ -1,7 +1,7 @@
 module.exports = {
     // base: '/bolg-note/',
     base: '/',
-    port: 8090,
+    port: 8080,
     dest: './dist', // 目录是相对于项目根目录来的
     repo: 'https://gitee.com/huangzetao/bolg-note',  // 代码仓库
     title: '笔记本',
@@ -12,24 +12,28 @@ module.exports = {
             { text: '主页', link: '/' },
             { text: '前端', link: '/front/' },
             { text: 'nodeJS', link: '/node/' },
-            { text: '服务器', link: '/server/' }
+            { text: '服务器', link: '/server/' },
+            { text: '公众号收录', link: '/wxmp/' }
         ],
         sidebar: {
             '/front/': [
-                {
-                    title: '微信小程序',
-                    children: [
-                        '/front/wxmini/学习笔记',
-                    ]
-                }
             ],
             '/node/': [
             ],
             '/server/': [
                 {
-                    title: 'nginx100讲',
+                    title: 'nginx',
                     children: [
-                        '/server/nginx100讲/001-nginx简介.md',
+                        '/server/nginx/001-nginx简介',
+                        '/server/nginx/007-nginx多域名',
+                    ]
+                }
+            ],
+            '/wxmp/': [
+                {
+                    title: '前端',
+                    children: [
+                        '/wxmp/front/工作中如何巧妙的使用发布订阅模式.md',
                     ]
                 }
             ]

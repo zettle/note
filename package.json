@@ -7,14 +7,10 @@
     "start": "vuepress dev docs",
     "build": "vuepress build docs"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://gitee.com/huangzetao/bolg-note.git"
-  },
   "keywords": [
     "blog"
   ],
-  "author": "huangzt",
+  "author": "zettle",
   "license": "ISC",
   "devDependencies": {
     "vuepress": "^0.13.1"
