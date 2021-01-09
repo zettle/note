@@ -34,6 +34,7 @@ module.exports = {
                     title: '前端',
                     children: [
                         '/wxmp/front/工作中如何巧妙的使用发布订阅模式.md',
+                        '/wxmp/front/其他.md',
                     ]
                 }
             ]
