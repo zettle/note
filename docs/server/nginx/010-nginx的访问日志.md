@@ -1,0 +1,41 @@
+# 010-nginx的访问日志
+
+nginx的访问日志由 ngx_http_log_module 模块提供，会把每个用户访问网站的日志记录到指定文件里面。
+
+更多该模块内容详见[官网](https://www.nginx.cn/doc/standard/httplog.html)
+
+
+## 1、nginx日志的2个参数
+nginx的访问日志主要由下面2个参数控制
+
+* `log_format`: 用来定义记录日志的格式（可以定义多种日志格式，取不同名字即可）
+* `access_log`: 用来指定日志文件的路径及使用的何种日志格式记录日志
+
+在安装完nginx后，我们在`nginx.conf`里面第21-25行可以看到下面代码
+```nginx
+# 日志格式
+log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                  '$status $body_bytes_sent "$http_referer" '
+                  '"$http_user_agent" "$http_x_forwarded_for"';
+# 日志位置和使用main这个日志格式
+access_log  logs/access.log  main;
+```
+其中 `main` 就相当于一个变量名
+
+|  参数   | 说明  | 示例  |
+|  ----  | ----  |----  |
+| $remote_addr  |  客户端地址          | 219.227.111.255 | 
+| $remote_user  |  客户端用户名称       | — | 
+| $time_local   |  访问时间和时区       | 18/Jul/2014:17:00:01 +0800 | 
+| $request      |  请求的URI和HTTP协议  |  “GET /article-10000.html HTTP/1.1” | 
+| $http_host    |  请求地址，即浏览器中你输入的地址（IP或域名） |  www.ha97.com  198.98.120.87 | 
+| $status       | HTTP请求状态  | 200 | 
+| $upstream_status  | upstream状态  | 200 | 
+| $body_bytes_sent  | 发送给客户端文件内容大小 |  1547 | 
+| $http_referer     | url跳转来源 |  https://www.google.com/ | 
+| $http_user_agent  |  用户终端浏览器等信息 |  “Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; SV1; GTB7.0; .NET4.0C; | 
+| $ssl_protocol     | SSL协议版本  | TLSv1 | 
+| $ssl_cipher       | 交换数据中的算法  | RC4-SHA | 
+| $upstream_addr    | 后台upstream的地址，即真正提供服务的主机地址  | 10.36.10.80:80 | 
+| $request_time     | 整个请求的总时间  | 0.165 | 
+| $upstream_response_time |  请求过程中，upstream响应时间  |  0.002  | 
