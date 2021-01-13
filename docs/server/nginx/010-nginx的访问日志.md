@@ -64,4 +64,69 @@ http {
 * `路径` - 如果是相对路径，是相对于nginx安装目录
 * `要用哪个变量名的格式` - 就是上面`log_format`定义好的名字
 
+可以放的位置: `http -> server -> locaton -> if in location -> limit_except`
 
+一般情况下，我们推荐 access_log 跟着 server 走，这样找日志也方便点
+
+
+
+## 4、多域名的access_log
+
+现在我们有域名`http://aaa.com` 和 `http://bbb.com` 是通过nginx的server_name实现多域名的。
+
+```nginx
+http {
+    server {
+        listen       80;
+        server_name  aaa.com;
+        location / {
+            root   /root/svr/aaa;
+            index  index.html index.htm;
+        }
+    }
+
+    server {
+        listen       80;
+        server_name  bbb;
+        location / {
+            root   /root/svr/bbb;
+            index  index.html index.htm;
+        }
+    }
+}
+```
+
+首先给2个网站定义好格式，然后在 `http://aaa.com` 为其单独配置
+```nginx
+http {
+    # 错误日志格式，命名main
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"'
+                      '"$request_time" "$upstream_response_time"';
+    # 错误日志格式，命名aaaLog
+    log_format  aaaLog  '$remote_addr - "$request" ';
+
+    access_log  logs/access.log  main;
+    server {
+        listen       80;
+        server_name  aaa.com;
+        access_log  logs/zettle_access.log  aaaLog;
+        location / {
+            root   /root/svr/aaa;
+            index  index.html index.htm;
+        }
+    }
+
+    server {
+        listen       80;
+        server_name  bbb;
+        location / {
+            root   /root/svr/bbb;
+            index  index.html index.htm;
+        }
+    }
+}
+```
+
+这样子，当用户访问 `http://aaa.com` 就会使用 `aaaLog格式` 把访问日志记录在 `logs/zettle_access.log` 里面，访问其他的就继续使用 `main格式` 把访问日志记录在 `logs/access.log`
