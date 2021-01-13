@@ -1,4 +1,4 @@
-# 010-nginx的访问日志
+# 010-nginx访问日志
 
 nginx的访问日志由 ngx_http_log_module 模块提供，会把每个用户访问网站的日志记录到指定文件里面。
 
@@ -130,3 +130,9 @@ http {
 ```
 
 这样子，当用户访问 `http://aaa.com` 就会使用 `aaaLog格式` 把访问日志记录在 `logs/zettle_access.log` 里面，访问其他的就继续使用 `main格式` 把访问日志记录在 `logs/access.log`
+
+
+## 5、按天切割访问日志
+nignx本身没有切割日志的功能，如果需要实现这种效果，需要通过shell脚本实现，在`00:00`的时候，把 `access.log` 的内容复制
+
+[shell脚本可以参考](https://www.cnblogs.com/littleatp/p/4625010.html)
