@@ -39,3 +39,29 @@ access_log  logs/access.log  main;
 | $upstream_addr    | 后台upstream的地址，即真正提供服务的主机地址  | 10.36.10.80:80 | 
 | $request_time     | 整个请求的总时间  | 0.165 | 
 | $upstream_response_time |  请求过程中，upstream响应时间  |  0.002  | 
+
+
+## 2、自定义日志记录
+将 `nginx.conf` 修改为下面
+```nginx
+http {
+    # 错误日志
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"'
+                      '"$request_time" "$upstream_response_time"';
+    access_log  logs/access.log  main;
+
+}
+```
+保存然后重启nginx，再去 `logs/access.log` 里面查看日志可以看到内容变成我们修改后的格式
+
+
+
+## 3、access_log的作用
+
+语法: `access_log [路径] [要用哪个变量名的格式]`
+* `路径` - 如果是相对路径，是相对于nginx安装目录
+* `要用哪个变量名的格式` - 就是上面`log_format`定义好的名字
+
+
