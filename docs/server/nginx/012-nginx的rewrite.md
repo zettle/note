@@ -1,4 +1,4 @@
-# 011-nginx的rewrite
+# 012-nginx的rewrite
 
 ## 1、介绍
 rewrite依赖PCRE软件，这也是前面安装nginx为什么要先安装PCRE软件

@@ -1,4 +1,4 @@
-# 010-nginx访问日志
+# 011-nginx访问日志
 
 nginx的访问日志由 ngx_http_log_module 模块提供，会把每个用户访问网站的日志记录到指定文件里面。
 

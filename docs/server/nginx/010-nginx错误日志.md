@@ -1,8 +1,8 @@
-# 009-nginx错误日志
+# 010-nginx错误日志
 
 nginx的错误日志管理，是核心功能模块`ngx_core_module`
 
-配置格式: `error_log [filePat] [level]`
+配置格式: `error_log [filePath] [level]`
 
 其中level级别支持这几种 `debug|info|notice|warn|error|crit|alert|emerg`，级别越高记录信息越少，记录信息最高的是debug级别，但带来的IO消耗也是最大
 

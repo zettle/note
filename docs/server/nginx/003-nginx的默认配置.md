@@ -3,7 +3,7 @@
 ## 安装好后的nginx.conf，默认是下面配置
 ```nginx
 user  root;
-worker_processes  1; # worker进程数量，一般配置成和cpu的核数一样
+worker_processes  1; # worker进程数量，一般配置成 `cpu数*核数` 一样，太多的话会相互争夺CPU资源
 
 # 事件区块的相关配置
 events {

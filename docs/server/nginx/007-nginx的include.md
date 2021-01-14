@@ -1,4 +1,4 @@
-# 006-nginx的include
+# 007-nginx的include
 
 当server里面配置多了之后会比较难维护，我们可以把server拆成一个个文件，然后通过include进nginx
 
