@@ -22,18 +22,18 @@ access_log  logs/access.log  main;
 ```
 其中 `main` 就相当于一个变量名
 
-|  参数   | 说明  | 示例  |
-|  ----  | ----  |----  |
-| $remote_addr  |  客户端地址          | 219.227.111.255 | 
-| $remote_user  |  客户端用户名称       | — | 
-| $time_local   |  访问时间和时区       | 18/Jul/2014:17:00:01 +0800 | 
-| $request      |  请求的URI和HTTP协议  |  “GET /article-10000.html HTTP/1.1” | 
-| $http_host    |  请求地址，即浏览器中你输入的地址（IP或域名） |  www.ha97.com  198.98.120.87 | 
+|     参数       |     说明   |     示例   |
+|  -----------  | -----------| --------- |
+| $remote_addr  | 客户端地址          | 219.227.111.255 | 
+| $remote_user  | 客户端用户名称       | — | 
+| $time_local   | 访问时间和时区       | 18/Jul/2014:17:00:01 +0800 | 
+| $request      | 请求的URI和HTTP协议  |  “GET /article-10000.html HTTP/1.1” | 
+| $http_host    | 请求地址，即浏览器中你输入的地址（IP或域名） |  www.ha97.com  198.98.120.87 | 
 | $status       | HTTP请求状态  | 200 | 
 | $upstream_status  | upstream状态  | 200 | 
 | $body_bytes_sent  | 发送给客户端文件内容大小 |  1547 | 
 | $http_referer     | url跳转来源 |  https://www.google.com/ | 
-| $http_user_agent  |  用户终端浏览器等信息 |  “Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; SV1; GTB7.0; .NET4.0C; | 
+| $http_user_agent  | 用户终端浏览器等信息 | Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; SV1; GTB7.0; .NET4.0C; | 
 | $ssl_protocol     | SSL协议版本  | TLSv1 | 
 | $ssl_cipher       | 交换数据中的算法  | RC4-SHA | 
 | $upstream_addr    | 后台upstream的地址，即真正提供服务的主机地址  | 10.36.10.80:80 | 
@@ -111,7 +111,7 @@ http {
     server {
         listen       80;
         server_name  aaa.com;
-        access_log  logs/zettle_access.log  aaaLog;
+        access_log   logs/zettle_access.log  aaaLog;
         location / {
             root   /root/svr/aaa;
             index  index.html index.htm;
