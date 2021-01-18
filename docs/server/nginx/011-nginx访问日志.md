@@ -111,7 +111,7 @@ http {
     server {
         listen       80;
         server_name  aaa.com;
-        access_log   logs/zettle_access.log  aaaLog;
+        access_log   logs/aaa_access.log  aaaLog;
         location / {
             root   /root/svr/aaa;
             index  index.html index.htm;
@@ -129,10 +129,46 @@ http {
 }
 ```
 
-这样子，当用户访问 `http://aaa.com` 就会使用 `aaaLog格式` 把访问日志记录在 `logs/zettle_access.log` 里面，访问其他的就继续使用 `main格式` 把访问日志记录在 `logs/access.log`
+这样子，当用户访问 `http://aaa.com` 就会使用 `aaaLog格式` 把访问日志记录在 `logs/aaa_access.log` 里面，访问其他的就继续使用 `main格式` 把访问日志记录在 `logs/access.log`
 
 
 ## 5、按天切割访问日志
 nignx本身没有切割日志的功能，如果需要实现这种效果，需要通过shell脚本实现，在`00:00`的时候，把 `access.log` 的内容复制
 
 [shell脚本可以参考](https://www.cnblogs.com/littleatp/p/4625010.html)
+
+比如现在有 `http://aaa.com` 和 `http://bbb.com` 两个网址，分别存的访问日志是 `aaa.access.log` 和 `bbb.access.log`
+
+我们新建`splitlog.sh`，内容如下：
+```shell
+#!/bin/bash 
+
+# nginx/log 文件夹的路径
+logPath=/usr/local/nginx-1.18.0/logs
+# aaa.access.log 文件的路径
+aaaLogPath=$logPath/aaa.access.log
+# bbb.access.log 文件的路径
+bbblogPath=$logPath/bbb.access.log
+# 昨天的日期 格式 年月日时分
+yesterdayDate=$(date -d yesterday +%Y%m%d%H%M)
+
+# 要备份到哪个文件夹、以及对应的文件
+bakPath=$logPath/baklog
+aaaBakLogPath=$bakPath/${yesterdayDate}.aaa.access.log
+bbblogBakPath=$bakPath/${yesterdayDate}.bbb.access.log
+
+# Linux的mv命令
+mv $aaaLogPath $aaaBakLogPath
+mv $bbblogPath $bbblogBakPath
+
+# mv之后原来的不见了，所以需要重新创建一份
+touch $aaaLogPath
+touch $bbblogPath
+
+nginx -s reopen # 也可以用信号量语句 kill -UER1
+```
+
+执行`sh splitlog.sh`就可以了
+
+接着只要让linux每天在定时执行上面的shell脚本即可
+

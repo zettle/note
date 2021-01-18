@@ -25,11 +25,11 @@ module.exports = {
                     title: 'nginx',
                     children: [
                         '/server/nginx/001-nginx简介',
+                        '/server/nginx/002-nginx的安装',
                         '/server/nginx/003-nginx的默认配置',
-                        '/server/nginx/006-nginx的include',
-                        '/server/nginx/007-nginx多域名',
-                        '/server/nginx/008-nginx状态',
-                        '/server/nginx/009-nginx错误日志'
+                        '/server/nginx/004-nginx的信号量',
+                        '/server/nginx/005-nginx的命令',
+                        '/server/nginx/007-nginx的include'
                     ]
                 }
             ],

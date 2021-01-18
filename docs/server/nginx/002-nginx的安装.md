@@ -59,7 +59,7 @@ cd nginx-1.18.0
 --group=nginx \
 --with-http_ssl_module \                     # 启用ngx_http_ssl_module支持（使支持https请求，需已安装openssl）
 --with-http_flv_module \                     # 启用ngx_http_flv_module支持（提供寻求内存使用基于时间的偏移量文件）
---with-http_stub_status_module \             # 启用ngx_http_stub_status_module支持（获取nginx自上次启动以来的工作状态）
+--with-http_stub_status_module \             # 启用ngx_http_stub_status_module支持（获取nginx自上次启动后到现在为止的工作状态）
 --with-http_gzip_static_module \             # 启用ngx_http_gzip_static_module支持（在线实时压缩输出数据流）
 --http-client-body-temp-path=/var/tmp/nginx/client/ \   # 设定http客户端请求临时文件路径
 --http-proxy-temp-path=/var/tmp/nginx/proxy/ \          # 设定http代理临时文件路径
@@ -83,7 +83,9 @@ nginx默认安装在`/usr/local/nginx/`这里，进入该目录
 3. 启动nginx
 ```shell
 ./nginx            # 启动nginx
+
 ps aux|grep nginx  # 查看进程
+
 ./nginx -s stop    # 停止nginx
 ```
 启动nginx后，就可以通过浏览器访问`http://59.110.21.75/`

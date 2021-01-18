@@ -79,8 +79,7 @@ nginx会优雅的读取新的日志节点然后重启，常常用在日志切割
 <script>window.location.reload()</script>
 ```
 
-2. 访问 `http://bbb.com` 一直处于刷新状态，查看nginx的
-`log/access.log`日志，可以看到日志一直再增加
+2. 访问 `http://bbb.com` 一直处于刷新状态，查看nginx的`log/access.log`日志，可以看到日志一直再增加
 ```shell
 ll
 ```
