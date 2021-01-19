@@ -146,7 +146,7 @@ if ($http_user_agent ~* mise) {
 if ($fastcgi_script_name = ie.html) {
     set $isIE 0; # 如果访问的是ie.html就设置$isIE=0
 }
-if ($isIE 1) {
+if ($isIE = 1) {
     rewrite ^.*% ie.html; # 如果$isIE就rewrite到ie.html
 }
 ```
