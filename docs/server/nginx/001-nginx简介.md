@@ -6,7 +6,6 @@
 * 占用资源小
 * 功能种类比较多（web/cache/proxy），每个功能都不是特别强
 * nginx可以配合动态PHP服务，加装fastcgi
-* 利用nginx可以对IP限速，可以限制连接数
 
 
 
