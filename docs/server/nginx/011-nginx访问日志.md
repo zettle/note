@@ -172,3 +172,12 @@ nginx -s reopen # 也可以用信号量语句 kill -UER1
 
 接着只要让linux每天在定时执行上面的shell脚本即可
 
+
+
+## 6、按天存访问日志
+```
+if ($time_iso8601 ~ '(\d{4}-\d{2}-\d{2})') {
+    set $tttt $1;
+}
+access_log  logs/baklog/aaa.access.$tttt.log  main;
+```
