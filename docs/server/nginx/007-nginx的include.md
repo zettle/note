@@ -7,7 +7,7 @@
 http {
     server {
         listen       80;
-        server_name  zettle.top www.zettle.top;
+        server_name  aaa.com www.aaa.com;
 
         location / {
             root   /root/svr/aaa;
@@ -17,7 +17,7 @@ http {
 
     server {
         listen       80;
-        server_name  huangzetao.xyz www.huangzetao.xyz;
+        server_name  bbb.com www.bbb.com;
         location / {
             root   /root/svr/bbb;
             index  index.html index.htm;
@@ -29,10 +29,10 @@ http {
 把server拆成2个
 
 ```nginx
-# conf/zettle.conf
+# conf/aaa.conf
 server {
     listen       80;
-    server_name  zettle.top www.zettle.top;
+    server_name  aaa.com www.aaa.com;
 
     location / {
         root   /root/svr/aaa;
@@ -40,10 +40,10 @@ server {
     }
 }
 
-# conf/huangzetao.conf
+# conf/bbb.conf
 server {
     listen       80;
-    server_name  huangzetao.xyz www.huangzetao.xyz;
+    server_name  bbb.com www.bbb.com;
     location / {
         root   /root/svr/bbb;
         index  index.html index.htm;
@@ -54,9 +54,9 @@ server {
 ```nginx
 # nginx.conf
 http {
-    include ./conf/zettle.conf;
-    include ./conf/huangzetao.conf;
+    include ./conf/aaa.conf;
+    include ./conf/bbb.conf;
 }
 ```
 
-include也支持 `*` ，表示任意字符，比如 `include ./conf/*.conf` 表示引入 `./conf/` 目录里面所有`.conf`结尾的配置文件
+1. include也支持 `*` ，表示任意字符，比如 `include ./conf/*.conf` 表示引入 `./conf/` 目录里面所有`.conf`结尾的配置文件

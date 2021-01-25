@@ -2,6 +2,7 @@
 
 ## 安装好后的nginx.conf，默认是下面配置
 ```nginx
+# 默认用户
 user  root;
 
 # worker进程数量，一般配置成 `cpu数*核数` 一样，太多的话会相互争夺CPU资源
@@ -23,7 +24,7 @@ events {
 # http区块的相关配置
 http {
     include       mime.types; # include语法: nginx支持的媒体类型
-    default_type  application/octet-stream; # 默认媒体类型
+    default_type  application/octet-stream; # 默认类型，会让浏览器认为响应是普通的文件流，并提示用户下载文件
 
     # 定义访问日志的格式
     #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '

@@ -1,4 +1,4 @@
-# 007-docker定制镜像
+# 007-docker发布镜像
 
 定制自己的镜像: `docker commit -a="[作者]" -m "[备注]" [镜像id或名称] [起的镜像名字]`
 
@@ -150,8 +150,10 @@ docker tag 5ab45f39ce2b registry.cn-beijing.aliyuncs.com/zettle/nginx:1.0.0
 ```shell
 docker push registry.cn-beijing.aliyuncs.com/zettle/nginx:1.0.0
 ```
+![](./img/007-aliyun-version.png)
 
 当想要pull的时候，执行下面
 ```shell
 docker pull registry.cn-beijing.aliyuncs.com/zettle/nginx:1.0.0
 ```
+

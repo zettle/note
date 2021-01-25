@@ -77,4 +77,4 @@ yum -y remove docker-ce.x86_64
 
 3. 执行`rm -rf /var/lib/docker`
 
-4. 执行`docker`检查，已经报没有该命令了
+4. 执行`docker`检查，报没有该命令了
