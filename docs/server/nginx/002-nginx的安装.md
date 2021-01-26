@@ -69,6 +69,20 @@ cd nginx-1.18.0
 --with-pcre # 启用pcre库
 ```
 
+执行`./configure --help`可以查看所有支持的参数
+
+一般的，执行这个就可以
+```
+./configure \
+    --prefix=/usr/local/nginx-1.18.0 \
+    --with-http_stub_status_module \
+    --with-http_ssl_module
+```
+* `--prefix`: 指定安装目录
+* `--with-http_stub_status_module`: 可以查看nginx的运行状态，详见[009-nginx状态](./009-nginx状态.md)
+* `--with-http_ssl_module`: 支持https
+
+
 2. 执行编译安装
 ```shell
 make  # 编译
