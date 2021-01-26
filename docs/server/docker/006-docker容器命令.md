@@ -84,6 +84,8 @@
 
 ![](./img/006-exec.png)
 
+比如要进入nginx镜像里面，执行`docker exec -it nginx /bin/bash`
+
 
 ## 5、启动容器
 `docker start [容器id或容器名]`: 将已停止的容器启动
@@ -129,3 +131,7 @@
 简单的做，源文件在前，目标位置在后
 
 
+## 12、查看详细信息
+`docker inspect [容器id]`可以查看容器的详细信息
+
+![](./img/006/inspect.png)

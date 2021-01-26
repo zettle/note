@@ -43,8 +43,6 @@
 `docker pull [名字][:版本号]`
 
 
-
-
 ## 4、删除镜像
 `docker rmi [名字或镜像id][:版本号]`
 
@@ -68,4 +66,9 @@
 ### 4.3 一次删除所有镜像
 `docker rmi -f $(docker images -qa)`
 
+
+## 5、查看某个镜像的构建脚本
+`docker history [镜像名称或镜像id]`: 查看dockerFile的构建脚本
+
+![](./img/005-history.png)
 
