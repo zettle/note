@@ -112,3 +112,8 @@ nginx会重新生成access_log然后往这个新的上面追加日志
 
 
 
+## 6、usr2和winch
+usr2和winch主要用来优雅的升级nginx版本
+
+[006-nginx的优雅升级](./006-nginx的优雅升级.md)
+
