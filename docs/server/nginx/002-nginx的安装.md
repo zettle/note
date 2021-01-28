@@ -118,7 +118,7 @@ vim /etc/profile
 
 在最后面添加
 ```
-export NGINX_HOME=/usr/local/nginx/sbin
+NGINX_HOME=/usr/local/nginx/sbin
 export PATH=$NGINX_HOME:$PATH
 ```
 
