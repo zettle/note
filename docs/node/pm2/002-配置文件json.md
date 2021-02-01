@@ -1,5 +1,7 @@
 # 002-配置文件
 
+[配置项目-英文文档](https://pm2.keymetrics.io/docs/usage/deployment/)
+
 在项目根目录添加pm2的部署脚本文件: `ecosystem.json`
 
 ```json
