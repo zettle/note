@@ -56,30 +56,3 @@ docker logs 14a863e65582
 ![](./img/setup-5.png)
 
 
-
-
-
-## 2 使用docker-compose启动（推荐）
-1. 编写docker-compose.yml文件
-```yml
-version: '3'
-services:
-  jenkins: # 服务的名称，这里设置名称=jenkins
-    container_name: 'jenkins' # 容器的名称
-    image: jenkins/jenkins:lts # 要是用哪个镜像
-    restart: always # 当docker重启或者linux系统重启的时候，会自动重启这个jenkins镜像
-    user: jenkins:994 # 指定jenkins的用户，这里的用户最重要是后面使用宿主机上docker去发布应用
-    ports: # 端口映射
-    - "11005:8080"
-    - "50000:50000"
-    - "10051:10051"
-    volumes: # 磁盘共享
-    - /root/myJenkins/jenkins_home:/var/jenkins_home
-    - /root/myJenkins/docker:/usr/bin/docker
-    - /root/myJenkins/docker.sock:/var/run/docker.sock
-```
-
-2. 启动
-```shell
-
-```
