@@ -2,6 +2,8 @@
 
 
 ## 1、问题
+[视频](https://www.bilibili.com/video/BV1wy4y1D7JT?p=15)
+
 首先来看一个最简单经典的代码
 ```jsx
 class App extends React.Component {
@@ -84,3 +86,55 @@ yy();
 
 
 
+
+## 3、加个bind为什么就可以
+[视频](https://www.bilibili.com/video/BV1wy4y1D7JT?p=16&spm_id_from=pageDriver)
+
+为了解决上面的问题，我们常会用下面的写法
+```jsx
+constructor (props) {
+  super(props);
+  this.state = {
+    count: 1
+  };
+  this.add = this.add.bind(this); // 加上这一句就可以
+}
+```
+那么为什么加上这一句就可能了呢，我们知道bind是改变this的指向
+
+首先要明白等号右侧的`this.add`做了什么事，它会先去App的实例上找，这个时候App实例还没有呢，肯定找不到，就会沿着原型链找，知道找到了App原型上，这个时候就找到了。
+
+然后`this.add.bind(this)`改变了this指向，`bind()`得到的是一个新函数，不会执行函数
+
+然后就到了等号左边`this.add = this.add(this)`，这个等号的左边`this.add`就会实例上多了个`add()`方法
+
+![](./img/class-1.png)
+
+当点击事件触发了，实例还是那个的有`add()`就会直接调用，而不会调用到App类上的
+
+为了清楚这层关系，我们方法名起个不一样的
+```jsx
+class App extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      count: 1
+    };
+    this.say = this.add.bind(this);
+  }
+  add () {
+    console.log(this);
+  }
+  render () {
+    return (
+      <div>
+        <!-- 写this.say没有问题，this指向正常 -->
+        <button type="button" onClick={this.say}>111</button>
+
+        <!-- 写this.add有问题，this指向正常 -->
+        <button type="button" onClick={this.add}>222</button>
+      </div>
+    )
+  }
+};
+```
