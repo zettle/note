@@ -138,3 +138,21 @@ class App extends React.Component {
   }
 };
 ```
+
+
+
+## 4、推荐写法
+```jsx
+class App extends React.Component {
+  state = {
+    name: 'xiaoming',
+    age: 23
+  }
+  say = () => { // 用属性+箭头函数的方式
+    console.log(this.state.name);
+  }
+  render () {
+    return <button type="button" onClick={this.say}>按钮{this.state.name}</button>;
+  }
+};
+```
