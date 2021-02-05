@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="012-node操作redis消息发布">012-node操作redis消息发布</h1>
+<p>可以借助redis作为中介，实现2套程序之间的数据传输</p>
+<p>模拟一台服务器，用作监听</p>
+<pre><code class="language-js"><span class="hljs-comment">// other.js 的代码</span>
+<span class="hljs-keyword">const</span> redis = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;redis&#x27;</span>);
+<span class="hljs-keyword">const</span> client = redis.createClient(<span class="hljs-number">6379</span>, <span class="hljs-string">&#x27;localhost&#x27;</span>);
+
+client.subscribe(<span class="hljs-string">&#x27;testPublich&#x27;</span>); <span class="hljs-comment">// 订阅`testPublich`事件，一旦有人发送这样一条的事件，就会触发下面的message监听</span>
+client.on(<span class="hljs-string">&#x27;message&#x27;</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">channel, msg</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;获取消息频道&#x27;</span>, channel);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;获取消息内容&#x27;</span>, msg, <span class="hljs-keyword">typeof</span> msg);
+});
+</code></pre>
+<p>模拟另外一台服务器，用作发送消息</p>
+<pre><code class="language-js"><span class="hljs-comment">// app.js 的代码</span>
+<span class="hljs-keyword">const</span> redis = require(<span class="hljs-string">&#x27;redis&#x27;</span>);
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">client</span> = redis.createClient(<span class="hljs-number">6379</span>, <span class="hljs-string">&#x27;localhost&#x27;</span>);
+
+<span class="hljs-comment">// 会发送到redis，然后redis会广播到各个连接端</span>
+<span class="hljs-comment">// 第2个参数只能传递字符串，如果是数字/布尔型会转为字符串</span>
+<span class="hljs-keyword">client</span>.publish(<span class="hljs-string">&#x27;testPublich&#x27;</span>, <span class="hljs-string">&#x27;我是小明&#x27;</span>);
+</code></pre>
+<p>先启动other.js的服务器<code>node other.js</code></p>
+<p>再启动app.js的服务器<code>node app.js</code></p>
+<p><img src="./img/publish.gif" alt=""></p>
+
+    </article>
+</body>
+</html>

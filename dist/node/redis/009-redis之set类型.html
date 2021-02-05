@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="008-redis之set类型">008-redis之set类型</h1>
+<p>不允许重复元素，无序</p>
+<h2 id="1、存储">1、存储</h2>
+<p>语法: <code>sadd &lt;key&gt; &lt;value&gt;</code></p>
+<pre><code class="language-shell"><span class="hljs-keyword">sadd</span> mySet a 
+<span class="hljs-keyword">sadd</span> mySet a <span class="hljs-comment">// 已经存在不能再添加</span>
+</code></pre>
+<h2 id="2、获取">2、获取</h2>
+<p>语法: <code>smembers &lt;key&gt;</code> 获取key的内容</p>
+<pre><code class="language-shell"><span class="hljs-attribute">smembers mySet</span>
+</code></pre>
+<h2 id="3、删除">3、删除</h2>
+<p>语法: <code>srem &lt;key&gt; &lt;value&gt;</code> 删除key的value值</p>
+<pre><code class="language-shell"><span class="hljs-attribute">srem mySet a</span>
+</code></pre>
+
+    </article>
+</body>
+</html>

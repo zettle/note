@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="001-在win的安装">001-在win的安装</h1>
+<h2 id="1、下载">1、下载</h2>
+<p><a href="https://www.mongodb.com/">mongodb官网</a></p>
+<p>我们下载社区免费版就够了，然后根据操作系统选择对应的稳定版本</p>
+<p><img src="./img/002/office-download.png" alt=""></p>
+<p><img src="./img/002/office-download-2.png" alt=""></p>
+<p><img src="./img/002/office-download-3.png" alt=""></p>
+<h2 id="2、安装">2、安装</h2>
+<p>下载好的双击一直下一步即可</p>
+<p>在安装的目录中找到bin文件夹，将其添加到电脑的环境变量上。这样就可以在cmd任意访问</p>
+<p>cmd执行<code>mongod</code>看到下面界面说明配置成功</p>
+<p><img src="./img/002/cmd-mongod.png" alt=""></p>
+<h2 id="3、启动">3、启动</h2>
+<p>执行 <code>mongod --dbpath=C:\MongoDB\myData --port=27017</code></p>
+<ul>
+<li>--dbpath 要在哪个文件夹创建数据库</li>
+<li>--port 要用什么端口启动，默认27017</li>
+</ul>
+<p><img src="./img/002/mongd-path.png" alt=""></p>
+<p>过后如果忘记端口了，想要查看可以执行<code>mongo</code>，得到下面结果:</p>
+<p><img src="./img/002/mongo.png" alt=""></p>
+<blockquote>
+<p>mongod是服务端命令，用来启动暂停服务之类。 mongo是客户端命令，在服务端启动后可以用客户端命令增删改查等操作</p>
+</blockquote>
+<p>上面的<code>mongod --dbpath=E:\workspace\express-blog-test\db --port=27018</code>启动的是临时服务，如果cmd停掉或者关闭，则mongodb服务跟着停止</p>
+<p>所以需要做下面的步骤，把mongod注册为一个服务，每次开机自动启动</p>
+<h2 id="4、注册window服务">4、注册window服务</h2>
+<p>如果想要启动一个支持的服务，可以加上参<code>--serverName</code>，如果想要打上日志可以加参数<code>--logpath</code></p>
+<p>比如执行下面代码（需要用管理员运行cmd才有权限）:</p>
+<pre><code>mongod <span class="hljs-attribute">--dbpath</span>=C:\MongoDB\myData <span class="hljs-attribute">--port</span>=27017 <span class="hljs-attribute">--logpath</span>=C:\MongoDB\myLog\mlog.log <span class="hljs-attribute">--serviceName</span>=Mongodb --install
+</code></pre>
+<p>这条命令会往window服务上注册名为<code>Mongodb</code>的服务，启动提示如下:</p>
+<p><img src="./img/002/mongod-service.png" alt=""></p>
+<p>注册成功后，需要自己再去<code>任务管理器-服务查看</code>启动下</p>
+<p><img src="./img/002/mongod-service-open.png" alt=""></p>
+<p>现在关闭了cmd，mongodb也会运行在后台，可以通过</p>
+<p><img src="./img/002/mongod-task.png" alt=""></p>
+<h2 id="5、删除window服务">5、删除window服务</h2>
+<p>首先要把服务停掉，然后用管理员执行下面命令</p>
+<pre><code class="language-shell">sc <span class="hljs-built_in">delete</span> Mongodb
+</code></pre>
+
+    </article>
+</body>
+</html>

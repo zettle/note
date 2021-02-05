@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="001-semver语义化">001-semver语义化</h1>
+<p><a href="https://semver.org/lang/zh-CN/">semver</a>其实就是让版本号语义化，是由npm团队起草。</p>
+<h2 id="1-版本号格式">1 版本号格式</h2>
+<p>版本号格式:</p>
+<p><img src="./img/version.png" alt=""></p>
+<ul>
+<li>主版本: 可能根本上的变化</li>
+<li>次版本: 可能有一些api等的变化</li>
+<li>修订号: 一般解决的是小的bug </li>
+<li>先行版本: 由2部分组合成，前部分是<code>alpha|beta|rc|</code>，后半部分是数字，随着先行版本迭代增加</li>
+<li>元数据: 表示先行版本中打了很多的tag</li>
+</ul>
+<h2 id="2-常见的先行版本号">2 常见的先行版本号</h2>
+<ul>
+<li><code>alpha</code>: 内部测试版本，给内部开发和测试用的，有很多bug</li>
+<li><code>beta</code>: 公测版本，消除了严重错误，但还是会有比较多bug</li>
+<li><code>rc</code>: 发行候选版本，这个版本不会加入新功能，主要是排查bug</li>
+<li><code>release</code>: 正式版</li>
+</ul>
+
+    </article>
+</body>
+</html>

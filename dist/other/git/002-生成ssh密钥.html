@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="002-生成ssh密钥">002-生成ssh密钥</h1>
+<ol>
+<li>查看下自己有没有生成过ssh密钥<pre><code class="language-shell"><span class="hljs-keyword">cd</span> ~/.ssh
+<span class="hljs-keyword">ll</span>
+</code></pre>
+如果该目录下没有<code>id_dsa</code>和<code>id_dsa.pub</code>这2个文件说明没有生成过</li>
+</ol>
+<p><img src="./img/id-dsa.png" alt=""></p>
+<ol start="2">
+<li>生成ssh密钥
+执行<pre><code class="language-shell"><span class="hljs-attribute">ssh-keygen -o</span>
+</code></pre>
+执行后，会出现下面输入选择项<pre><code>Enter <span class="hljs-keyword">file</span> in which to save the key (<span class="hljs-regexp">/home/</span>xiaoming<span class="hljs-regexp">/.ssh/i</span>d_rsa):
+Created directory <span class="hljs-string">&#x27;/home/xiaoming/.ssh&#x27;</span>.
+Enter passphrase (empty <span class="hljs-keyword">for</span> no passphrase):
+Enter same passphrase again:
+</code></pre>
+上面几个输入选择项的意思分别是:</li>
+</ol>
+<ul>
+<li>确认密钥的存储位置，如果不想修改默认路径，就直接回车</li>
+<li>输入密钥口令，如果不需要就直接回车</li>
+</ul>
+<ol start="2">
+<li>查看公钥
+执行完上面的操作后，会在指定目录上生成<code>id_dsa</code>和<code>id_dsa.pub</code>这2个文件，其中<code>id_dsa.pub</code>就是我们经常用到的，把里面内容复制到git或者服务器上即可ssh登录<pre><code class="language-shell"><span class="hljs-selector-tag">cat</span> <span class="hljs-selector-tag">id_dsa</span><span class="hljs-selector-class">.pub</span>
+</code></pre>
+</li>
+</ol>
+
+    </article>
+</body>
+</html>

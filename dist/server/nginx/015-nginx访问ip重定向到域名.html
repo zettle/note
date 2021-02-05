@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="015-nginx访问ip重定向到域名">015-nginx访问ip重定向到域名</h1>
+<p>正常情况下，用户通过域名或者通过IP地址都可以访问到我们的网站</p>
+<p>如果我们想要实现用户访问IP的时候，重定向到域名，则在nginx添加下面配置即可</p>
+<p>baidu就是做了这种效果</p>
+<pre><code class="language-nginx"><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+    <span class="hljs-attribute">server_name</span>  <span class="hljs-number">59.110.21.75</span>;
+    <span class="hljs-attribute">rewrite</span><span class="hljs-regexp"> ^/(.*)</span> http://aaa.com/<span class="hljs-variable">$1</span> <span class="hljs-literal">redirect</span>;
+}
+</code></pre>
+
+    </article>
+</body>
+</html>

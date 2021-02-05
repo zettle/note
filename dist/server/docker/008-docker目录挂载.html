@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="008-docker目录挂载">008-docker目录挂载</h1>
+<p>一个目录挂载语法: <code>docker run -it -v [宿主机目录]:[容器目录] 镜像名</code></p>
+<p>多个目录挂载语法: <code>docker run -it -v [宿主机目录]:[容器目录] -v [宿主机目录]:[容器目录] 镜像名</code></p>
+<h2 id="1、nginx静态资源挂载">1、nginx静态资源挂载</h2>
+<p>比如启动nginx镜像的时候，想要把自己项目的代码挂载到nginx镜像里面</p>
+<pre><code>docker run -di -p <span class="hljs-number">7001</span>:<span class="hljs-number">80</span> -v <span class="hljs-regexp">/apps/</span>svr<span class="hljs-regexp">/zettle:/u</span>sr<span class="hljs-regexp">/share/</span>nginx/html --privileged=<span class="hljs-keyword">true</span> nginx
+</code></pre>
+
+    </article>
+</body>
+</html>

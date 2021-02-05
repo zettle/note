@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="104-dockerfile的cmd">104-dockerFile的CMD</h1>
+<h2 id="1、cmd的语法">1、CMD的语法</h2>
+<ul>
+<li><code>CMD [&quot;executable&quot;,&quot;param1&quot;,&quot;param2&quot;] (exec form, this is the preferred form)</code>: 运行一个可执行的文件并提供参数。</li>
+<li><code>CMD [&quot;param1&quot;,&quot;param2&quot;]</code>: 为ENTRYPOINT指定参数</li>
+<li><code>CMD command param1 param2 (shell form)</code>: 执行某条shell命令，是以<code>/bin/sh -c</code>的方法执行的命令</li>
+</ul>
+<h2 id="2、entrypoint的语法">2、ENTRYPOINT的语法</h2>
+<ul>
+<li><code>ENTRYPOINT [&quot;executable&quot;,&quot;param1&quot;,&quot;param2&quot;](exec格式推荐)</code>: </li>
+<li><code>ENTRYPOINT command param1 param2</code>: </li>
+</ul>
+<h2 id="2、cmd和entrypoint的区别">2、CMD和ENTRYPOINT的区别</h2>
+<p>相同点: CMD和ENTRYPOINT都是容器启动的时候，执行的命令；都支持exec和shell方式；</p>
+<p>一般用法: 单独一个CMD或者先ENTRYPOINT后CMD结合使用</p>
+<p>假如有多个CMD，启动的时候带参数，会覆盖前面的CMD命令，最后一个命令生效。所以我们平时用CMD的时候，有一种情况的就是单独用一个CMD命令即可，启动命令不带参数</p>
+<p><strong>比如tomcat</strong></p>
+<p><a href="https://github.com/docker-library/tomcat/blob/2c472565d72a03201789ddd3fb4bec3316a609e9/10.0/jdk15/openjdk-oraclelinux7/Dockerfile">tomcat</a>在最后就是<code>CMD [&quot;catalina.sh&quot;, &quot;run&quot;]</code>就是CMD的一种用法</p>
+<p>我们在启动的时候执行<code>docker run -it tomcat</code>会自动启动tomcat就是因为这句CMD</p>
+<p><img src="./img/104/run-tomcat.png" alt=""></p>
+<p>假如我们启动命令这么写 <code>docker run -it tomcat /bin/bash</code>那么就会用<code>bash</code>替代CMD命令，因为CMD是只执行最后一个的。就会发现tomcat不会自动启动了</p>
+<p><img src="./img/104/run-bash.png" alt=""></p>
+<p><strong>多个CMD的例子</strong></p>
+<p>有下面的dockerFile文件，</p>
+<pre><code class="language-docker"><span class="hljs-keyword">FROM</span> centos
+<span class="hljs-keyword">CMD</span><span class="bash"> <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;xiaoming&quot;</span></span>
+</code></pre>
+<p>执行构建并且启动镜像</p>
+<pre><code class="language-shell">docker build -f ./dockerFile -t xmcentos .
+docker <span class="hljs-keyword">run</span><span class="bash"> -it xmcentos</span>
+</code></pre>
+<p>可以看到控制台输出了<code>xiaoming</code></p>
+<p><img src="./img/104/xmcentos.png" alt=""></p>
+<p>当我们写多条CMD的时候</p>
+<pre><code class="language-docker"><span class="hljs-keyword">FROM</span> centos
+<span class="hljs-keyword">CMD</span><span class="bash"> <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;xiaoming&quot;</span></span>
+<span class="hljs-keyword">CMD</span><span class="bash"> <span class="hljs-built_in">echo</span> <span class="hljs-string">&quot;xiaohong&quot;</span></span>
+</code></pre>
+<p>执行构建并且启动镜像</p>
+<pre><code class="language-shell">docker build -f ./dockerFile -t xhcentos .
+docker <span class="hljs-keyword">run</span><span class="bash"> -it xhcentos</span>
+</code></pre>
+<p>可以看到控制台只输出了<code>xiaohong</code>，并没有输出<code>xiaoming</code></p>
+<p><img src="./img/104/xhcentos.png" alt=""></p>
+<p><strong>CMD为ENTRYPOINT指定参数的例子</strong></p>
+<pre><code class="language-docker"><span class="hljs-keyword">FROM</span> centos
+<span class="hljs-keyword">ENTRYPOINT</span><span class="bash"> [<span class="hljs-string">&quot;ls&quot;</span>]</span>
+<span class="hljs-keyword">CMD</span><span class="bash"> [<span class="hljs-string">&quot;-l&quot;</span>]</span>
+</code></pre>
+<p>CMD给ENTRYPOINT提供参数，真正执行的是<code>ls -l</code></p>
+
+    </article>
+</body>
+</html>
