@@ -19,7 +19,7 @@ const imgSuffix = 'png|gif|jepg|jpg';
  * 对单个md文件的处理
  **************/
 async function handSingleMdFile (options, fileFullPath) {
-    const {source, output, mdConf} = options;
+    const {source, output, publicPath, mdConf} = options;
     const regStr = `${source.replace(/\\/g, '/')}(.*)/(.*).md$`;
 
     const res = fileFullPath.match(new RegExp(regStr));
@@ -41,7 +41,7 @@ async function handSingleMdFile (options, fileFullPath) {
         highlight: (code) =>  hljs.highlightAuto(code).value
     });
     const templHtml = await readTmplHtml();
-    const html = await ejs.render(templHtml, { article }, {async: true});
+    const html = await ejs.render(templHtml, { article, publicPath }, {async: true});
     writeFileAsync(`${mdTargetDirPath}/${mdFileName}.html`, html)
 }
 
