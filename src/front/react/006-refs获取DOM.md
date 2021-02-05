@@ -1,4 +1,4 @@
-# 006-refs
+# 006-refs获取DOM
 
 react的refs就和vue2的refs一样，用来获取指定的DOM
 ```jsx
