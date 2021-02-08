@@ -1,5 +1,7 @@
 # 004-propsType检验
 
+propsType可以校验props传递过来的类型是否正确，当传递过来的不正确，会在控制台给予警告。但react代码还是会继续执行
+
 
 ## 1、类组件
 react对于props传递过来的数据，可以进行类型的检查和默认值的设置
@@ -58,3 +60,11 @@ Person.defaultProps = {}; // 默认值的设置
 
 <Person name="xiaoming" age={12}></Person>
 ```
+
+
+
+## 3、常见的类型
+* `PropTypes.string`: 需要一个字符串
+* `PropTypes.string.isRequired`: 需要一个字符串，并且必传
+* `PropTypes.array`: 需要一个数组
+* `PropTypes.func`: 需要一个函数
