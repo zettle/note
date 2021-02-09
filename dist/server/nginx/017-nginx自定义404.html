@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="017-nginx自定义404">017-nginx自定义404</h1>
+<h2 id="1、nginx配置">1、nginx配置</h2>
+<p>nginx自带404页面，当我们想要定制的时候，只需要配置<code>error_page  404</code>属性即可</p>
+<pre><code class="language-nginx"><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+    <span class="hljs-attribute">server_name</span>  aaa.com www.aaa.com;
+
+    <span class="hljs-attribute">location</span> / {
+        <span class="hljs-attribute">root</span>   /root/svr/aaa;
+        <span class="hljs-attribute">index</span>  index.html index.htm;
+    }
+    
+    <span class="hljs-comment"># 自定义404页面</span>
+    <span class="hljs-attribute">error_page</span>  <span class="hljs-number">404</span> /<span class="hljs-number">404</span>.html;
+}
+</code></pre>
+<p>上面当用户访问<code>http://aaa.com/sdfjsdfj234</code>一个不存在的页面的时候，就会展示我们的404页面，并且http状态是404</p>
+
+    </article>
+</body>
+</html>

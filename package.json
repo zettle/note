@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node app.js"
   },
-  "pre-commit": ["start"],
+  "pre-commit": [
+    "start"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",

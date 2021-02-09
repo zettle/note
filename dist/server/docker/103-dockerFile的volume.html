@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="103-dockerfile的volume">103-dockerFile的volume</h1>
+<p>dockerFile里面自带了VOLUME指令，可以指定镜像中的数据卷。</p>
+<p>在前面的docker中也有对应的参数<code>-v</code>，但是<code>-v</code>可以支持我们自定义宿主机到镜像路径的映射</p>
+<p>而dockerFile的VOLUME不行，只能定义镜像里面的路径，然后docker会自动在宿主机创建一个随机的路径作为数据卷</p>
+<h2 id="1、例子">1、例子</h2>
+<ol>
+<li><p>编写dockerFile</p>
+<pre><code class="language-docker"><span class="hljs-keyword">FROM</span> centos
+<span class="hljs-keyword">VOLUME</span><span class="bash"> [ <span class="hljs-string">&quot;/home/v1&quot;</span>, <span class="hljs-string">&quot;/home/v2&quot;</span> ]</span>
+<span class="hljs-keyword">CMD</span><span class="bash"> /bin/bash</span>
+</code></pre>
+<p>上面定义了centos镜像，镜像中的 <code>/home/v1</code> 和 <code>/home/v2</code> 与宿主机数据共享</p>
+</li>
+<li><p>构建成镜像</p>
+<pre><code class="language-shell">docker build -f ./dockerFile -t xhcentos .
+</code></pre>
+</li>
+<li><p>查看构建的镜像并启动</p>
+<pre><code class="language-shell">docker images
+docker <span class="hljs-built_in">run</span> -<span class="hljs-keyword">it</span> xhcentos
+</code></pre>
+</li>
+<li><p>通过<code>docker inspect</code>查看容器的详细信息</p>
+<pre><code class="language-shell"><span class="hljs-comment"># 47a700511b8b: 容器id</span>
+<span class="hljs-attribute">docker</span> inspect <span class="hljs-number">47</span>a<span class="hljs-number">700511</span>b<span class="hljs-number">8</span>b
+</code></pre>
+<p>在详细信息里面有个<code>Mounts</code>字段，里面就记录了容器的各个数据卷，通过<code>source</code>字段就可以知道宿主机的位置了
+<img src="./img/103/inspect.png" alt=""></p>
+</li>
+<li><p>修改共享数据卷</p>
+<pre><code class="language-shell"><span class="hljs-attribute">cd</span> /var/lib/docker/volumes/<span class="hljs-number">91400</span>ed<span class="hljs-number">0</span>f<span class="hljs-number">37</span>c<span class="hljs-number">6</span>f<span class="hljs-number">5</span>aca<span class="hljs-number">184</span>ecf<span class="hljs-number">966</span>fe<span class="hljs-number">3273</span>ce<span class="hljs-number">59</span>dfe<span class="hljs-number">2632</span>c<span class="hljs-number">11</span>f<span class="hljs-number">742782371</span>cefacfc/_data
+</code></pre>
+</li>
+</ol>
+<p>vim haha.txt</p>
+<pre><code>再进入容器，就可以看到共享数据卷的同步过来了
+```shell
+docker <span class="hljs-built_in">attach</span> <span class="hljs-number">47</span>a700511b8b
+
+cd /<span class="hljs-built_in">home</span>/v1
+</code></pre>
+
+    </article>
+</body>
+</html>

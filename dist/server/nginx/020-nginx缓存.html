@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="020-nginx缓存">020-nginx缓存</h1>
+<h2 id="1、图片的缓存">1、图片的缓存</h2>
+<p>对于网站，尤其是新闻网站，图片一旦发布，改动的可能性非常小，我们希望用户访问一次后，图片缓存在浏览器上，且时间长点，可以使用到nginx的expires配置</p>
+<p>位置: <code>location -&gt; if</code> 里面写</p>
+<p>格式: </p>
+<pre><code><span class="hljs-attribute">expires</span> <span class="hljs-number">30</span>s # <span class="hljs-number">30</span>秒后过期
+<span class="hljs-attribute">expires</span> <span class="hljs-number">30</span>m # <span class="hljs-number">30</span>分后过期
+<span class="hljs-attribute">expires</span> <span class="hljs-number">2</span>h # <span class="hljs-number">2</span>小时后过期
+<span class="hljs-attribute">expires</span> <span class="hljs-number">30</span>d # <span class="hljs-number">30</span>天后过期
+</code></pre>
+<p>在请求响应中，有下面几个字段</p>
+<ul>
+<li><code>expires:Wed, 20 Jan 2021 01:54:01 GMT</code>: 过期时间</li>
+<li><code>Date:Wed, 20 Jan 2021 02:06:42 GMT</code>: 服务时间</li>
+<li><code>Last-Modified:Wed, 20 Jan 2021 02:06:42 GMT</code>: 文件最后一次修改的时间</li>
+<li><code>etag: &quot;60078670-7cca&quot;</code>: 内容的签名，内容改了签名也会改</li>
+</ul>
+<h2 id="2、htmljscss">2、html/js/css</h2>
+<p>304也是一种很好的缓存手段</p>
+<p>原理: </p>
+<ol>
+<li>首次请求服务端，服务端响应文件，在响应头带上<code>etag</code>标签（内容的签名，内容改了，<code>etag</code>也会改）和<code>Last-Modified</code>2个标签值。</li>
+<li>浏览器把拿到的<code>etag</code>和<code>Last-Modified</code>存起来，下次请求的时候带上，</li>
+<li>浏览器下次请求，请求头信息发送这<code>If-None-Match</code>（对应上面的<code>etag</code>的值）和<code>If-Modified-Since</code>（对应上面的<code>Last-Modified</code>的值）个标签，服务端检测文件有没有发生变化。<ul>
+<li>如无，直接头信息返回<code>etag</code>和<code>last_modified_since</code></li>
+<li>如有，返回新的内容和新的<code>etag|last_modified_since</code></li>
+</ul>
+</li>
+<li>浏览器知道内容无改变，于是直接调用本地缓存。</li>
+<li>这个过程也请求了服务器，但是传的内容极少</li>
+<li>对于经常变化的，如html/js/css，比较适合这种方式</li>
+</ol>
+
+    </article>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="007-受控和非受控组件">007-受控和非受控组件</h1>
+<p>受控和非受控组件是针对表单组件而言的</p>
+<h2 id="1、非受控组件">1、非受控组件</h2>
+<p>非受控组件，表单元素的数据不在state维护，等需要获取表单元素的值时候，通过refs去获取</p>
+<p>设置默认值得时候，也不能通过value属性去设置，得通过defaultValue属性</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  myInp = <span class="hljs-type">React</span>.createRef();
+  subHandl = () =&gt; {
+    console.log(<span class="hljs-keyword">this</span>.myInp.current.value);
+  };
+  render () {
+    <span class="hljs-keyword">return</span> (
+      &lt;div&gt;
+      &lt;input defaultValue=<span class="hljs-string">&quot;ddd&quot;</span> ref={<span class="hljs-keyword">this</span>.myInp} /&gt;
+      &lt;button onClick={<span class="hljs-keyword">this</span>.subHandl}&gt;提交&lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre>
+<blockquote>
+<p>为什么不能通过value设置默认值？在react中，value有特别的用处，一定你在表单组件使用了value属性，react就会要求你用onChange事件。比如代码<code>&lt;input value=&quot;ddd&quot; ref={this.myInp} /&gt;</code>。而你用了<code>onChange+value</code>组合，那这就是一个受控组件</p>
+</blockquote>
+<p><img src="./img/value-prop.png" alt=""></p>
+<h2 id="2、受控组件">2、受控组件</h2>
+<p>表单组件受到state控制的为受控组件，这也是react比较推荐的写法</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  state = {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;xiaoming&#x27;</span>
+  };
+  saveName = <span class="hljs-function">(<span class="hljs-params">ev</span>) =&gt;</span> {
+    <span class="hljs-built_in">this</span>.setState({<span class="hljs-attr">name</span>: ev.target.value});
+  };
+  subHandl = <span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">this</span>.state.name);
+  };
+  render () {
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{this.state.name}</span> <span class="hljs-attr">onChange</span>=<span class="hljs-string">{this.saveName}</span> /&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.subHandl}</span>&gt;</span>提交<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+  }
+}
+</code></pre>
+
+    </article>
+</body>
+</html>

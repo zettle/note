@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="011-nginx访问日志">011-nginx访问日志</h1>
+<p>nginx的访问日志由 ngx_http_log_module 模块提供，会把每个用户访问网站的日志记录到指定文件里面。</p>
+<p>更多该模块内容详见<a href="https://www.nginx.cn/doc/standard/httplog.html">官网</a></p>
+<h2 id="1、nginx日志的2个参数">1、nginx日志的2个参数</h2>
+<p>nginx的访问日志主要由下面2个参数控制</p>
+<ul>
+<li><code>log_format</code>: 用来定义记录日志的格式（可以定义多种日志格式，取不同名字即可）</li>
+<li><code>access_log</code>: 用来指定日志文件的路径及使用的何种日志格式记录日志</li>
+</ul>
+<p>在安装完nginx后，我们在<code>nginx.conf</code>里面第21-25行可以看到下面代码</p>
+<pre><code class="language-nginx"><span class="hljs-comment"># 日志格式</span>
+log_format  main  <span class="hljs-string">&#x27;<span class="hljs-variable">$remote_addr</span> - <span class="hljs-variable">$remote_user</span> [<span class="hljs-variable">$time_local</span>] &quot;<span class="hljs-variable">$request</span>&quot; &#x27;</span>
+                  <span class="hljs-string">&#x27;<span class="hljs-variable">$status</span> <span class="hljs-variable">$body_bytes_sent</span> &quot;<span class="hljs-variable">$http_referer</span>&quot; &#x27;</span>
+                  <span class="hljs-string">&#x27;&quot;<span class="hljs-variable">$http_user_agent</span>&quot; &quot;<span class="hljs-variable">$http_x_forwarded_for</span>&quot;&#x27;</span><span class="hljs-comment">;</span>
+<span class="hljs-comment"># 日志位置和使用main这个日志格式</span>
+access_log  logs/access.log  main<span class="hljs-comment">;</span>
+</code></pre>
+<p>其中 <code>main</code> 就相当于一个变量名</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$remote_addr</td>
+<td>客户端地址</td>
+<td>219.227.111.255</td>
+</tr>
+<tr>
+<td>$remote_user</td>
+<td>客户端用户名称</td>
+<td>—</td>
+</tr>
+<tr>
+<td>$time_local</td>
+<td>访问时间和时区</td>
+<td>18/Jul/2014:17:00:01 +0800</td>
+</tr>
+<tr>
+<td>$request</td>
+<td>请求的URI和HTTP协议</td>
+<td>“GET /article-10000.html HTTP/1.1”</td>
+</tr>
+<tr>
+<td>$http_host</td>
+<td>请求地址，即浏览器中你输入的地址（IP或域名）</td>
+<td><a href="http://www.ha97.com">www.ha97.com</a>  198.98.120.87</td>
+</tr>
+<tr>
+<td>$status</td>
+<td>HTTP请求状态</td>
+<td>200</td>
+</tr>
+<tr>
+<td>$body_bytes_sent</td>
+<td>发送给客户端文件内容大小</td>
+<td>1547</td>
+</tr>
+<tr>
+<td>$http_referer</td>
+<td>url跳转来源</td>
+<td><a href="https://www.google.com/">https://www.google.com/</a></td>
+</tr>
+<tr>
+<td>$http_user_agent</td>
+<td>用户终端浏览器等信息</td>
+<td>Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; SV1; GTB7.0; .NET4.0C;</td>
+</tr>
+<tr>
+<td>$ssl_protocol</td>
+<td>SSL协议版本</td>
+<td>TLSv1</td>
+</tr>
+<tr>
+<td>$ssl_cipher</td>
+<td>交换数据中的算法</td>
+<td>RC4-SHA</td>
+</tr>
+<tr>
+<td>$request_time</td>
+<td>整个请求的总时间</td>
+<td>0.165</td>
+</tr>
+<tr>
+<td>$upstream_response_time</td>
+<td>请求过程中，upstream响应时间</td>
+<td>0.002</td>
+</tr>
+<tr>
+<td>$upstream_status</td>
+<td>upstream状态</td>
+<td>200</td>
+</tr>
+<tr>
+<td>$upstream_addr</td>
+<td>后台upstream的地址，即真正提供服务的主机地址</td>
+<td>10.36.10.80:80</td>
+</tr>
+</tbody></table>
+<h2 id="2、自定义日志记录">2、自定义日志记录</h2>
+<p>将 <code>nginx.conf</code> 修改为下面</p>
+<pre><code class="language-nginx"><span class="hljs-keyword">http</span> {
+    <span class="hljs-comment"># 错误日志</span>
+    log_format  <span class="hljs-keyword">main</span>  <span class="hljs-string">&#x27;<span class="hljs-variable">$remote_addr</span> - <span class="hljs-variable">$remote_user</span> [<span class="hljs-variable">$time_local</span>] &quot;<span class="hljs-variable">$request</span>&quot; &#x27;</span>
+                      <span class="hljs-string">&#x27;<span class="hljs-variable">$status</span> <span class="hljs-variable">$body_bytes_sent</span> &quot;<span class="hljs-variable">$http_referer</span>&quot; &#x27;</span>
+                      <span class="hljs-string">&#x27;&quot;<span class="hljs-variable">$http_user_agent</span>&quot; &quot;<span class="hljs-variable">$http_x_forwarded_for</span>&quot;&#x27;</span>
+                      <span class="hljs-string">&#x27;&quot;<span class="hljs-variable">$request_time</span>&quot; &quot;<span class="hljs-variable">$upstream_response_time</span>&quot;&#x27;</span>;
+    access_log  logs/access.log  <span class="hljs-keyword">main</span>;
+
+}
+</code></pre>
+<p>保存然后重启nginx，再去 <code>logs/access.log</code> 里面查看日志可以看到内容变成我们修改后的格式</p>
+<h2 id="3、access_log的作用">3、access_log的作用</h2>
+<p>语法: <code>access_log [路径] [要用哪个变量名的格式]</code></p>
+<ul>
+<li><code>路径</code> - 如果是相对路径，是相对于nginx安装目录</li>
+<li><code>要用哪个变量名的格式</code> - 就是上面<code>log_format</code>定义好的名字</li>
+</ul>
+<p>可以放的位置: <code>http -&gt; server -&gt; locaton -&gt; if in location -&gt; limit_except</code></p>
+<p>一般情况下，我们推荐 access_log 跟着 server 走，这样找日志也方便点</p>
+<h2 id="4、多域名的access_log">4、多域名的access_log</h2>
+<p>现在我们有域名<code>http://aaa.com</code> 和 <code>http://bbb.com</code> 是通过nginx的server_name实现多域名的。</p>
+<pre><code class="language-nginx"><span class="hljs-section">http</span> {
+    <span class="hljs-section">server</span> {
+        <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+        <span class="hljs-attribute">server_name</span>  aaa.com;
+        <span class="hljs-attribute">location</span> / {
+            <span class="hljs-attribute">root</span>   /root/svr/aaa;
+            <span class="hljs-attribute">index</span>  index.html index.htm;
+        }
+    }
+
+    <span class="hljs-section">server</span> {
+        <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+        <span class="hljs-attribute">server_name</span>  bbb;
+        <span class="hljs-attribute">location</span> / {
+            <span class="hljs-attribute">root</span>   /root/svr/bbb;
+            <span class="hljs-attribute">index</span>  index.html index.htm;
+        }
+    }
+}
+</code></pre>
+<p>首先给2个网站定义好格式，然后在 <code>http://aaa.com</code> 为其单独配置</p>
+<pre><code class="language-nginx"><span class="hljs-keyword">http</span> {
+    <span class="hljs-comment"># 错误日志格式，命名main</span>
+    log_format  <span class="hljs-keyword">main</span>  <span class="hljs-string">&#x27;<span class="hljs-variable">$remote_addr</span> - <span class="hljs-variable">$remote_user</span> [<span class="hljs-variable">$time_local</span>] &quot;<span class="hljs-variable">$request</span>&quot; &#x27;</span>
+                      <span class="hljs-string">&#x27;<span class="hljs-variable">$status</span> <span class="hljs-variable">$body_bytes_sent</span> &quot;<span class="hljs-variable">$http_referer</span>&quot; &#x27;</span>
+                      <span class="hljs-string">&#x27;&quot;<span class="hljs-variable">$http_user_agent</span>&quot; &quot;<span class="hljs-variable">$http_x_forwarded_for</span>&quot;&#x27;</span>
+                      <span class="hljs-string">&#x27;&quot;<span class="hljs-variable">$request_time</span>&quot; &quot;<span class="hljs-variable">$upstream_response_time</span>&quot;&#x27;</span>;
+    <span class="hljs-comment"># 错误日志格式，命名aaaLog</span>
+    log_format  aaaLog  <span class="hljs-string">&#x27;<span class="hljs-variable">$remote_addr</span> - &quot;<span class="hljs-variable">$request</span>&quot; &#x27;</span>;
+
+    access_log  logs/access.log  <span class="hljs-keyword">main</span>;
+    server {
+        listen       <span class="hljs-number">80</span>;
+        server_name  aaa.com;
+        access_log   logs/aaa_access.log  aaaLog;
+        location / {
+            <span class="hljs-literal">root</span>   /<span class="hljs-literal">root</span>/svr/aaa;
+            index  index.html index.htm;
+        }
+    }
+
+    <span class="hljs-keyword">server</span> {
+        listen       <span class="hljs-number">80</span>;
+        server_name  bbb;
+        location / {
+            <span class="hljs-literal">root</span>   /<span class="hljs-literal">root</span>/svr/bbb;
+            index  index.html index.htm;
+        }
+    }
+}
+</code></pre>
+<p>这样子，当用户访问 <code>http://aaa.com</code> 就会使用 <code>aaaLog格式</code> 把访问日志记录在 <code>logs/aaa_access.log</code> 里面，访问其他的就继续使用 <code>main格式</code> 把访问日志记录在 <code>logs/access.log</code></p>
+<h2 id="5、按天切割访问日志">5、按天切割访问日志</h2>
+<p>nignx本身没有切割日志的功能，如果需要实现这种效果，需要通过shell脚本实现，在<code>00:00</code>的时候，把 <code>access.log</code> 的内容复制</p>
+<p><a href="https://www.cnblogs.com/littleatp/p/4625010.html">shell脚本可以参考</a></p>
+<p>比如现在有 <code>http://aaa.com</code> 和 <code>http://bbb.com</code> 两个网址，分别存的访问日志是 <code>aaa.access.log</code> 和 <code>bbb.access.log</code></p>
+<p>我们新建<code>splitlog.sh</code>，内容如下：</p>
+<pre><code class="language-shell"><span class="hljs-comment">#!/bin/bash </span>
+
+<span class="hljs-comment"># nginx/log 文件夹的路径</span>
+<span class="hljs-attribute">logPath</span>=/usr/local/nginx-1.18.0/logs
+<span class="hljs-comment"># aaa.access.log 文件的路径</span>
+<span class="hljs-attribute">aaaLogPath</span>=<span class="hljs-variable">$logPath</span>/aaa.access.log
+<span class="hljs-comment"># bbb.access.log 文件的路径</span>
+<span class="hljs-attribute">bbblogPath</span>=<span class="hljs-variable">$logPath</span>/bbb.access.log
+<span class="hljs-comment"># 昨天的日期 格式 年月日时分</span>
+<span class="hljs-attribute">yesterdayDate</span>=$(date -d yesterday +%Y%m%d%H%M)
+
+<span class="hljs-comment"># 要备份到哪个文件夹、以及对应的文件</span>
+<span class="hljs-attribute">bakPath</span>=<span class="hljs-variable">$logPath</span>/baklog
+<span class="hljs-attribute">aaaBakLogPath</span>=<span class="hljs-variable">$bakPath</span>/${yesterdayDate}.aaa.access.log
+<span class="hljs-attribute">bbblogBakPath</span>=<span class="hljs-variable">$bakPath</span>/${yesterdayDate}.bbb.access.log
+
+<span class="hljs-comment"># Linux的mv命令</span>
+mv <span class="hljs-variable">$aaaLogPath</span> <span class="hljs-variable">$aaaBakLogPath</span>
+mv <span class="hljs-variable">$bbblogPath</span> <span class="hljs-variable">$bbblogBakPath</span>
+
+<span class="hljs-comment"># mv之后原来的不见了，所以需要重新创建一份</span>
+touch <span class="hljs-variable">$aaaLogPath</span>
+touch <span class="hljs-variable">$bbblogPath</span>
+
+nginx -s reopen # 也可以用信号量语句 kill -UER1
+</code></pre>
+<p>执行<code>sh splitlog.sh</code>就可以了</p>
+<p>接着只要让linux每天在定时执行上面的shell脚本即可</p>
+<h2 id="6、按天存访问日志">6、按天存访问日志</h2>
+<pre><code><span class="hljs-keyword">if</span> (<span class="hljs-variable">$time_iso8601</span> ~ <span class="hljs-string">&#x27;(\d{4}-\d{2}-\d{2})&#x27;</span>) {
+    set <span class="hljs-variable">$tttt</span> <span class="hljs-variable">$1</span>;
+}
+access_log  logs<span class="hljs-regexp">/baklog/</span>aaa.access.<span class="hljs-variable">$tttt</span>.log  main;
+</code></pre>
+
+    </article>
+</body>
+</html>

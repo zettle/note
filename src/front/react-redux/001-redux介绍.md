@@ -1,6 +1,6 @@
 # 001-redux介绍
 
-redux不是react官方推出的，并且redux不一定和react绑定使用，也可以和vue/angular使用
+redux不是react官方推出的，不一定和react绑定使用，也可以和vue/angular使用
 
 ## 1、一个最简单的demo
 
@@ -98,7 +98,7 @@ export default createStore(countReducer); // 暴露store
 ```
 
 2. 修改页面代码
-```
+```jsx
 import React, { Component } from 'react'
 import store from './redux/store'
 
@@ -254,3 +254,4 @@ addAsync () {
     store.dispatch(createAddAsyncAction(1, 500));
 }
 ```
+

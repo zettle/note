@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="004-开机自动重启">004-开机自动重启</h1>
+<p>我们用pm2启动node程序后，如果进程挂了，pm2会自动帮我们重启。</p>
+<p>但如果是服务器重启，那么pm2也就挂了。</p>
+<p>所以需要设置开启自动重启pm2，而pm2本身就自动这种功能</p>
+<ol>
+<li><p>执行</p>
+<pre><code class="language-shell">pm2 <span class="hljs-keyword">save</span> <span class="hljs-meta"># 保存服务</span>
+pm2 startup <span class="hljs-meta"># 把已启动服务加到systemd中</span>
+</code></pre>
+<p>既可将已经启动的服务保存到systemd中，要是服务器重启，就会自动启动保存好的pm2</p>
+</li>
+<li><p>重启服务
+重启的方法:</p>
+</li>
+</ol>
+<ul>
+<li>执行<code>systemctl reboot</code>重启服务器</li>
+<li>如果是aliyun等，在管理平台有重启按钮</li>
+</ul>
+<p><img src="./img/reboot.png" alt=""></p>
+
+    </article>
+</body>
+</html>

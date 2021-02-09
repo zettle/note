@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="010-redis持久化">010-redis持久化</h1>
+<p>redis是一个内存数据库，当redis服务重启，数据就消失了。我们可以把redis内存中的数据持久化保存到硬盘中。</p>
+<h2 id="1、redis持久化机制">1、redis持久化机制</h2>
+<ol>
+<li>RDB: 默认方式，不需要进行配置，默认就是采用这种机制。redis每隔一段时间就检测所有key的变化，然后将数据持久化</li>
+<li>AOF: 日志记录的方式，记录每一条命令的操作，每执行一条命令就保存数据一次，不太推荐，这种消耗内存</li>
+</ol>
+<h2 id="2、修改rdb配置">2、修改RDB配置</h2>
+<p>在<code>C:\Redis\redis.windows.conf</code>里面有配置</p>
+<pre><code><span class="hljs-attribute">save</span> <span class="hljs-number">900</span> <span class="hljs-number">1</span>
+<span class="hljs-attribute">save</span> <span class="hljs-number">300</span> <span class="hljs-number">10</span>
+<span class="hljs-attribute">save</span> <span class="hljs-number">60</span> <span class="hljs-number">10000</span>
+</code></pre>
+<p><img src="./img/redis-conf.png" alt=""></p>
+<pre><code># after <span class="hljs-number">900</span> <span class="hljs-built_in">sec</span> (<span class="hljs-number">15</span> <span class="hljs-built_in">min</span>) <span class="hljs-keyword">if</span> <span class="hljs-built_in">at</span> least <span class="hljs-number">1</span> <span class="hljs-built_in">key</span> changed
+<span class="hljs-number">15</span>分钟后有<span class="hljs-number">1</span>个<span class="hljs-built_in">key</span>发生改变则会持久化
+
+# after <span class="hljs-number">300</span> <span class="hljs-built_in">sec</span> (<span class="hljs-number">5</span> <span class="hljs-built_in">min</span>) <span class="hljs-keyword">if</span> <span class="hljs-built_in">at</span> least <span class="hljs-number">10</span> keys changed
+<span class="hljs-number">5</span>分钟后有<span class="hljs-number">10</span>个<span class="hljs-built_in">key</span>发生改变则会持久化
+
+# after <span class="hljs-number">60</span> <span class="hljs-built_in">sec</span> <span class="hljs-keyword">if</span> <span class="hljs-built_in">at</span> least <span class="hljs-number">10000</span> keys changed
+<span class="hljs-number">1</span>分钟后有<span class="hljs-number">10000</span>个<span class="hljs-built_in">key</span>发生改变则会持久化
+</code></pre>
+<p>如果修改配置，修改后不能用双击的方式运行redis服务端，需要在redis目录上打开cmd，执行exe并制定配置文件</p>
+<pre><code class="language-shell"><span class="hljs-selector-tag">redis-server</span><span class="hljs-selector-class">.exe</span> <span class="hljs-selector-tag">redis</span><span class="hljs-selector-class">.windows</span><span class="hljs-selector-class">.conf</span>
+</code></pre>
+<h2 id="3、开启aof并配置">3、开启AOF并配置</h2>
+<ol>
+<li><p>开启，修改<code>redis.windows.conf</code>里面的配置，将<code>appendonly no</code>改为<code>appendonly yes</code>，这样redis就会开启AOF模式</p>
+</li>
+<li><p>修改<code>redis.windows.conf</code>里面的配置，找到下面代码</p>
+<pre><code># appendfsync always # always每一次操作都会持久化
+appendfsync everysec # 每隔<span class="hljs-number">1</span>s进行持久化
+# appendfsync no     # 不持久化
+</code></pre>
+<p>选择其中的一种模式</p>
+</li>
+</ol>
+
+    </article>
+</body>
+</html>

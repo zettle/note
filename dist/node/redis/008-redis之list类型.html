@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="007-redis之list类型">007-redis之list类型</h1>
+<p>list-列表操作</p>
+<p>允许元素重复，可以添加一个元素到列表的头部（左边）或者尾部（右边）</p>
+<h2 id="1、存储">1、存储</h2>
+<ul>
+<li>语法1: <code>lpush &lt;key&gt; &lt;value&gt;</code> 将元素加入列表左表</li>
+<li>语法2: <code>rpush &lt;key&gt; &lt;value&gt;</code> 将元素加入列表右边
+比如下面的场景:<pre><code class="language-shell"><span class="hljs-attribute">lpush myList a</span>
+</code></pre>
+<img src="./img/list-push-a.png" alt=""></li>
+</ul>
+<pre><code class="language-shell"><span class="hljs-attribute">lpush myList b</span>
+</code></pre>
+<p><img src="./img/list-push-b.png" alt=""></p>
+<pre><code class="language-shell"><span class="hljs-attribute">rpush myList c</span>
+</code></pre>
+<p><img src="./img/list-push-c.png" alt=""></p>
+<p>最终的队列为<code>b a c</code></p>
+<p>支持一次添加多个字符串</p>
+<pre><code class="language-shell">lpush myList <span class="hljs-selector-tag">a</span> <span class="hljs-selector-tag">b</span> c
+</code></pre>
+<p>比如上面，虽然是一句，但是添加也是一个字符串一个字符串添加的。先添加a，再添加b，最后添加c。所以在redis中顺序是<code>c b a</code></p>
+<h2 id="2、获取">2、获取</h2>
+<p>语法: <code>lrange &lt;key&gt; &lt;start&gt; &lt;end&gt;</code> </p>
+<p>获取key的内容，范围是start到end。下标0开始，<code>end=-1</code>的时候表示到结尾</p>
+<pre><code class="language-shell"><span class="hljs-keyword">lrange</span> myList <span class="hljs-number">0</span> <span class="hljs-number">-1</span>
+</code></pre>
+<h2 id="2、删除">2、删除</h2>
+<ul>
+<li>语法1: <code>lpop &lt;key&gt;</code> 删除列表最左边的元素，并将元素返回</li>
+<li>语法2: <code>rpop &lt;key&gt;</code> 删除列表最右边的元素，并将元素返回
+比如上面队列的<code>b a c</code><pre><code class="language-shell">lpop myList <span class="hljs-regexp">//</span> 最左边的b被删除，并返回b
+rpop myList <span class="hljs-regexp">//</span> 最右边的c被删除，并返回c
+</code></pre>
+</li>
+</ul>
+
+    </article>
+</body>
+</html>

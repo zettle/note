@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="004-docker基本命令">004-docker基本命令</h1>
+<p>docker的基本命令，控制docker本身进程</p>
+<h2 id="1、启动">1、启动</h2>
+<pre><code class="language-shell">systemctl <span class="hljs-literal">start</span> docker
+</code></pre>
+<h2 id="2、停止">2、停止</h2>
+<pre><code class="language-shell">systemctl <span class="hljs-built_in">stop</span> docker
+</code></pre>
+<h2 id="3、重启">3、重启</h2>
+<pre><code class="language-shell"><span class="hljs-attribute">systemctl restart docker</span>
+</code></pre>
+<h2 id="4、开机自启动">4、开机自启动</h2>
+<pre><code class="language-shell">systemctl <span class="hljs-builtin-name">enable</span> docker
+</code></pre>
+<h2 id="5、查看概要">5、查看概要</h2>
+<pre><code class="language-shell"><span class="hljs-attribute">docker</span> <span class="hljs-literal">info</span> 
+</code></pre>
+<h2 id="6、查看帮助文档">6、查看帮助文档</h2>
+<pre><code class="language-shell">docker <span class="hljs-comment">--help</span>
+</code></pre>
+<h2 id="6、查看版本号">6、查看版本号</h2>
+<pre><code class="language-shell">docker <span class="hljs-built_in">version</span>
+</code></pre>
+
+    </article>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="005-nginx的命令">005-nginx的命令</h1>
+<p>通过 <code>nginx -h</code> 可以查看支持的命令</p>
+<p><img src="./img/help.png" alt=""></p>
+<h2 id="1、nginx--s命令">1、<code>nginx -s</code>命令</h2>
+<p>nginx自带命令，实现的效果和前面讲的<a href="./004-nginx%E7%9A%84%E4%BF%A1%E5%8F%B7%E9%87%8F.md">信号量</a>作用一样</p>
+<ul>
+<li><code>nginx -s stop</code>: 等同于<code>kill -int</code></li>
+<li><code>nginx -s quit</code>: 等同于<code>kill -quit</code></li>
+<li><code>nginx -s reopen</code>: 等同于<code>kill -usr1</code></li>
+<li><code>nginx -s reload</code>: 等同于<code>kill -hup</code></li>
+</ul>
+<h2 id="2、nginx--t命令">2、<code>nginx -t</code>命令</h2>
+<p>检查 <code>nginx.conf</code> 配置是否正确</p>
+<h2 id="3、nginx--v命令">3、<code>nginx -v</code>命令</h2>
+<p>查看nginx的版本号</p>
+<h2 id="4、nginx--v命令">4、<code>nginx -V</code>命令</h2>
+<p>查看nginx的版本号以及当初编译执行<code>configure</code>的时候所带的参数</p>
+
+    </article>
+</body>
+</html>

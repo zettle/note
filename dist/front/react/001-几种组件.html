@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="001-几种组">001-几种组</h1>
+<h2 id="1、函数组件">1、函数组件</h2>
+<p>用函数的形式声明组件</p>
+<pre><code class="language-jsx"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">App</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span>
+}
+
+ReactDOM.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">App</span> /&gt;</span></span>, <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;root&#x27;</span>));
+</code></pre>
+<h2 id="2、类组件">2、类组件</h2>
+<p>用class的形式声明组件</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  render () {
+    <span class="hljs-keyword">return</span> &lt;h1&gt;<span class="hljs-type">Hello</span>&lt;/h1&gt;
+  }
+};
+<span class="hljs-type">ReactDOM</span>.render(&lt;<span class="hljs-type">App</span> /&gt;, document.getElementById(<span class="hljs-symbol">&#x27;roo</span>t&#x27;));
+</code></pre>
+<h2 id="3、简单组件">3、简单组件</h2>
+<p>无state状态的组件</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  render () {
+    <span class="hljs-keyword">return</span> &lt;h1&gt;<span class="hljs-type">Hello</span>&lt;/h1&gt;
+  }
+};
+</code></pre>
+<p><img src="./img/simple-1.png" alt=""></p>
+<h2 id="4、复杂组件">4、复杂组件</h2>
+<p>有state状态的组件</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  constructor(props) {
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = { seconds: <span class="hljs-number">0</span> }; <span class="hljs-comment">// 有设置state</span>
+  }
+  render () {
+    <span class="hljs-keyword">return</span> &lt;h1&gt;<span class="hljs-type">Hello</span>&lt;/h1&gt;
+  }
+};
+</code></pre>
+<p><img src="./img/simple-2.png" alt=""></p>
+<blockquote>
+<p>简单组件、复杂组件是针对类组件的，因为只有类组件才有实例，才有this，才有state这个属性，state为空的是简单组件，state有值的是复杂组件，而函数组件连state属性都没有</p>
+</blockquote>
+<blockquote>
+<p>简单组件、复杂组件的定义可以看<a href="https://reactjs.bootcss.com/">官网</a></p>
+</blockquote>
+
+    </article>
+</body>
+</html>

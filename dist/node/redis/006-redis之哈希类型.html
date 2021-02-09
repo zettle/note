@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="006-redis之hash类型">006-redis之hash类型</h1>
+<h2 id="1、存储">1、存储</h2>
+<p>语法: <code>hset &lt;key&gt; &lt;field&gt; &lt;value&gt;</code> </p>
+<p>往key添加一个hash，该hash<code>属性=field; 值=value</code>的hash</p>
+<pre><code class="language-shell"><span class="hljs-attribute">hset</span> myHash name xiaoming
+<span class="hljs-attribute">hset</span> myHash age <span class="hljs-number">23</span>
+</code></pre>
+<p>上面代码类似往redis写一个myHash变量，值为<code>{name:&#39;xiaoming&#39;, age:23}</code></p>
+<p>hset一次只能设置一个值，如果想要设置多个，可以使用hmset</p>
+<pre><code class="language-shell"><span class="hljs-attribute">hmset</span> myHash name xiaoming age <span class="hljs-number">23</span> sex 男 
+</code></pre>
+<h2 id="2、获取">2、获取</h2>
+<ul>
+<li>语法1: <code>hget &lt;key&gt; &lt;field&gt;</code>， 获取key的field的值</li>
+<li>语法2: <code>hgetall &lt;key&gt;</code>，获取key的hash内容<pre><code class="language-shell"><span class="hljs-comment"># 相当于获取`myHash.name`的值</span>
+hget myHash <span class="hljs-built_in">name</span>
+</code></pre>
+</li>
+</ul>
+<h1 id="相当于获取myhash的内容">相当于获取<code>myHash</code>的内容</h1>
+<p>hgetall myHash</p>
+<pre><code>![](./img/hget.png)
+
+
+
+## <span class="hljs-number">3</span>、删除
+<span class="hljs-title">语法:</span> `hdel &lt;key&gt; &lt;field&gt;`
+```shell
+hdel myHash name
+</code></pre>
+
+    </article>
+</body>
+</html>

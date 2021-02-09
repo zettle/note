@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="005-class组件的constructor">005-class组件的constructor</h1>
+<p>对于类组件的构造函数，我们在调用<code>super()</code>的时候，props貌似都不影响到代码</p>
+<p>比如下面代码</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  constructor (props) {
+    <span class="hljs-keyword">super</span>();
+  }
+  render () {
+    const {name} = <span class="hljs-keyword">this</span>.props;
+    <span class="hljs-keyword">return</span> (
+      &lt;p&gt;<span class="hljs-type">My</span> name is {name}&lt;/p&gt;
+    );
+  }
+};
+</code></pre>
+<p>然而<a href="https://reactjs.bootcss.com/docs/react-component.html#constructor">官网</a>针对这一块说不推荐这么写，让我们还是要把<code>super(props)</code>传递过去，否则可能出现<code>this.props</code>在构造函数中可能会出现未定义的 bug。</p>
+<p>那么这句话是什么意思呢，看下面的场景</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  constructor (props) {
+    <span class="hljs-keyword">super</span>();
+    console.log(<span class="hljs-keyword">this</span>.props); <span class="hljs-comment">// 由于没有把props传递给super,所以这里的this.props=underfined</span>
+  }
+}
+</code></pre>
+<p>所以我们推荐，要不就不写构造函数，要么就写全<code>super(props)</code></p>
+
+    </article>
+</body>
+</html>

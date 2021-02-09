@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="007-docker发布镜像">007-docker发布镜像</h1>
+<p>定制自己的镜像: <code>docker commit -a=&quot;[作者]&quot; -m &quot;[备注]&quot; [镜像id或名称] [起的镜像名字]</code></p>
+<h2 id="1、如何定制自己的nginx">1、如何定制自己的nginx</h2>
+<ol>
+<li>启动nginx镜像
+首先启动nginx镜像: <code>docker run -di -p 8080:80 --name myNg nginx</code></li>
+</ol>
+<p>用进程式的方式启动，宿主机的8080端口映射到nginx镜像</p>
+<p>通过<code>docker ps</code>可以查看镜像情况</p>
+<p><img src="./img/007-run-nginx.png" alt=""></p>
+<ol start="2">
+<li>通过 <code>http://59.110.21.75:8080/</code> 访问如下</li>
+</ol>
+<p><img src="./img/007-url.png" alt=""></p>
+<ol start="3">
+<li>进入该镜像，修改页面内容<pre><code class="language-shell"><span class="hljs-comment"># 进入镜像</span>
+<span class="hljs-attribute">docker</span> exec -it d<span class="hljs-number">2</span>e<span class="hljs-number">97</span>b<span class="hljs-number">96</span>a<span class="hljs-number">923</span> /bin/bash
+</code></pre>
+因为镜像里面没有vim等工具，所以把页面index.html复制到宿主机上，修改完再复制进镜像<pre><code class="language-shell"><span class="hljs-comment"># 复制index.html到宿主机</span>
+docker cp d2e97b96a923:<span class="hljs-regexp">/usr/</span>share<span class="hljs-regexp">/nginx/</span>html<span class="hljs-regexp">/index.html /</span>root<span class="hljs-regexp">/download/</span>
+</code></pre>
+</li>
+</ol>
+<h1 id="修改html并保存">修改html并保存</h1>
+<p>vim index.html</p>
+<h1 id="把修改后的indexhtml复制到镜像">把修改后的index.html复制到镜像</h1>
+<p>docker cp  /root/download/index.html a5e176992b40:/usr/share/nginx/html/index.html</p>
+<pre><code>
+<span class="hljs-number">4</span>. 在访问`http://<span class="hljs-number">59.110</span>.<span class="hljs-number">21.75</span>:<span class="hljs-number">8080</span>/`，结果如下:
+
+![](./img/<span class="hljs-number">007</span>-url2.png)
+
+
+<span class="hljs-number">5</span>. 修改我们的镜像修改好了，准备做成自己的镜像
+```shell
+docker commit -a=<span class="hljs-string">&quot;xiaoming&quot;</span> -m <span class="hljs-string">&quot;my nginx image&quot;</span> a5e176992b40 zett/nginx
+</code></pre>
+<p><img src="./img/007-commit.png" alt=""></p>
+<p>执行<code>docker ps</code></p>
+<p><img src="./img/007-images.png" alt=""></p>
+<ol start="6">
+<li>再启动刚才制作好的镜像</li>
+</ol>
+<p><img src="./img/007-run-my.png" alt=""></p>
+<ol start="7">
+<li>访问 <code>http://59.110.21.75:8081/</code> 即可看到我们自己做的nginx</li>
+</ol>
+<h2 id="2、推送到docker仓库">2、推送到docker仓库</h2>
+<p>先到<a href="https://registry.hub.docker.com/">docker仓库</a>注册个账号</p>
+<p>执行<code>docker login</code>，输入账号密码在Linux上登录下</p>
+<p><img src="./img/007-login.png" alt=""></p>
+<p>执行<code>docker push [镜像名称]:[版本号]</code>推送上远程仓库</p>
+<pre><code class="language-shell"><span class="hljs-symbol">docker</span> <span class="hljs-keyword">push</span> zett/nginx
+</code></pre>
+<blockquote>
+<p>注意: 在dockerHub上我的账号名是zettle，而这里的镜像前缀是zett。直接push的时候会提示<code>denied: requested access to the resource is denied </code>，如下:</p>
+</blockquote>
+<p><img src="./img/007-push-error.png" alt=""></p>
+<p>这种时候，要先执行下<code>docker tag [本地镜像名称] [将要存的真正dockerHub的镜像名]</code></p>
+<pre><code class="language-shell"><span class="hljs-comment"># zett/nginx 是本地的镜像名称</span>
+<span class="hljs-comment"># zettle/nginx 是因为我的账号名叫zettle</span>
+docker <span class="hljs-keyword">tag</span> <span class="hljs-title">zett</span>/nginx zettle/nginx
+</code></pre>
+<p><code>docker tag</code>会在本地再复制出一个镜像</p>
+<p><img src="./img/007-tag.png" alt=""></p>
+<p>然后再执行<code>docker push zettle/nginx</code>即可</p>
+<p><img src="./img/007-push-sucess.png" alt=""></p>
+<h2 id="3、从远程pull我们自定义的镜像">3、从远程pull我们自定义的镜像</h2>
+<p>先把本地的镜像删除掉</p>
+<p><img src="./img/007-cliear.png" alt=""></p>
+<p>执行<code>docker pull zettle/nginx</code></p>
+<p>现在就和平常一样启动就可以</p>
+<h2 id="2、推送到阿里云仓库">2、推送到阿里云仓库</h2>
+<p>上面推动到的是<a href="https://registry.hub.docker.com/">docker的官方仓库</a>由于是国外的，push和pull的速度都很慢。</p>
+<p>想要快的话，就用<a href="https://cr.console.aliyun.com">阿里云的镜像</a></p>
+<p>镜像的账号密码就是登录阿里云的账号密码</p>
+<h3 id="22-创建一个属于自己的命名空间">2.2 创建一个属于自己的命名空间</h3>
+<p><img src="./img/007-aliyun-space.png" alt=""></p>
+<h3 id="23-创建一个属于自己的仓库">2.3 创建一个属于自己的仓库</h3>
+<p><img src="./img/007-aliyun-spri.png" alt=""></p>
+<p><img src="./img/007-aliyun-spri-2.png" alt=""></p>
+<p>创建好后如下图</p>
+<p><img src="./img/007-aliyun-spri-3.png" alt=""></p>
+<p>点击进入可以看到怎么发布的详细步骤</p>
+<p><img src="./img/007-aliyun-spri-4.png" alt=""></p>
+<p>首先登录</p>
+<pre><code class="language-shell"><span class="hljs-comment"># 登录 159XXXXXXX </span>
+docker login <span class="hljs-attribute">--username</span>=159XXXXXXX registry.cn-beijing.aliyuncs.com
+</code></pre>
+<p>然后打tag</p>
+<pre><code class="language-shell"><span class="hljs-comment"># 5ab45f39ce2b为本地镜像的id</span>
+<span class="hljs-comment"># 为其打个tag命名为registry.cn-beijing.aliyuncs.com/zettle/nginx</span>
+<span class="hljs-comment"># 1.0.0 为版本号</span>
+<span class="hljs-attribute">docker</span> tag <span class="hljs-number">5</span>ab<span class="hljs-number">45</span>f<span class="hljs-number">39</span>ce<span class="hljs-number">2</span>b registry.cn-beijing.aliyuncs.com/zettle/nginx:<span class="hljs-number">1</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>
+</code></pre>
+<p><img src="./img/007-aliyun-tag.png" alt=""></p>
+<p>最后push</p>
+<pre><code class="language-shell"><span class="hljs-selector-tag">docker</span> <span class="hljs-selector-tag">push</span> <span class="hljs-selector-tag">registry</span><span class="hljs-selector-class">.cn-beijing</span><span class="hljs-selector-class">.aliyuncs</span><span class="hljs-selector-class">.com</span>/<span class="hljs-selector-tag">zettle</span>/<span class="hljs-selector-tag">nginx</span><span class="hljs-selector-pseudo">:1.0.0</span>
+</code></pre>
+<p><img src="./img/007-aliyun-version.png" alt=""></p>
+<p>当想要pull的时候，执行下面</p>
+<pre><code class="language-shell"><span class="hljs-selector-tag">docker</span> <span class="hljs-selector-tag">pull</span> <span class="hljs-selector-tag">registry</span><span class="hljs-selector-class">.cn-beijing</span><span class="hljs-selector-class">.aliyuncs</span><span class="hljs-selector-class">.com</span>/<span class="hljs-selector-tag">zettle</span>/<span class="hljs-selector-tag">nginx</span><span class="hljs-selector-pseudo">:1.0.0</span>
+</code></pre>
+
+    </article>
+</body>
+</html>

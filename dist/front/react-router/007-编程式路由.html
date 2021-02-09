@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="007-编程式路由">007-编程式路由</h1>
+<h2 id="1、如果是路由组件">1、如果是路由组件</h2>
+<p>如果是路由组件，要写编程时路由很简单，我们知道，react-router-dom会给路由组件传递一些props</p>
+<p>要实现路由跳转，其实就是调用<code>this.props.history</code>下面的几个API</p>
+<pre><code class="language-js">history: {
+    <span class="hljs-attr">go</span>: <span class="hljs-function">(<span class="hljs-params">n</span>) =&gt;</span> {}          <span class="hljs-comment">// 返回几页，-1表示放回上一页</span>
+    goBack:<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {}        <span class="hljs-comment">// 返回上一页，相当于go(-1)</span>
+    goForward: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {}    <span class="hljs-comment">// 前进一页</span>
+    push: <span class="hljs-function">(<span class="hljs-params">path, state</span>) =&gt;</span> {}      <span class="hljs-comment">// push方式跳页面</span>
+    replace: <span class="hljs-function">(<span class="hljs-params">path, state</span>) =&gt;</span> {}   <span class="hljs-comment">// replace方式跳页面</span>
+}
+</code></pre>
+<ul>
+<li>如果是params传参: <code>this.props.history.push(</code>/about/${id}<code>);</code></li>
+<li>如果是search传参: <code>this.props.history.push(</code>/about?id=${id}<code>);</code></li>
+<li>如果是state传参: 需要第2个参数，<code>this.props.history.push(</code>/about<code>, {id:&#39;001&#39;})</code></li>
+</ul>
+<h2 id="2、如果是一般组件">2、如果是一般组件</h2>
+<p>一般组件，不像路由组件一样，有<code>this.props.history</code>可以调用</p>
+<p>这种情况情况，就需要用到react-router-dom的<code>withRouter()</code>方法了</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>{
+    componentDidMount () {
+        console.log(<span class="hljs-keyword">this</span>.props);
+    }
+    render() {
+        <span class="hljs-keyword">return</span> (&lt;button onClick={() =&gt; {<span class="hljs-keyword">this</span>.props.history.push(&#x27;/home&#x27;)}}&gt;<span class="hljs-type">Home</span>&lt;/button&gt;);
+    }
+}
+export <span class="hljs-keyword">default</span> withRouter(<span class="hljs-type">App</span>); <span class="hljs-comment">// 要包装一下，高阶组件</span>
+</code></pre>
+
+    </article>
+</body>
+</html>

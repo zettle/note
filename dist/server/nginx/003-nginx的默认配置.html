@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="003-nginx的默认配置">003-nginx的默认配置</h1>
+<h2 id="安装好后的nginxconf，默认是下面配置">安装好后的nginx.conf，默认是下面配置</h2>
+<pre><code class="language-nginx"><span class="hljs-comment"># 默认用户</span>
+<span class="hljs-attribute">user</span>  root;
+
+<span class="hljs-comment"># worker进程数量，一般配置成 `cpu数*核数` 一样，太多的话会相互争夺CPU资源</span>
+<span class="hljs-attribute">worker_processes</span>  <span class="hljs-number">1</span>; 
+
+<span class="hljs-comment"># 错误日志的文件位置</span>
+<span class="hljs-comment"># error_log  logs/error.log;</span>
+
+<span class="hljs-comment"># 指定存放nginx线程号的地方</span>
+<span class="hljs-comment">#pid        logs/nginx.pid;</span>
+
+<span class="hljs-comment"># 事件区块的相关配置</span>
+<span class="hljs-section">events</span> {
+    <span class="hljs-comment"># 每个worker进程支持的最大连接数，</span>
+    <span class="hljs-comment"># 一个nginx服务能同时处理多少请求，就是看上面的 worker_processes * 这里的 worker_connections</span>
+    <span class="hljs-attribute">worker_connections</span>  <span class="hljs-number">1024</span>; 
+}
+
+<span class="hljs-comment"># http区块的相关配置</span>
+<span class="hljs-section">http</span> {
+    <span class="hljs-attribute">include</span>       mime.types; <span class="hljs-comment"># include语法: nginx支持的媒体类型</span>
+    <span class="hljs-attribute">default_type</span>  application/octet-stream; <span class="hljs-comment"># 默认类型，会让浏览器认为响应是普通的文件流，并提示用户下载文件</span>
+
+    <span class="hljs-comment"># 定义访问日志的格式</span>
+    <span class="hljs-comment">#log_format  main  &#x27;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &#x27;</span>
+    <span class="hljs-comment">#                  &#x27;$status $body_bytes_sent &quot;$http_referer&quot; &#x27;</span>
+    <span class="hljs-comment">#                  &#x27;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&#x27;;</span>
+    <span class="hljs-comment"># 配置访问日志存放位置和要用的格式</span>
+    <span class="hljs-comment">#access_log  logs/access.log  main;</span>
+
+    <span class="hljs-attribute">sendfile</span>        <span class="hljs-literal">on</span>; <span class="hljs-comment"># 开启高效传输模式</span>
+    <span class="hljs-attribute">keepalive_timeout</span>  <span class="hljs-number">65</span>; <span class="hljs-comment"># 连接超时</span>
+
+    <span class="hljs-comment"># server虚拟主机的相关配置，每个server监听一个端口</span>
+    <span class="hljs-section">server</span> {
+        <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>; <span class="hljs-comment"># 提供服务的端口</span>
+        <span class="hljs-attribute">server_name</span>  localhost; <span class="hljs-comment"># 提供服务的域名主机，多个用空格分开</span>
+
+        <span class="hljs-comment"># location区块的相关配置</span>
+        <span class="hljs-attribute">location</span> / {
+            <span class="hljs-attribute">root</span>   /root/svr/aaa; <span class="hljs-comment"># 站点的跟目录，如果写成相对路径，则相对于nginx的安装目录</span>
+            <span class="hljs-attribute">index</span>  index.html index.htm; <span class="hljs-comment"># 默认首页文件，多个用空格分开</span>
+        }
+
+        <span class="hljs-comment"># 出现对应http状态码使用的 50x.html 返回给客户端</span>
+        <span class="hljs-comment"># 就是如果出现 500 502 503 504 这种错误码的时候，返回 50x.html 这个文件给浏览器</span>
+        <span class="hljs-attribute">error_page</span>   <span class="hljs-number">500</span> <span class="hljs-number">502</span> <span class="hljs-number">503</span> <span class="hljs-number">504</span>  /50x.html;
+
+        <span class="hljs-comment"># location区块，指定访问 50x.html的时候，到哪个目录里面找</span>
+        <span class="hljs-attribute">location</span> = /50x.html {
+            <span class="hljs-attribute">root</span>   html; <span class="hljs-comment"># 这是一个相对路径，相对nginx安装目录，找到里面的 html/50x.html</span>
+        }
+    }
+}
+</code></pre>
+
+    </article>
+</body>
+</html>

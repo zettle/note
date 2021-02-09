@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="001-免密登录服务器">001-免密登录服务器</h1>
+<p>比如我们阿里云服务器IP是: <code>59.110.21.75</code>，账号是root</p>
+<h2 id="1、密码方式登录">1、密码方式登录</h2>
+<p>在win上启动<code>git bash</code>。执行下面命令</p>
+<pre><code class="language-shell"><span class="hljs-attribute">ssh</span> root@<span class="hljs-number">59.110.21.75</span>
+</code></pre>
+<p>然后输入密码，即可登录阿里云服务器</p>
+<p><img src="./img/ssh-pass.png" alt=""></p>
+<p>如何不是默认22端口，则加上端口号<code>ssh -p 端口号 账号@IP地址</code></p>
+<h2 id="2、使用ssh免密码登录">2、使用ssh免密码登录</h2>
+<ol>
+<li>登录阿里云查看ssh状态
+执行命令<pre><code class="language-shell"><span class="hljs-comment"># 该命令是centos的，其他系统的自行百度</span>
+<span class="hljs-attribute">service</span> sshd status
+</code></pre>
+看到下面内容说明阿里云的ssh是运行的。
+<img src="./img/ssh-status.png" alt=""></li>
+</ol>
+<p>查看阿里云服务器ssh服务的端口，执行</p>
+<pre><code class="language-shell">netstat -anlp <span class="hljs-string">| grep sshd</span>
+</code></pre>
+<p>得到下面的截图，说明现在监听的是22端口
+<img src="./img/ssh-port.png" alt=""></p>
+<blockquote>
+<p>如果想要修改默认端口，则执行命令<code>vim /etc/ssh/sshd_config</code>
+看到下面内容，把port端口修改下</p>
+</blockquote>
+<pre><code class="language-shell"><span class="hljs-meta"># The strategy used for options in the default sshd_config shipped with</span>
+<span class="hljs-meta"># OpenSSH is to specify options with their default value where</span>
+<span class="hljs-meta"># possible, but leave them commented.  Uncommented options override the</span>
+<span class="hljs-meta"># default value.</span>
+
+<span class="hljs-meta"># If you want to change the port on a SELinux system, you have to tell</span>
+<span class="hljs-meta"># SELinux about this change.</span>
+<span class="hljs-meta"># 下面的代码提示，如果改了端口，要执行下面的命令</span>
+<span class="hljs-meta"># 比如改为端口10022，那么改后需要执行`semanage port -a -t ssh_port_t -p tcp 10022`</span>
+<span class="hljs-meta"># 然后再重启下`service sshd restart`</span>
+<span class="hljs-meta"># semanage port -a -t ssh_port_t -p tcp #PORTNUMBER</span>
+<span class="hljs-meta">#</span>
+<span class="hljs-meta">#Port 22</span>
+<span class="hljs-meta">#AddressFamily any</span>
+<span class="hljs-meta">#ListenAddress 0.0.0.0</span>
+<span class="hljs-meta">#ListenAddress ::</span>
+</code></pre>
+<blockquote>
+<p>更多配置信息可以查看<a href="./2-sshd_config%E6%96%87%E4%BB%B6%E7%9A%84%E8%A7%A3%E8%AF%BB.md">2-sshd_config文件的解读</a></p>
+</blockquote>
+<blockquote>
+<p>注意配置文件是sshd_config而不是ssh_config，2者都在同级目录下面</p>
+</blockquote>
+<ol start="2">
+<li>在本地电脑生成ssh公私钥
+如果是以前已经生成过想要查看则可以执行<code>cd ~/.ssh</code>就可以进入ssh配置目录</li>
+</ol>
+<p><img src="./img/ssh-mu.png" alt=""></p>
+<p>因为以前我们生成过就不生成了，可以看到上面的目录结构</p>
+<p>查看公钥的内容，复制出来</p>
+<p><img src="./img/ssh-cat.png" alt=""></p>
+<ol start="3">
+<li>在阿里云服务器也进入ssh目录<pre><code class="language-shell"><span class="hljs-keyword">cd</span> ~<span class="hljs-string">/.ssh</span>
+</code></pre>
+看到下面的目录</li>
+</ol>
+<p><img src="./img/ssh-linux.png" alt=""></p>
+<p>如果linux没有上面目录，则可以执行<code>mkdir -p ~/.ssh</code>创建文件夹</p>
+<p>编辑authorized_keys文件<code>vim authorized_keys</code></p>
+<p>把本地电脑的<code>id_rsa.pub</code>复制到阿里云服务器的<code>authorized_keys</code>里面保存</p>
+<h3 id="24-免密登录服务器">2.4 免密登录服务器</h3>
+<p>回到本地电脑，执行下面密码</p>
+<pre><code class="language-shell"><span class="hljs-attribute">ssh</span> root@<span class="hljs-number">59.110.21.75</span>
+</code></pre>
+<p>不再需要密码了</p>
+<p>有时候记住IP地址不方便，我们可以写个配置文件。</p>
+<p>在本地电脑的ssh目录下，新建config文件（注意文件名就叫config，没有后缀名的）</p>
+<pre><code class="language-ssh"><span class="hljs-keyword">cd</span> ~<span class="hljs-string">/.ssh</span>
+vim config
+</code></pre>
+<p>config的内容如下</p>
+<pre><code class="language-conf">Host aliyun     <span class="hljs-comment"># 自己起的别名，方便自己记住   </span>
+    Port <span class="hljs-number">22</span>     <span class="hljs-comment"># 阿里云服务器ssh的端口号</span>
+    HostName <span class="hljs-number">59.110</span>.<span class="hljs-number">21.75</span>  <span class="hljs-comment"># 阿里云服务器IP地址</span>
+    <span class="hljs-keyword">User</span> <span class="hljs-title">root</span>   <span class="hljs-comment"># 要登录的账号</span>
+    IdentityFile ~/.ssh/id_rsa <span class="hljs-comment"># 我们本地电脑的私钥位置，注意这里是私钥</span>
+</code></pre>
+<blockquote>
+<p>注意上面的注释部分不要写入代码里面 </p>
+</blockquote>
+
+    </article>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="004-redis的数据结构">004-redis的数据结构</h1>
+<h2 id="1、redist所支持的几种类型">1、redist所支持的几种类型</h2>
+<p>redis是以keyValue键值对的形式存在的，其中key为字符串，value支持下面5中数据类型</p>
+<ol>
+<li>字符串 - string</li>
+<li>哈希类型 - hash</li>
+<li>列表类型 - list</li>
+<li>集合类型 - set</li>
+<li>有序集合类型 - sortedset</li>
+</ol>
+<h2 id="2、通用命令">2、通用命令</h2>
+<ol>
+<li><code>keys *</code>: 查询所有的键</li>
+<li><code>type &lt;key&gt;</code>： 获取键对应的value的类型</li>
+<li><code>del &lt;key&gt;</code>：删除指定的key value</li>
+<li><code>flushall</code>: 删除整个redis的数据</li>
+<li><code>expire &lt;key&gt; &lt;second&gt;</code>: 设置key的过期时间是second秒，即second秒后自动删除</li>
+</ol>
+
+    </article>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="001-redux介绍">001-redux介绍</h1>
+<p>redux不是react官方推出的，不一定和react绑定使用，也可以和vue/angular使用</p>
+<h2 id="1、一个最简单的demo">1、一个最简单的demo</h2>
+<p><img src="./img/react-code.png" alt=""></p>
+<p>如果用普通的react实现，代码如下:</p>
+<pre><code class="language-jsx">export <span class="hljs-keyword">default</span> class App extends Component {
+    <span class="hljs-keyword">state</span> = {
+        num: <span class="hljs-number">0</span>
+    };
+    // +<span class="hljs-number">1</span>
+    add () {
+        this.<span class="hljs-built_in">set</span>State({
+            num: this.<span class="hljs-keyword">state</span>.num + <span class="hljs-number">1</span>
+        });
+    }
+    // -<span class="hljs-number">1</span>
+    subt () {
+        this.<span class="hljs-built_in">set</span>State({
+            num: this.<span class="hljs-keyword">state</span>.num - <span class="hljs-number">1</span>
+        });
+    }
+    // 偶数+<span class="hljs-number">1</span>
+    addifeven () {
+        if (this.<span class="hljs-keyword">state</span>.num % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>) {
+            this.<span class="hljs-built_in">set</span>State({
+                num: this.<span class="hljs-keyword">state</span>.num + <span class="hljs-number">1</span>
+            });
+        }
+    }
+    // 异步+<span class="hljs-number">1</span>
+    addAsync () {
+        <span class="hljs-built_in">set</span>Timeout(() =&gt; {
+            this.<span class="hljs-built_in">set</span>State({
+                num: this.<span class="hljs-keyword">state</span>.num + <span class="hljs-number">1</span>
+            });
+        }, <span class="hljs-number">1000</span>);
+    }
+    render() {
+        return (
+            <span class="hljs-variable">&lt;div&gt;</span>
+                <span class="hljs-variable">&lt;p&gt;</span>计算结果: {this.<span class="hljs-keyword">state</span>.num}&lt;/p&gt;
+                <span class="hljs-variable">&lt;button onClick={() =&gt;</span> this.add()}&gt;加 <span class="hljs-number">1</span>&lt;/button&gt;
+                <span class="hljs-variable">&lt;button onClick={() =&gt;</span> this.subt()}&gt;减 <span class="hljs-number">1</span>&lt;/button&gt;
+                <span class="hljs-variable">&lt;button onClick={() =&gt;</span> this.addifeven()}&gt;偶数才能加&lt;/button&gt;
+                <span class="hljs-variable">&lt;button onClick={() =&gt;</span> this.addAsync()}&gt;异步加&lt;/button&gt;
+            &lt;/div&gt;
+        )
+    }
+};
+</code></pre>
+<p>改造成redux</p>
+<ol>
+<li>新建<code>/src/redux/store.js</code> 和 <code>/src/redux/count_reducer.js</code></li>
+</ol>
+<ul>
+<li>store全局只有一个，所以就一个<code>store.js</code></li>
+<li>reducer有多个，所以从文件名上就要区分是哪个</li>
+</ul>
+<p>定义reducer</p>
+<pre><code class="language-js"><span class="hljs-string">`/src/redux/count_reducer.js`</span> 内容
+<span class="hljs-comment">/*******************************
+ * reducer的作用: 初始化数据（页面一打开的时候） + 更新数据 
+ * 
+ * redux初始化数据
+ *      preState=undefined
+ *      action={type:&#x27;@<span class="hljs-doctag">@redux</span>/INIT随机字符串&#x27;}
+ * 
+ * redux更新数据
+ *      preState=当前state数据
+ *      action={type:派发来的事件, data:派发来的数据}
+ ******************************/</span> 
+<span class="hljs-keyword">const</span> initState = <span class="hljs-number">0</span>; <span class="hljs-comment">// 初始化值</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">countReducer</span>(<span class="hljs-params">preState = initState, action</span>) </span>{
+    <span class="hljs-keyword">const</span> {<span class="hljs-keyword">type</span>, data} = action;
+    <span class="hljs-keyword">switch</span> (<span class="hljs-keyword">type</span>) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;add-action&#x27;</span>: <span class="hljs-comment">// 加</span>
+            <span class="hljs-keyword">return</span> preState + data;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;jian-action&#x27;</span>: <span class="hljs-comment">// 减</span>
+            <span class="hljs-keyword">return</span> preState - data;
+        <span class="hljs-keyword">default</span>: <span class="hljs-comment">// 没有action匹配上，说明是redux初始化，把默认数据返回进行初始化</span>
+            <span class="hljs-keyword">return</span> initState;
+    }
+}
+</code></pre>
+<p>定义store</p>
+<pre><code class="language-js">`<span class="hljs-regexp">/src/</span>redux/store.js` 内容
+<span class="hljs-keyword">import</span> {createStore} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;redux&#x27;</span>;
+<span class="hljs-keyword">import</span> countReducer <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./count_reducer&#x27;</span>
+
+export <span class="hljs-keyword">default</span> createStore(countReducer); <span class="hljs-comment">// 暴露store</span>
+</code></pre>
+<ol start="2">
+<li>修改页面代码<pre><code class="language-jsx"><span class="hljs-keyword">import</span> React, { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
+<span class="hljs-keyword">import</span> store <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./redux/store&#x27;</span>
+</code></pre>
+</li>
+</ol>
+<p>export default class App extends Component {
+    componentDidMount() {
+        // 监听redux数据改变
+        store.subscribe(() =&gt; {
+            this.setState({}); // 重新出发render
+        });
+    }
+    add () {
+        store.dispatch({ type: &#39;add-action&#39;, data: 1 });
+    }
+    jian () {
+        store.dispatch({ type: &#39;jian-action&#39;, data: 1 });
+    }
+    addifeven () {
+        if (store.getState() % 2 === 0) {
+            store.dispatch({ type: &#39;add-action&#39;, data: 1 });
+        }
+    }
+    addAsync () {
+        setTimeout(() =&gt; {
+            store.dispatch({ type: &#39;add-action&#39;, data: 1 });
+        }, 1000);
+    }
+    render() {
+        return (
+            <div>
+                <p>计算结果: {store.getState()}</p>
+                &lt;button onClick={() =&gt; this.add()}&gt;加 1</button>
+                &lt;button onClick={() =&gt; this.jian()}&gt;减 1</button>
+                &lt;button onClick={() =&gt; this.addifeven()}&gt;偶数才能加</button>
+                &lt;button onClick={() =&gt; this.addAsync()}&gt;异步加</button>
+            </div>
+        )
+    }
+};</p>
+<pre><code>
+<span class="hljs-bullet">*</span> <span class="hljs-code">`store.getState()`</span>: 获取store里面的数据，每次要store数据就调用一次
+<span class="hljs-bullet">*</span> <span class="hljs-code">`store.dispatch(action)`</span>: 触发reducer
+<span class="hljs-bullet">*</span> <span class="hljs-code">`store.subscribe()`</span>: 监听store数据的改变
+<span class="hljs-bullet">*</span> <span class="hljs-code">`this.setState({})`</span>: 触发react的<span class="hljs-code">`render()`</span>
+
+<span class="hljs-quote">&gt; redux不是为react或者vue设计的，所以redux没有响应式数据，修改后不会自动更新react里面的数据，需要开发者自己每次需要获取数据的时候，就调用`store.getState()`去获取</span>
+
+
+
+
+
+<span class="hljs-section">## 2、action</span>
+
+在上面的例子总，我们是自己定义一个json格式 <span class="hljs-code">`{ type: &#x27;add-action&#x27;, data: 1 }`</span> 作为action，并且多个地方写死字符串<span class="hljs-code">`add-action`</span>不好维护
+
+而真正项目中，action应该是由函数创建好，并且actionName应该放在一个js中统一维护
+
+新建<span class="hljs-code">`/src/redux/constant.js`</span> 用于维护actionName常量名称
+
+新建<span class="hljs-code">`/src/redux/count_action.js`</span> 用于创建action对象
+
+<span class="hljs-code">```js
+// constant.js 内容
+export const addActionName = &#x27;add-action&#x27;;
+export const jianActionName = &#x27;jian-action&#x27;;</span>
+</code></pre>
+<p>编写<code>count_action.js</code></p>
+<pre><code class="language-js"><span class="hljs-comment">// count_action.js 内容</span>
+<span class="hljs-comment">// 定义创建action的函数</span>
+<span class="hljs-keyword">import</span> {addActionName, jianActionName} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./constant&#x27;</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> createAddAction = <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
+    <span class="hljs-keyword">return</span> {<span class="hljs-attr">type</span>: addActionName, data};
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> createJianAction = <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
+    <span class="hljs-keyword">return</span> {<span class="hljs-attr">type</span>: jianActionName, data};
+};
+</code></pre>
+<p>这样，页面上调用<code>store.dispatch({type: &#39;add-action&#39;, data: 1})</code>的就需要对应的改为<code>store.dispatch(createAddAction(1))</code></p>
+<p>同时，reducer里面写死的actionName应该改为引入常量js</p>
+<pre><code class="language-js">switch(<span class="hljs-keyword">type</span>) {
+    // <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;add-action&#x27;</span>
+    <span class="hljs-keyword">case</span> addActionName:
+        <span class="hljs-keyword">return</span> preState + <span class="hljs-keyword">data</span>;
+    <span class="hljs-keyword">case</span> jianActionName:
+        <span class="hljs-keyword">return</span> preState - <span class="hljs-keyword">data</span>;
+    <span class="hljs-keyword">default</span>:
+        <span class="hljs-keyword">return</span> preState;
+}
+</code></pre>
+<h2 id="3、异步action">3、异步action</h2>
+<p>在redux，我们用<code>{type: &lt;actionName&gt;, data: &lt;data&gt;}</code> 定义一个action，这种属于同步action</p>
+<p>默认情况下，redux不支持异步action，需要再使用一个第3方库<code>redux-thunk</code>，引入后，就可以定义异步action</p>
+<ul>
+<li>异步action是一个函数，比如<code>store.dispatch(() =&gt; {})</code></li>
+<li>同步action是一个json格式，比如<code>store.dispatch({type: &lt;actionName&gt;, data: &lt;data&gt;})</code></li>
+</ul>
+<ol>
+<li>通过<code>npm i redux-thunk</code>后，修改<code>/src/redux/store.js</code>的内容<pre><code class="language-js"><span class="hljs-keyword">import</span> {createStore, applyMiddleware} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;redux&#x27;</span>
+<span class="hljs-keyword">import</span> thunk <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;redux-thunk&#x27;</span>
+<span class="hljs-keyword">import</span> countReducer <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./count_reducer&#x27;</span>;
+</code></pre>
+</li>
+</ol>
+<p>// 多了个redux-thunk中间件，需要用applyMiddleware()
+export default createStore(countReducer, applyMiddleware(thunk));</p>
+<pre><code>
+
+<span class="hljs-selector-tag">2</span>. 就可以用异步<span class="hljs-selector-tag">action</span>了
+```<span class="hljs-selector-tag">js</span>
+<span class="hljs-comment">// 异步加</span>
+<span class="hljs-selector-tag">addAsync</span> () {
+    <span class="hljs-selector-tag">setTimeout</span>(() =&gt; {
+        <span class="hljs-selector-tag">store</span><span class="hljs-selector-class">.dispatch</span>({ <span class="hljs-attribute">type</span>: <span class="hljs-string">&#x27;add-action&#x27;</span>, <span class="hljs-attribute">data</span>: <span class="hljs-number">1</span> });
+    }, <span class="hljs-number">1000</span>);
+}
+</code></pre>
+<p>改下为</p>
+<pre><code class="language-js">addAsync () {
+    <span class="hljs-regexp">//</span> 派发异步action
+    store.dispatch(<span class="hljs-function"><span class="hljs-params">(dispatch)</span> =&gt;</span> {
+        <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> dispatch(createAddAction(<span class="hljs-number">1</span>)), <span class="hljs-number">500</span>);
+    });
+}
+</code></pre>
+<p>进一步，异步action也应该和同步action一样，定义到<code>/src/redux/count_action.js</code>里面</p>
+<pre><code class="language-js"><span class="hljs-comment">// src/redux/count_action.js</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> createAddAsyncAction = <span class="hljs-function">(<span class="hljs-params">data, deploy</span>) =&gt;</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">dispatch</span>) =&gt;</span> {
+        <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> dispatch(createAddAction(<span class="hljs-number">1</span>)), deploy);
+    };
+}
+</code></pre>
+<p>这样，页面就改为派发这个<code>createAddAsyncAction()</code></p>
+<pre><code class="language-jsx"><span class="hljs-comment">// App.jsx</span>
+<span class="hljs-selector-tag">addAsync</span> () {
+    <span class="hljs-selector-tag">store</span><span class="hljs-selector-class">.dispatch</span>(createAddAsyncAction(<span class="hljs-number">1</span>, <span class="hljs-number">500</span>));
+}
+</code></pre>
+
+    </article>
+</body>
+</html>

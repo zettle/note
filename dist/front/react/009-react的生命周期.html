@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="009-react的生命周期">009-react的生命周期</h1>
+<h2 id="1、旧版本的生命周期react1700以前的">1、旧版本的生命周期(react17.0.0以前的)</h2>
+<p>react所拥有的声明周期</p>
+<ol>
+<li>首次挂载</li>
+</ol>
+<p>触发: <code>constructor - componentWillMount - render - componentDidMount</code></p>
+<ol start="2">
+<li>通过setState改变状态</li>
+</ol>
+<p>触发: <code>shouldComponentUpdate - componentWillUpdate - render - componentDidUpdate</code></p>
+<blockquote>
+<p><code>shouldComponentUpdate</code>能控制更不更新视图，当<code>shouldComponentUpdate()=false</code>的时候，就不更新视图了，后面的生命周期也就不会触发。</p>
+</blockquote>
+<blockquote>
+<p>当<code>shouldComponentUpdate()=false</code>的时候，视图虽然不会更新，但js内存内的变量还是改了</p>
+</blockquote>
+<pre><code class="language-jsx">class App extends React.Component {
+  <span class="hljs-keyword">state</span> = {
+    age: <span class="hljs-number">1</span>
+  }
+  // 返回false不更新视图
+  shouldComponentUpdate () {
+    return false;
+  }
+  change = () =&gt; {
+    this.<span class="hljs-built_in">set</span>State({age: this.<span class="hljs-keyword">state</span>.age+<span class="hljs-number">1</span>}); // <span class="hljs-built_in">set</span>State调用，视图不会更新
+    console.<span class="hljs-keyword">log</span>(this.<span class="hljs-keyword">state</span>.age); // 但js中的age变量还是会变
+  }
+  render () {
+    return (
+      <span class="hljs-variable">&lt;div&gt;</span>
+        <span class="hljs-variable">&lt;h1&gt;</span>Hello{this.<span class="hljs-keyword">state</span>.age}&lt;/h1&gt;
+        <span class="hljs-variable">&lt;button onClick={this.change}&gt;</span>更新&lt;/button&gt;
+      &lt;/div&gt;
+    )
+  }
+}
+</code></pre>
+<ol start="3">
+<li>通过forceUpdate强制重新渲染</li>
+</ol>
+<p>触发: <code>componentWillUpdate - render - componentDidUpdate</code></p>
+<blockquote>
+<p>既然叫强制，那就没有类似 <code>shouldComponentUpdate</code>这种可以控制更新不更新的生命周期了</p>
+</blockquote>
+<blockquote>
+<p>当触发<code>forceUpdate()</code>，react会重新拿state里面的最新状态去更新</p>
+</blockquote>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  state = {
+    age: <span class="hljs-number">1</span>
+  }
+  change = () =&gt; {
+    <span class="hljs-keyword">this</span>.state.age += <span class="hljs-number">1</span>; <span class="hljs-comment">// 这里仅仅改变js中的age变量，不会触发render</span>
+    <span class="hljs-keyword">this</span>.forceUpdate(); <span class="hljs-comment">// 强制触发render，会用age的最新的值去渲染</span>
+  }
+  render () {
+    <span class="hljs-keyword">return</span> (
+      &lt;div&gt;
+        &lt;h1&gt;<span class="hljs-type">Hello</span>{<span class="hljs-keyword">this</span>.state.age}&lt;/h1&gt;
+        &lt;button onClick={<span class="hljs-keyword">this</span>.change}&gt;更新&lt;/button&gt;
+      &lt;/div&gt;
+    )
+  }
+}
+</code></pre>
+<p>4、父组件触发render</p>
+<p>无论父组件是因为什么原因，触发了父组件的render后，子组件会触发下面的生命周期: <code>componentWillReceiveProps - shouldComponentUpdate - componentWillUpdate - render - componentDidUpdate</code></p>
+<blockquote>
+<p>可以这么记住，只要父组件触发render，就会重新渲染子组件，那就触发componentWillReceiveProps和一系列更新的生命周期。和父组件传不传props、props有没有更新都没有关系</p>
+</blockquote>
+<blockquote>
+<p>componentWillReceiveProps在父组件第1次挂载触发<code>render()</code>的时候，不会触发，当挂载后父组件触发<code>render()</code>才会触发</p>
+</blockquote>
+<pre><code><span class="hljs-comment">// 子组件</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Son</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-comment">// 父组件并没有传递props过来，但是当父组件改变state触发render后</span>
+  <span class="hljs-comment">// 子组件的componentWillReceiveProps也会触发</span>
+  componentWillReceiveProps (props) {
+    console.log(<span class="hljs-symbol">&#x27;son</span>-componentWillReceiveProps&#x27;, props);
+  }
+  render () {
+    <span class="hljs-keyword">return</span> (
+      &lt;div&gt;
+        &lt;h1&gt;<span class="hljs-keyword">this</span> is <span class="hljs-type">Son</span> <span class="hljs-type">Component</span>: {<span class="hljs-keyword">this</span>.props.age}&lt;/h1&gt;
+      &lt;/div&gt;
+    )
+  }
+}
+
+<span class="hljs-comment">// 父组件</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  state = {
+    age: <span class="hljs-number">1</span>
+  }
+  change = () =&gt; {
+    <span class="hljs-keyword">this</span>.setState({age: <span class="hljs-keyword">this</span>.state.age+<span class="hljs-number">1</span>});
+  }
+  render () {
+    <span class="hljs-keyword">return</span> (
+      &lt;div&gt;
+        &lt;h1&gt;<span class="hljs-type">Hello</span>{<span class="hljs-keyword">this</span>.state.age}&lt;/h1&gt;
+        &lt;<span class="hljs-type">Son</span>&gt;&lt;/<span class="hljs-type">Son</span>&gt;
+        &lt;button onClick={<span class="hljs-keyword">this</span>.change}&gt;更新&lt;/button&gt;
+      &lt;/div&gt;
+    )
+  }
+}
+</code></pre>
+<h2 id="2、新版本的生命周期">2、新版本的生命周期</h2>
+<p>改动点:</p>
+<ul>
+<li><code>componentWillMount/componentWillUpdate/componentWillReceiveProps</code> 几个带will（除了componentWillUnmont）的生命周期要加前缀 <code>UNSAFE_</code>。命名为<code>UNSAFE_componentWillMount/UNSAFE_componentWillUpdate/UNSAFE_componentWillReceiveProps</code></li>
+</ul>
+<p><a href="https://reactjs.bootcss.com/blog/2018/03/27/update-on-async-rendering.html">【React为什么要做出这种改动】</a></p>
+<p>我们是推荐直接不使用者3个生命周期了</p>
+<ul>
+<li>新增2个生命周期: <code>getDerivedStateFromProps / getSnapshotBeforeUpdate</code></li>
+</ul>
+<h2 id="3、新旧生命周期对比图">3、新旧生命周期对比图</h2>
+<p>旧的生命周期图:</p>
+<p><img src="./img/left-old.png" alt=""></p>
+<p>新的生命周期图:</p>
+<p><img src="./img/left-new.png" alt=""></p>
+
+    </article>
+</body>
+</html>

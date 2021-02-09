@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="006-nginx的优雅升级">006-nginx的优雅升级</h1>
+<p>现有nginx是在<code>/usr/local/nginx-1.18.0</code>，版本为<code>1.18.0</code>。</p>
+<p>已经在线上跑了一段时间，现在准备将其升级到<code>1.19.6</code></p>
+<ol>
+<li><p>升级nginx其实就是升级<code>bin/nginx</code>这个二进制文件，为了防止出错，先将该二进制文件备份下</p>
+<pre><code class="language-shell">cd <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/nginx-1.18.0/</span>sbin
+cp .<span class="hljs-regexp">/nginx ./</span>nginx.bak
+</code></pre>
+</li>
+<li><p>查看下以前安装nginx执行过的参数</p>
+<pre><code class="language-shell"><span class="hljs-attribute">nginx -V</span>
+</code></pre>
+<p><img src="./img/last-configure.png" alt=""></p>
+</li>
+</ol>
+<p>一定要记住这个参数，最好找个地方记下</p>
+<ol start="3">
+<li>下载 <code>nginx 1.19.6</code></li>
+</ol>
+<p><img src="./img/link.png" alt=""></p>
+<pre><code class="language-shell"><span class="hljs-comment"># 下载</span>
+<span class="hljs-attribute">wget</span> http://nginx.org/download/nginx-<span class="hljs-number">1</span>.<span class="hljs-number">19</span>.<span class="hljs-number">6</span>.tar.gz
+
+<span class="hljs-comment"># 解压</span>
+<span class="hljs-attribute">tar</span> -zxvf nginx-<span class="hljs-number">1</span>.<span class="hljs-number">19</span>.<span class="hljs-number">6</span>.tar.gz
+</code></pre>
+<ol start="4">
+<li>配置
+把之前查看到的参数配置拿过来执行下<pre><code class="language-shell"><span class="hljs-attribute">cd</span> nginx-<span class="hljs-number">1</span>.<span class="hljs-number">19</span>.<span class="hljs-number">6</span>
+</code></pre>
+</li>
+</ol>
+<h1 id="配置">配置</h1>
+<p>./configure --prefix=/usr/local/nginx-1.18.0 --with-http_stub_status_module --with-http_ssl_module</p>
+<h1 id="编译">编译</h1>
+<p>make</p>
+<pre><code>执行完`make`后，会在`nginx-<span class="hljs-number">1.19</span>.<span class="hljs-number">6</span>/objs`里面生成一个二进制文件`nginx`，把这个`nginx`替换原来运行的nginx二进制
+```shell
+cd nginx-<span class="hljs-number">1.19</span>.<span class="hljs-number">6</span>/objs
+
+# -f 强制复制
+cp ./nginx /usr/local/nginx/sbin/nginx -f 
+</code></pre>
+<ol start="5">
+<li>执行<pre><code class="language-shell"><span class="hljs-meta"># 查看进程</span>
+ps aux<span class="hljs-string">|grep nginx</span>
+</code></pre>
+</li>
+</ol>
+<p>kill -usr2 10347</p>
+<pre><code>![](./img/kill-usr1.png)
+
+可以看到执行完后，会启动一批新的进程来执行master和work进程，旧的master和work进程依旧还在
+
+执行
+```<span class="hljs-keyword">shell</span><span class="bash">
+<span class="hljs-built_in">kill</span> -winch 10347</span>
+</code></pre>
+<p><img src="./img/kill-winch.png" alt=""></p>
+<p>就可以看到旧的word进程已经都没有，仅留一个旧的master进程在，这个是为了反正出问题，可以给我们回退的</p>
+<p>如果确定没有问题了，就可以执行命令把旧的进程删掉</p>
+<pre><code class="language-shell"><span class="hljs-attribute">kill</span> <span class="hljs-number">10347</span>
+</code></pre>
+
+    </article>
+</body>
+</html>

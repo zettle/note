@@ -6,7 +6,7 @@ function resolve (filePath) {
 }
 
 md2html({
-    publicPath: 'note',
+    publicPath: 'dist',
     source: resolve('./src'),
     output: resolve('./dist'),
     mdConf: {}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+
+<title>Document</title>
+</head>
+<body>
+    <article class="markdown-body">
+        <h1 id="001-npm包推荐">001-npm包推荐</h1>
+<h2 id="-功能库">| 功能库</h2>
+<ul>
+<li><code>[querystring](https://www.npmjs.com/package/querystring)</code>: 类似node的querystring模块，可以用在web端，<a href="https://blog.csdn.net/weixin_34237596/article/details/91405129">【用法参考】</a></li>
+</ul>
+<p>常用来解析url的query参数</p>
+<pre><code class="language-js"><span class="hljs-keyword">import</span> querystring <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;querystring&#x27;</span>;
+ 
+<span class="hljs-keyword">const</span> params = <span class="hljs-string">&#x27;name=hy&amp;age=21&amp;gender=female&amp;hobby=eat&amp;hobby=game&amp;lover=lq&amp;weight=&#x27;</span>;
+<span class="hljs-keyword">const</span> paramsObject = querystring.parse(params); <span class="hljs-comment">// 解析成js对象</span>
+<span class="hljs-keyword">const</span> paramsObjectString = querystring.stringify(paramsObject);
+ 
+<span class="hljs-built_in">console</span>.log(params);
+<span class="hljs-built_in">console</span>.log(paramsObject);
+<span class="hljs-built_in">console</span>.log(paramsObjectString);
+<span class="hljs-built_in">console</span>.log(params === paramsObjectString);
+</code></pre>
+
+    </article>
+</body>
+</html>
