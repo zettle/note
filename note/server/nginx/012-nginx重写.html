@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="013-nginx重写">013-nginx重写</h1>
+<h2 id="1、常用重写命令">1、常用重写命令</h2>
+<pre><code class="language-nginx"><span class="hljs-keyword">if</span> (条件) {} <span class="hljs-comment"># 设定条件，再进行重写</span>
+<span class="hljs-built_in">set</span> <span class="hljs-comment"># 设置变量</span>
+<span class="hljs-built_in">return</span> <span class="hljs-comment"># 返回状态码</span>
+<span class="hljs-built_in">break</span> <span class="hljs-comment"># 跳出rewrite</span>
+rewrite <span class="hljs-comment"># 重写</span>
+</code></pre>
+<h2 id="2、if判断">2、if判断</h2>
+<p>格式:</p>
+<pre><code class="language-nginx"><span class="hljs-keyword">if</span> (条件) {  <span class="hljs-meta"># 注意if后面的空格不能省</span>
+    重写模式
+}
+</code></pre>
+<p>条件支持下面几种写法:</p>
+<ul>
+<li><code>=</code>: 判断是否相等，用于字符串比较</li>
+<li><code>~</code>: 用正则匹配，区分大小写</li>
+<li><code>~|~*</code>: 用正则匹配，不区分大小写</li>
+<li><code>-f</code>: 来判断是否为文件</li>
+<li><code>-d</code>: 来判断是否为目录</li>
+<li><code>-e</code>: 来判断是否存在</li>
+</ul>
+<h3 id="21-场景1：禁止某些ip访问">2.1 场景1：禁止某些IP访问</h3>
+<p>比如现在访问 <code>http://aaa.com</code> 访问了项目A的前端代码</p>
+<pre><code class="language-nginx"><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+    <span class="hljs-attribute">server_name</span>  aaa.com;
+    <span class="hljs-attribute">location</span> / {
+        <span class="hljs-attribute">root</span> /root/svr/aaa;
+        <span class="hljs-attribute">index</span> index.html index.htm;
+    }
+}
+</code></pre>
+<p>我们现在加个判断，如果是指定IP的，就不给访问了</p>
+<pre><code class="language-nginx"><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+    <span class="hljs-attribute">server_name</span>  aaa.com;
+    <span class="hljs-attribute">location</span> / {
+        <span class="hljs-comment"># 如果客户端IP=218.13.14.211就返回403状态码</span>
+        <span class="hljs-comment"># 客户端IP可以去 log/access.log 中访问日志看</span>
+        <span class="hljs-attribute">if</span> ($remote_addr = <span class="hljs-number">218.13.14.211</span>) {
+            <span class="hljs-attribute">return</span> <span class="hljs-number">403</span>;
+        }
+        <span class="hljs-attribute">root</span> /root/svr/aaa;
+        <span class="hljs-attribute">index</span> index.html index.htm;
+    }
+}
+</code></pre>
+<h3 id="22-场景2：-用ie浏览器访问提示升级">2.2 场景2： 用IE浏览器访问提示升级</h3>
+<p>比如现在访问 <code>http://aaa.com</code> 访问了项目A的前端代码</p>
+<pre><code class="language-nginx"><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+    <span class="hljs-attribute">server_name</span>  aaa.com;
+    <span class="hljs-attribute">location</span> / {
+        <span class="hljs-attribute">root</span> /root/svr/aaa;
+        <span class="hljs-attribute">index</span> index.html index.htm;
+    }
+}
+</code></pre>
+<p>我们想要实现这种效果：用户用IE浏览器访问的时候，就出现我们的提示升级页面</p>
+<pre><code class="language-nginx"><span class="hljs-keyword">server</span> {
+    listen       <span class="hljs-number">80</span>;
+    server_name  aaa.com;
+    location / {
+        <span class="hljs-meta"># 网上很多写的是 $http_user_agent ~ MISE</span>
+        <span class="hljs-keyword">if</span> ($http_user_agent ~ Trident) { 
+            rewrite ^.*$ /ie.html;
+            <span class="hljs-keyword">break</span>; <span class="hljs-meta"># 这里不能省略</span>
+        }
+        root /root/svr/aaa;
+        <span class="hljs-keyword">index</span> <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
+    }
+}
+</code></pre>
+<ol>
+<li>网上很多写的是 <code>$http_user_agent ~ MISE</code>。因为测试的时候，电脑已经是IE11，IE11不再有MISE的ua，就算是在IE11上切换成低版本的，也不会影响nginx获取到的ua</li>
+</ol>
+<p>IE原来的UA</p>
+<p><img src="./img/ie.png" alt=""></p>
+<p>切换成IE7后，用JS获取的UA</p>
+<p><img src="./img/ie7.png" alt=""></p>
+<p>但是在nginx中获取的UA</p>
+<p><img src="./img/nginx-ua.png" alt=""></p>
+<p>可以看出来，就算是IE切换了版本，获取的还是原来的UA</p>
+<ol start="2">
+<li><code>break</code>不能省
+记住<code>break</code>不能省，否则会死循环，去掉后，用IE访问出现500错误</li>
+</ol>
+<p>去 <code>log/error.log</code> 里面看日志，可以发现是死循环了: <code>rewrite or internal redirection cycle while processing &quot;/ie.html&quot;, client: 218.13.14.211, server: aaa.com, request: &quot;GET / HTTP/1.1&quot;, host: &quot;aaa.com&quot;</code></p>
+<p><img src="./img/cycle.png" alt=""></p>
+<p>这是因为不加<code>break</code>后，nginx匹配进入然后出发rewrite，接着内部uri跳转请求<code>/ie.html</code>，这个时候又匹配中了</p>
+<ol start="3">
+<li>按照上面配置，<code>ie.html</code>的位置应该在 <code>/root/svr/aaa/ie.html</code> 这里</li>
+</ol>
+<h3 id="23-场景3：-找不到返回特定页面">2.3 场景3： 找不到返回特定页面</h3>
+<p>访问 <code>http://aaa.com</code>，访问 <code>http://aaaa.com/aa.html</code>并不存在返回我们指定的页面，当然我们也可以用<code>error_page</code>配置，不过这里专门演示下<code>-e</code>的用法。</p>
+<pre><code class="language-nginx">location / {
+    <span class="hljs-keyword">if</span> (!-e <span class="hljs-variable">$document_root</span><span class="hljs-variable">$fastcgi_script_name</span>) {
+        rewrite ^.*$ /nofind.html;
+        <span class="hljs-keyword">break</span>;
+    }
+    root <span class="hljs-regexp">/root/</span>svr/aaa;
+    index index.html index.htm;
+}
+</code></pre>
+<ol>
+<li><p><code>$document_root$fastcgi_script_name</code>表示访问的是linux的哪个文件夹，比如访问<code>http://aaaa.com/aa.html</code>，则<code>$document_root$fastcgi_script_name = /root/svr/aaa/aa.html</code></p>
+</li>
+<li><p><code>break</code>必须加上，不然会进入循环</p>
+</li>
+</ol>
+<h2 id="3、set-设置变量">3、set 设置变量</h2>
+<pre><code class="language-nginx"><span class="hljs-keyword">if</span> (<span class="hljs-symbol">$</span>http_user_agent ~* mise) {
+    <span class="hljs-keyword">set</span> $isIE <span class="hljs-comment">1</span>; # 如果ua中含有mise就设置<span class="hljs-symbol">$</span>isIE=<span class="hljs-number">1</span>
+}
+<span class="hljs-keyword">if</span> (<span class="hljs-symbol">$</span>fastcgi_script_name = ie.html) {
+    <span class="hljs-keyword">set</span> $isIE <span class="hljs-comment">0</span>; # 如果访问的是ie.html就设置<span class="hljs-symbol">$</span>isIE=<span class="hljs-number">0</span>
+}
+<span class="hljs-keyword">if</span> (<span class="hljs-symbol">$</span>isIE = <span class="hljs-number">1</span>) {
+    rewrite ^.*% ie.html; # 如果<span class="hljs-symbol">$</span>isIE就rewrite到ie.html
+}
+</code></pre>
+<p>上面的等同<code>break</code></p>
+<pre><code class="language-nginx"><span class="hljs-keyword">if</span> (<span class="hljs-symbol">$fastcgi</span>_script_name = ie.html) {
+    rewrite ^.*% ie.html;
+    <span class="hljs-keyword">break</span>;
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        const id$ = $(idDom);
+        const classNames = `level-${level}`;
+        liStr += `<li><a href="#${idDom.id}">${id$.text()}</a></li>`;
+    });
+    mdNav.html(liStr);
+});
+</script>
+</body>
+</html>

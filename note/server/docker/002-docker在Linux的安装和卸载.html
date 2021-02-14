@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="002-docker在linux的安装和卸载">002-docker在Linux的安装和卸载</h1>
+<h2 id="1、安装docker">1、安装docker</h2>
+<p>参考资料: <a href="https://www.runoob.com/docker/centos-docker-install.html">Linux安装docker</a></p>
+<ol>
+<li>执行 <pre><code class="language-shell">curl -fsSL <span class="hljs-keyword">https</span>://<span class="hljs-built_in">get</span>.docker.com | bash -s docker <span class="hljs-comment">--mirror Aliyun</span>
+</code></pre>
+执行完后看到下面结果，表示安装完成了</li>
+</ol>
+<p><img src="./img/002-yum-install.png" alt=""></p>
+<p>看上面提示中有一句话<code>sudo usermod -aG docker your-user</code>，提示我们可以执行这条命令给予权限</p>
+<p>docker安装后，默认情况下只允许root用户来执行，比如执行:<code>sudo usermod -aG docker apps</code></p>
+<p>执行上面是为了给用户apps这个用户加到docker组里面，这样apps这个用户就有了执行docker的权限了</p>
+<ol start="2">
+<li>验证<pre><code class="language-shell"><span class="hljs-attribute">docker</span>
+</code></pre>
+看到下面结果说明docker已经安装好了</li>
+</ol>
+<p><img src="./img/002-install-ok.png" alt=""></p>
+<h2 id="2、镜像加速">2、镜像加速</h2>
+<p>由于国内墙的问题，需要配置下阿里云的加速器，这样就直接从阿里云下载</p>
+<ol>
+<li>通过<a href="https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors">阿里云镜像获取地址</a>获取到地址</li>
+</ol>
+<p><img src="./img/002-aliyun.png" alt=""></p>
+<ol start="2">
+<li>在服务器上执行<pre><code class="language-shell">mkdir -p <span class="hljs-regexp">/etc/</span>docker
+</code></pre>
+</li>
+</ol>
+<p>vim /etc/docker/daemon.json</p>
+<pre><code>
+<span class="hljs-number">3</span>. 编辑`daemon.json`的内容，如下
+</code></pre>
+<p>{
+  &quot;registry-mirrors&quot;: [&quot;<a href="https://6z3gokzw.mirror.aliyuncs.com&quot;%5D">https://6z3gokzw.mirror.aliyuncs.com&quot;]</a> // 具体值从阿里云管理平台获取
+}</p>
+<pre><code>
+<span class="hljs-number">4</span>. 重新加载配置并重启
+```shell
+systemctl daemon-reload
+
+systemctl restart docker
+</code></pre>
+<h2 id="3、卸载docker">3、卸载docker</h2>
+<p><a href="https://blog.csdn.net/qq_36421955/article/details/87802942">参考资料</a></p>
+<ol>
+<li>执行<code>yum list installed | grep docker</code>，查看yum安装过哪些，得到下面的结果</li>
+</ol>
+<p><img src="./img/002-yum-list.png" alt=""></p>
+<ol start="2">
+<li>把上面列表的都删除即可，执行<pre><code class="language-shell"><span class="hljs-attribute">yum</span> -y remove docker-ce-cli.x<span class="hljs-number">86</span>_<span class="hljs-number">64</span>
+</code></pre>
+</li>
+</ol>
+<p>yum -y remove docker-ce.x86_64</p>
+<pre><code>
+<span class="hljs-number">3</span>. 执行`rm -rf /var/lib/docker`
+
+<span class="hljs-number">4</span>. 执行`docker`检查，报没有该命令了
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        const id$ = $(idDom);
+        const classNames = `level-${level}`;
+        liStr += `<li><a href="#${idDom.id}">${id$.text()}</a></li>`;
+    });
+    mdNav.html(liStr);
+});
+</script>
+</body>
+</html>

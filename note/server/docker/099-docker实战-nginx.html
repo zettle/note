@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="099-docker实战-nginx">099-docker实战-nginx</h1>
+<h2 id="1、挂载静态页面的目录">1、挂载静态页面的目录</h2>
+<pre><code class="language-shell">docker run -di -p <span class="hljs-number">7001</span>:<span class="hljs-number">80</span> -v <span class="hljs-regexp">/apps/</span>svr<span class="hljs-regexp">/zettle:/u</span>sr<span class="hljs-regexp">/share/</span>nginx/html nginx
+</code></pre>
+<p>nginx镜像的几个文件位置</p>
+<ul>
+<li>配置文件: <code>/etc/nginx/nginx.conf</code></li>
+<li>include的配置文件: <code>/etc/nginx/conf.d/default.conf</code></li>
+<li>静态文件目录: <code>/usr/share/nginx/html</code></li>
+</ul>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        const id$ = $(idDom);
+        const classNames = `level-${level}`;
+        liStr += `<li><a href="#${idDom.id}">${id$.text()}</a></li>`;
+    });
+    mdNav.html(liStr);
+});
+</script>
+</body>
+</html>

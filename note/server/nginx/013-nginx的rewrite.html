@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="012-nginx的rewrite">012-nginx的rewrite</h1>
+<h2 id="1、介绍">1、介绍</h2>
+<p>rewrite依赖PCRE软件，这也是前面安装nginx为什么要先安装PCRE软件</p>
+<p>语法: <code>rewrite [regex] [replacement] [?flag]</code></p>
+<p>位置: <code>server -&gt; location -&gt; if</code></p>
+<p>比如<code>rewrite ^/(.*) http://www.aaa.com/$1 permanent</code>，表示匹配以<code>/</code>开头任意字符的路径，将匹配到的拼接在<code>http://www.aaa.com/$1</code>中的<code>$1</code>位置。</p>
+<p>比如用户访问了<code>http://aaa.com/login.html</code>经过上面的rewrite后，变成了<code>http://www.aaa.com/login.html</code></p>
+<p><strong>flag参数</strong>
+|  flag标记  | 说明  |
+| --------   | ----  |
+| last       | 本条规则匹配后，继续向下匹配新的loctionURI规则   |
+| break      | 本条规则匹配完成即终止，不在继续匹配后面的任何规则  |
+| redirect   | 返回302临时重定向，浏览器会显示跳出后的URL地址    |
+| permanent  | 返回301永久重定向，浏览器会显示跳出后的URL地址    |</p>
+<h3 id="11-例子，重定向wwwaaacom到aaacom">1.1 例子，重定向<a href="http://www.aaa.com%E5%88%B0aaa.com">www.aaa.com到aaa.com</a></h3>
+<p>下面举个例子，比如现在<code>http://aaa.com</code>和<code>http://www.aaa.com</code>，在nginx配置如下</p>
+<pre><code class="language-nginx"><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+    <span class="hljs-attribute">server_name</span>  aaa www.aaa;
+    <span class="hljs-attribute">location</span> / {
+        <span class="hljs-attribute">root</span>   /root/svr/aaa;
+        <span class="hljs-attribute">index</span>  index.html index.htm;
+    }
+}
+</code></pre>
+<p>用户访问<code>http://aaa.com</code>和<code>http://www.aaa.com</code>都会读取前端代码然后返回。</p>
+<p>现在我们改为用户访问<code>http://aaa.com</code>才读取前端代码，而访问<code>http://www.aaa.com</code>就重定向到<code>http://aaa.com</code>，配置如下</p>
+<pre><code class="language-nginx"><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+    <span class="hljs-attribute">server_name</span>  aaa.com;
+    <span class="hljs-attribute">location</span> / {
+        <span class="hljs-attribute">root</span>   /root/svr/aaa;
+        <span class="hljs-attribute">index</span>  index.html index.htm;
+    }
+}
+
+<span class="hljs-comment"># 监听www然后重定向</span>
+<span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+    <span class="hljs-attribute">server_name</span>  www.aaa.com;
+    <span class="hljs-attribute">rewrite</span><span class="hljs-regexp"> ^/(.*)</span> http://aaa.com/<span class="hljs-variable">$1</span> <span class="hljs-literal">permanent</span>; <span class="hljs-comment"># http://不能省</span>
+}
+</code></pre>
+<p>当用户访问<code>http://www.aaa.com</code>的时候，就会301重定向到<code>http://aaa.com</code></p>
+<blockquote>
+<p>注意上面的<code>http://aaa.com/$1</code>中的<code>http://</code>不能省，不让nginx就会一直往请求的路径追加，变成了重定向<code>http://aaa.com/aaa.com/aaa.com</code></p>
+</blockquote>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        const id$ = $(idDom);
+        const classNames = `level-${level}`;
+        liStr += `<li><a href="#${idDom.id}">${id$.text()}</a></li>`;
+    });
+    mdNav.html(liStr);
+});
+</script>
+</body>
+</html>

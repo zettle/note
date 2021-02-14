@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="001-开发工具">001-开发工具</h1>
+<ul>
+<li>chrome扩展工具: <a href="https://chrome.zzzmh.cn/info?token=fmkadmapgofadopljbjfkapdkoienihi">【react developer tools】</a></li>
+</ul>
+<ul>
+<li><a href="https://www.babeljs.cn/repl#?browsers=defaults%2C%20not%20ie%2011%2C%20not%20ie_mob%2011&amp;build=&amp;builtIns=false&amp;spec=false&amp;loose=false&amp;code_lz=Q&amp;debug=false&amp;forceAllTransforms=false&amp;shippedProposals=false&amp;circleciRepo=&amp;evaluate=false&amp;fileSize=false&amp;timeTravel=false&amp;sourceType=module&amp;lineWrap=true&amp;presets=env%2Creact%2Cstage-2&amp;prettier=false&amp;targets=&amp;version=7.12.14&amp;externalPlugins=">babel在线试一试</a>: 在线可以查看jsx转为js后的样子</li>
+</ul>
+<p><img src="./img/online-try.png" alt=""></p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        const id$ = $(idDom);
+        const classNames = `level-${level}`;
+        liStr += `<li><a href="#${idDom.id}">${id$.text()}</a></li>`;
+    });
+    mdNav.html(liStr);
+});
+</script>
+</body>
+</html>

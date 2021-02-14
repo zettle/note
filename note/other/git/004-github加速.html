@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="001-github加速">001-github加速</h1>
+<p>由于github是国外的，所以clone的时候时常太慢导致clone失败，所以需要用过国内的加速</p>
+<h2 id="1-安装">1 安装</h2>
+<p>安装<a href="https://chrome.zzzmh.cn/info?token=mfnkflidjnladnkldfonnaicljppahpg">Github 加速器</a>这个chrome扩展插件</p>
+<h2 id="2-在github仓库就可以看到多出来的，选择其中一个通道既可">2 在github仓库就可以看到多出来的，选择其中一个通道既可</h2>
+<p><img src="./img/sudu.png" alt=""></p>
+<blockquote>
+<p>需要注意的是上面列表中，有的是https，有的是ssh通道
+如果选择的是https就没什么好说的，每次push都是输入账号密码
+如果是想要选择ssh加速的通道，则需要按照配置下</p>
+</blockquote>
+<h2 id="3-配置ssh并且是加速通道">3 配置ssh并且是加速通道</h2>
+<p><a href="https://github.com/fhefh2015/Fast-GitHub">资料</a></p>
+<p>配置步骤:</p>
+<ol>
+<li><p>启动<code>git bash</code></p>
+</li>
+<li><p>进入ssh文件夹</p>
+<pre><code class="language-shell"><span class="hljs-keyword">cd</span> ~<span class="hljs-string">/.ssh</span>
+</code></pre>
+</li>
+<li><p>新建config文件，<strong>注意没有后缀。</strong>内容如下:</p>
+<pre><code class="language-config"><span class="hljs-selector-tag">Host</span> <span class="hljs-selector-tag">git</span><span class="hljs-selector-class">.zhlh6</span><span class="hljs-selector-class">.cn</span>
+ <span class="hljs-selector-tag">HostName</span> <span class="hljs-selector-tag">git</span><span class="hljs-selector-class">.zhlh6</span><span class="hljs-selector-class">.cn</span>
+ <span class="hljs-selector-tag">User</span> <span class="hljs-selector-tag">zettle</span>
+ <span class="hljs-selector-tag">IdentityFile</span> ~/<span class="hljs-selector-class">.ssh</span>/<span class="hljs-selector-tag">id_rsa</span>
+</code></pre>
+</li>
+<li><p>执行下面命令</p>
+<pre><code class="language-shell">ssh -T <span class="hljs-symbol">git@</span>git.zhlh6.cn
+</code></pre>
+<p>看到下面提示则代表配置成功</p>
+<pre><code>You<span class="hljs-symbol">&#x27;ve</span> successfully authenticated, but GitHub does <span class="hljs-keyword">not</span> provide shell <span class="hljs-keyword">access</span>
+</code></pre>
+</li>
+<li><p>这样就clone的时候就可以用<code>github.zhlh6.cn</code>的链接了，即是ssh通道又是加速的</p>
+</li>
+</ol>
+<p><img src="./img/sudu-ssh.png" alt=""></p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        const id$ = $(idDom);
+        const classNames = `level-${level}`;
+        liStr += `<li><a href="#${idDom.id}">${id$.text()}</a></li>`;
+    });
+    mdNav.html(liStr);
+});
+</script>
+</body>
+</html>

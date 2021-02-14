@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="004-propstype检验">004-propsType检验</h1>
+<h2 id="1、类组件">1、类组件</h2>
+<p>react对于props传递过来的数据，可以进行类型的检查和默认值的设置</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+}
+<span class="hljs-type">Person</span>.propTypes = {}; <span class="hljs-comment">// 类型的检查</span>
+<span class="hljs-type">Person</span>.defaultProps = {}; <span class="hljs-comment">// 默认值的设置</span>
+</code></pre>
+<p>可见，<code>propTypes/defaultProps</code>是挂载在类上的，我们推荐用static</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+    static propTypes = {}; <span class="hljs-comment">// 类型的检查</span>
+    static defaultProps = {};  <span class="hljs-comment">// 默认值的设置</span>
+}
+</code></pre>
+<p>对于类型检查，<code>react15.5</code>之后，已经把PropTypes抽离出去，所以我们需要单独引入</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> <span class="hljs-type">PropTypes</span> from <span class="hljs-symbol">&#x27;prop</span>-types&#x27;;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-comment">// 类型校验，propTypes这个是首字母小写</span>
+  static propTypes = {
+    name: <span class="hljs-type">PropTypes</span>.string.isRequired, <span class="hljs-comment">// PropTypes这个是首字母小写，是个字符串且必传</span>
+    age: <span class="hljs-type">PropTypes</span>.number, <span class="hljs-comment">// 是个数字，可不传</span>
+    say: <span class="hljs-type">PropTypes</span>.func <span class="hljs-comment">// 是个function</span>
+  };
+  <span class="hljs-comment">// 默认值</span>
+  static defaultProps = {
+    age: <span class="hljs-number">100</span>
+  };
+  render () {
+    const {name, age} = <span class="hljs-keyword">this</span>.props;
+    <span class="hljs-keyword">return</span> (
+      &lt;p&gt;<span class="hljs-type">My</span> name is {name}, age is {age}&lt;/p&gt;
+    );
+  }
+};
+</code></pre>
+<h2 id="2、函数组件">2、函数组件</h2>
+<p>函数组件，没有state，没有refs，只有props，也可以对props检验</p>
+<p>函数组件的props校验，就只能挂在到函数名上</p>
+<pre><code class="language-jsx"><span class="hljs-comment">// 函数组件，参数是props</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Person</span>(<span class="hljs-params">props</span>) </span>{
+  <span class="hljs-keyword">const</span> {name, age} = props;
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>name is {name} and age is {age}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>
+}
+Person.propTypes = {}; <span class="hljs-comment">// 类型的检查</span>
+Person.defaultProps = {}; <span class="hljs-comment">// 默认值的设置</span>
+
+<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Person</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;xiaoming&quot;</span> <span class="hljs-attr">age</span>=<span class="hljs-string">{12}</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">Person</span>&gt;</span></span>
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        const id$ = $(idDom);
+        const classNames = `level-${level}`;
+        liStr += `<li><a href="#${idDom.id}">${id$.text()}</a></li>`;
+    });
+    mdNav.html(liStr);
+});
+</script>
+</body>
+</html>

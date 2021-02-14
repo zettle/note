@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="010-nginx错误日志">010-nginx错误日志</h1>
+<p>nginx的错误日志管理，是核心功能模块<code>ngx_core_module</code></p>
+<p>配置格式: <code>error_log [filePath] [level]</code></p>
+<p>其中level级别支持这几种 <code>debug|info|notice|warn|error|crit|alert|emerg</code>，级别越高记录信息越少，记录信息最高的是debug级别，但带来的IO消耗也是最大</p>
+<p>一般场景用<code>warn|error|crit</code>其中一种就够了</p>
+<p>在main区块中全局配置，也可以放在不同的虚拟主机中单独配置，可以放在下面的标签里面，权重是越近的越重</p>
+<pre><code><span class="hljs-function"><span class="hljs-title">main</span> -&gt;</span> <span class="hljs-function"><span class="hljs-title">http</span> -&gt;</span> <span class="hljs-function"><span class="hljs-title">server</span> -&gt;</span> location # 越后权重越高
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        const id$ = $(idDom);
+        const classNames = `level-${level}`;
+        liStr += `<li><a href="#${idDom.id}">${id$.text()}</a></li>`;
+    });
+    mdNav.html(liStr);
+});
+</script>
+</body>
+</html>

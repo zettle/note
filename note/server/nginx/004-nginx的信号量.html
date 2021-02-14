@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="004-nginx的信号量">004-nginx的信号量</h1>
+<p>nginx的信号量，是指和kill搭配的命令，nginx支持下面几种信号量</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>term/int</td>
+<td>硬关闭</td>
+</tr>
+<tr>
+<td>quit</td>
+<td>软停止，处理完当前没有处理完的请求再关闭</td>
+</tr>
+<tr>
+<td>hup</td>
+<td>等到没有请求的时候，再读取nginx配置然后重启</td>
+</tr>
+<tr>
+<td>usr1</td>
+<td>重读日志，在日志切割有用</td>
+</tr>
+<tr>
+<td>usr2</td>
+<td>平滑的升级</td>
+</tr>
+<tr>
+<td>winch</td>
+<td>优雅的关闭旧的进程，配合usr2来进行升级</td>
+</tr>
+</tbody></table>
+<h2 id="1、查看nginx进程">1、查看nginx进程</h2>
+<pre><code class="language-shell">ps aux | <span class="hljs-keyword">grep</span> nginx <span class="hljs-comment"># 看出nginx的进程</span>
+</code></pre>
+<p>执行完后，可以看到下面的结果：</p>
+<p><img src="./img/ps-aux.png" alt=""></p>
+<p>上面中分别看到3条进程</p>
+<blockquote>
+<p>nginx的这么工作的，master进程负责管理work进程，真正在处理请求的是work进程</p>
+</blockquote>
+<p>我们修改<code>nginx.conf</code>里面的<code>work_process</code></p>
+<pre><code class="language-nginx">worker_processes <span class="hljs-number">5</span><span class="hljs-comment">;</span>
+</code></pre>
+<p>然后重启nginx，再执行 <code>ps aux | grep nginx</code> 可以看到，这次就有5个work进程了</p>
+<p><img src="./img/ps-aux-work.png" alt=""></p>
+<h2 id="2、termint">2、term/int</h2>
+<p>硬停止即让nginx不管什么情况，立即停止掉</p>
+<p>查看nginx的主进程，然后直接通过kill掉进程</p>
+<pre><code class="language-shell">ps aux | <span class="hljs-keyword">grep</span> nginx <span class="hljs-comment"># 查看进程</span>
+<span class="hljs-keyword">kill</span> -INT 进程 <span class="hljs-comment"># 删掉指定进程</span>
+</code></pre>
+<p>执行 <code>ps aux | grep nginx</code> 的到下面结果，看出主进程是<code>17149</code>
+<img src="./img/master.png" alt=""></p>
+<p>接着执行<code>kill -INT 17149</code>，再执行看进程已经不在了</p>
+<p><img src="./img/kill-master.png" alt=""></p>
+<blockquote>
+<p>后面为了方面，统一用17149来表示nginx主进程</p>
+</blockquote>
+<h2 id="3、quit">3、quit</h2>
+<p>执行 <code>kill -quit 17149</code> </p>
+<p>nginx是这么工作的，把当前处理到一半的事情处理完，然后再关闭进程</p>
+<h2 id="4、hup">4、hup</h2>
+<p>执行 <code>kill -hup 17149</code></p>
+<p>nginx是这么工作的，把当前处理到一半的事情处理完，然后重新读取<code>nginx.conf</code>配置，并重启</p>
+<h2 id="5、usr1">5、usr1</h2>
+<p>执行 <code>kill -usr1 17149</code></p>
+<p>nginx会优雅的读取新的日志节点然后重启，常常用在日志切割</p>
+<blockquote>
+<p>首先我们要知道linux和window对文件名的管理不一样，linux更多的依赖文件的inode来找到文件的</p>
+</blockquote>
+<p><strong>模拟日志切割</strong></p>
+<ol>
+<li>首先在 <code>http://bbb.com</code> 上写个js脚本，让其一直处于刷新状态，这样子就模拟一直有客户端请求nginx，nginx的访问日志一直在累加</li>
+</ol>
+<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>这是bbb页面<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript"><span class="hljs-built_in">window</span>.location.reload()</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+<ol start="2">
+<li>访问 <code>http://bbb.com</code> 一直处于刷新状态，查看nginx的<code>log/access.log</code>日志，可以看到日志一直再增加<pre><code class="language-shell"><span class="hljs-attribute">ll</span>
+</code></pre>
+</li>
+</ol>
+<p><img src="./img/ll-access.png" alt=""></p>
+<ol start="3">
+<li>现在模拟到了0点要日志切割了，我们通过命令<pre><code class="language-shell">mv ./<span class="hljs-keyword">access</span>.<span class="hljs-built_in">log</span> ./<span class="hljs-number">20210114.</span><span class="hljs-keyword">access</span>.<span class="hljs-built_in">log</span> # 把原来的日志重命名
+</code></pre>
+<img src="./img/mv-access.png" alt=""></li>
+</ol>
+<p>已经把旧的日志归档到了，多次执行 <code>ll</code> 会发现nginx的日志还是继续往<code>20210114.access.log</code>这个上面加，而不是重新生成<code>access.log</code></p>
+<p><img src="./img/ll-access-2.png" alt=""></p>
+<blockquote>
+<p>这个就是linux上的文件特点，和window不同，linux不依赖文件名去识别文件，而是依赖文件的inode</p>
+</blockquote>
+<ol start="4">
+<li>执行<code>kill -usr1</code>
+执行下面命令<pre><code class="language-shell"><span class="hljs-attribute">kill</span> -usr<span class="hljs-number">1</span> <span class="hljs-number">17149</span>
+</code></pre>
+nginx会重新生成access_log然后往这个新的上面追加日志</li>
+</ol>
+<p>通过多次<code>ll</code>可以看到，新的访问日志记录是追加到<code>access.log</code>上面了</p>
+<p><img src="./img/ll-access-3.png" alt=""></p>
+<h2 id="6、usr2和winch">6、usr2和winch</h2>
+<p>usr2和winch主要用来优雅的升级nginx版本</p>
+<p><a href="./006-nginx%E7%9A%84%E4%BC%98%E9%9B%85%E5%8D%87%E7%BA%A7.md">006-nginx的优雅升级</a></p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        const id$ = $(idDom);
+        const classNames = `level-${level}`;
+        liStr += `<li><a href="#${idDom.id}">${id$.text()}</a></li>`;
+    });
+    mdNav.html(liStr);
+});
+</script>
+</body>
+</html>
