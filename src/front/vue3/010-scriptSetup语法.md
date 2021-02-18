@@ -1,6 +1,9 @@
 # 010-scriptSetup语法
 
-scriptSetup语法，3.0.3版本后可用，[文档](https://github.com/vuejs/rfcs/blob/script-setup/active-rfcs/0000-script-setup.md)
+scriptSetup语法，3.0.3版本后可用，不过vscode里面的vetur插件会报很多错误
+* [文档1](https://github.com/vuejs/rfcs/blob/script-setup/active-rfcs/0000-script-setup.md)
+* [文档2](https://github.com/vuejs/rfcs/blob/script-setup-2/active-rfcs/0000-script-setup.md)
+
 
 
 ## 1、定义响应变量和方法
@@ -35,6 +38,19 @@ const addHandle = () => {
 ```
 
 * 不需要再return出去了
+
+也可以用下面的ref语法糖
+```js
+<script lang="ts" setup>
+ref: count = 0;
+
+const addHandle = ()=> {
+  count++;
+  console.log($count); // 得到的是ref对象
+  console.log(count); // 得到的数值，相当于$count.value  
+}
+</script>
+```
 
 
 
