@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="jwt">JWT</h1>
+<p>一个介绍<a href="https://jwt.io/#decoded-jwt">JWT</a>的网站</p>
+<h2 id="1、jwt的工作原理">1、JWT的工作原理</h2>
+<p><img src="./img/jwt-step.png" alt=""></p>
+<h2 id="2、jwt的结构">2、JWT的结构</h2>
+<p>JWT由3个部分组成，分别是<code>Header/Payload/Signature</code>，由这3个部分组合成一个token，比如``</p>
+<ul>
+<li><p><code>Header</code>部分: 主要规定了token使用的加密方式以及token的运行,比如</p>
+<pre><code class="language-js">{
+<span class="hljs-attribute">alg</span>: <span class="hljs-string">&#x27;HS256&#x27;</span>,
+typ: <span class="hljs-string">&#x27;JWT&#x27;</span>
+}
+</code></pre>
+</li>
+<li><p><code>Payload</code>部分: 主要是用户的一些信息，比如用户名、过期时间等，比如:</p>
+<pre><code class="language-js">{
+<span class="hljs-attribute">sub</span>: <span class="hljs-string">&#x27;2019-09-12&#x27;</span>,
+name: <span class="hljs-string">&#x27;小明&#x27;</span>,
+admin: true
+}
+</code></pre>
+</li>
+<li><p><code>Signature</code>部分: 由下面计算而得</p>
+<pre><code class="language-js">HMACSHA256(
+<span class="hljs-function"><span class="hljs-title">base64UrlEncode</span><span class="hljs-params">(header)</span></span> + <span class="hljs-string">&#x27;.&#x27;</span> + 
+<span class="hljs-function"><span class="hljs-title">base64UrlEncode</span><span class="hljs-params">(payload)</span></span>, 
+secret
+)
+</code></pre>
+</li>
+</ul>
+<h2 id="3、koa集成jwt">3、koa集成JWT</h2>
+<p>安装对应的npm包: <code>npm i koa-jwt jsonwebtoken</code></p>
+<ul>
+<li><code>koa-jwt</code>: 主要负责的是对请求的拦截，比如约定哪些请求不需要JWT校验，检验tokoen是否正确，校验失败的处理 </li>
+<li><code>jsonwebtoken</code>: 主要负责JWT的token生成</li>
+</ul>
+<h3 id="31-集成koa-jwt，约定哪些请求要鉴权">3.1 集成koa-jwt，约定哪些请求要鉴权</h3>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> Koa = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;koa&#x27;</span>);
+<span class="hljs-keyword">const</span> jwt = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;koa-jwt&#x27;</span>);
+
+<span class="hljs-keyword">const</span> app = <span class="hljs-keyword">new</span> Koa();
+<span class="hljs-comment">// secret为随机字符串</span>
+<span class="hljs-comment">// unless.path配置不需要jwt校验的路径，支持正则，像下面表示以 `localhost:3000`和 `localhost:3000/login`不需要鉴权</span>
+app.use(jwt({ <span class="hljs-attr">secret</span>: <span class="hljs-string">&#x27;suijisuiji&#x27;</span> }).unless({ <span class="hljs-attr">path</span>: [<span class="hljs-regexp">/^\/$/</span>, <span class="hljs-regexp">/^\/login/</span>] }));
+</code></pre>
+<p>请求<code>http://localhost:3000/login</code>正常，访问<code>http://localhost:3000/getUserInfo</code>提示401</p>
+<p><img src="./img/401.png" alt=""></p>
+<p><strong>自定义错误提示</strong></p>
+<p>上面截图是koa-jwt默认提示页面，如果我们想要自定义错误提示，可以这么处理</p>
+<pre><code class="language-js"><span class="hljs-comment">// 要放在 app.use(jwt({ secret: &#x27;suijisuiji&#x27; }) 之前</span>
+app.use(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">ctx, next</span>)</span>{
+  <span class="hljs-keyword">return</span> next().catch(<span class="hljs-function">(<span class="hljs-params">err</span>) =&gt;</span> {
+    <span class="hljs-keyword">if</span> (<span class="hljs-number">401</span> == err.status) {
+      ctx.status = <span class="hljs-number">401</span>;
+      ctx.body = {
+        <span class="hljs-attr">code</span>: -<span class="hljs-number">9999</span>,
+        <span class="hljs-attr">msg</span>: <span class="hljs-string">&#x27;token校验失败&#x27;</span>
+      };
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">throw</span> err;
+    }
+  });
+});
+
+app.use(jwt({ <span class="hljs-attr">secret</span>: <span class="hljs-string">&#x27;suijisuiji&#x27;</span> }).unless({ <span class="hljs-attr">path</span>: [<span class="hljs-regexp">/^\/$/</span>, <span class="hljs-regexp">/^\/login/</span>] }));
+</code></pre>
+<p>异常处理要放在<code>app.use(jwt())</code>之前才能生效</p>
+<h3 id="32-登录接口集成jsonwebtoken">3.2 登录接口集成jsonwebtoken</h3>
+<p>比如登录接口，在用户名+密码验证通过后，我们就生成一个token</p>
+<pre><code class="language-js">router.post(<span class="hljs-string">&#x27;/login&#x27;</span>, <span class="hljs-keyword">async</span> (ctx, next) =&gt; {
+  <span class="hljs-keyword">const</span> token =jsonwebtoken.sign({ username:<span class="hljs-string">&#x27;xiaoming&#x27;</span> }, <span class="hljs-string">&#x27;suijisuiji&#x27;</span>, {expiresIn: <span class="hljs-string">&#x27;1d&#x27;</span>});
+  
+  ctx.body = {
+    code: <span class="hljs-number">0</span>,
+    data: {
+      token
+    }
+  }
+})
+</code></pre>
+<p>上面的 <code>suijisuiji</code> 需要和 <code>jwt({ secret: &#39;suijisuiji&#39; })</code> 的字符串保持一致，这样才能验证通过</p>
+<blockquote>
+<p>上面是通过第3个参数设置<code>{expiresIn: &#39;1d&#39;}</code>来设置1天有效期，也可以在第1个参数设置<code>{ username:&#39;xiaoming&#39;, exp: Math.floor(Date.now()/1000)+60*60*24 }</code>效果是一样，但是不能2边都设置</p>
+</blockquote>
+<h3 id="33-前端的处理">3.3 前端的处理</h3>
+<p>先请求登录接口，获取到token，然后后面的接口要往headers设置<code>{Authorization: &#39;Bearer &#39; + token}</code></p>
+<pre><code class="language-js">$.post(<span class="hljs-string">&#x27;/login&#x27;</span>, {<span class="hljs-attr">name</span>:<span class="hljs-string">&#x27;xiaming&#x27;</span>,<span class="hljs-attr">password</span>:<span class="hljs-string">&#x27;123456&#x27;</span>}).then(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> {
+  <span class="hljs-keyword">const</span> token = res.data.token;
+  $.ajax({
+    <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;POST&#x27;</span>,
+    <span class="hljs-attr">url</span>: <span class="hljs-string">&#x27;/getUserInfo&#x27;</span>,
+    <span class="hljs-attr">headers</span>:{
+      <span class="hljs-string">&quot;Authorization&quot;</span>: <span class="hljs-string">&#x27;Bearer &#x27;</span> + token
+    },
+    <span class="hljs-attr">success</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data, status, xhr</span>)</span>{
+      <span class="hljs-built_in">console</span>.log(data);
+    }
+  });
+});
+</code></pre>
+<blockquote>
+<p>注意: <code>Bearer </code>不能省不能改，<code>Bearer</code>和token之间有个空格</p>
+</blockquote>
+<p>在headers携带Authorization给接口，koa-jwt就会去验证是否正确，正确才会返回数据</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

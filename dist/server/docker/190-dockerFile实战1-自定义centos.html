@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="190-dockerfile实战1-自定义centos">190-dockerFile实战1-自定义centos</h1>
+<h2 id="1、编写dockerfile">1、编写dockerFile</h2>
+<p>编写dockerFile文件，文件名称命名为<code>myCentosDockerFile</code></p>
+<pre><code class="language-docker"><span class="hljs-keyword">FROM</span> centos
+<span class="hljs-keyword">LABEL</span><span class="bash"> name=<span class="hljs-string">&quot;xiaoming custom centos&quot;</span></span>
+<span class="hljs-keyword">LABEL</span><span class="bash"> buildDate=<span class="hljs-string">&quot;2021-01-26&quot;</span></span>
+
+<span class="hljs-keyword">ENV</span> WORKPATH=/home/
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> <span class="hljs-variable">${WORKPATH}</span></span>
+
+<span class="hljs-keyword">RUN</span><span class="bash"> yum -y install net-tools</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> yum -y install vim</span>
+
+<span class="hljs-keyword">EXPOSE</span> <span class="hljs-number">80</span>
+
+<span class="hljs-keyword">CMD</span><span class="bash"> /bin/bash</span>
+</code></pre>
+<h2 id="2、执行docker-build">2、执行docker build</h2>
+<p>执行命令: <code>docker build -f ./myCentosDockerFile -t xmcentos:1.0.0 .</code></p>
+<p>等待构建完执行<code>docker images</code>可以看到已经有该镜像了</p>
+<p><img src="./img/190/images.png" alt=""></p>
+<p>执行<code>docker run -it xmcentos:1.0.0</code>就可以进入该镜像并且在镜像内执行net-tools和vim的相关方法了</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

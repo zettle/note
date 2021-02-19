@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="016-nginx二级路径多网站">016-nginx二级路径多网站</h1>
+<h2 id="1、使用root配置">1、使用root配置</h2>
+<p>现在访问 <code>http://aaa.com</code> 是A网站， 访问<code>http://aaa.com/bbs/</code> 想要是bbs这个项目的页面</p>
+<p>则可以这么配置</p>
+<pre><code class="language-nginx"><span class="hljs-keyword">server</span> {
+    <span class="hljs-keyword">listen</span>       <span class="hljs-number">80</span>;
+    server_name  aaa.com www.aaa.com;
+
+    <span class="hljs-keyword">location</span> / {
+        root   /root/svr/blog;
+        <span class="hljs-keyword">index</span>  <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
+    }
+
+    <span class="hljs-keyword">location</span> /bbs {
+        root /root/svr; # 注意这里不要配置到 `/root/svr/bbs`，nginx会自动拿 `这个文件夹+配置的<span class="hljs-keyword">location</span>` 组合在一起
+        <span class="hljs-keyword">index</span> <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
+    }
+}
+</code></pre>
+<p>这样子，当访问 <code>http://aaa.com</code> 会读取 <code>/root/svr/blog</code> 这个文件夹的前端资源</p>
+<p>这样子，当访问 <code>http://aaa.com/bbs/</code> 会读取 <code>/root/svr/bbs</code> 这个文件夹的前端资源</p>
+<blockquote>
+<p>注意点：</p>
+</blockquote>
+<p>在配置</p>
+<pre><code class="language-nginx"><span class="hljs-keyword">location</span> /bbs {
+    root /root/svr;
+    <span class="hljs-keyword">index</span> <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
+}
+</code></pre>
+<p>注意不要配置成 <code>root /root/svr/bbs</code>，nginx会自动把location的拼接在后面，如果配置成这样子，最终nginx找的路径是<code>/root/svr/bbs/bbs</code></p>
+<h2 id="1、使用alias配置">1、使用alias配置</h2>
+<pre><code class="language-nginx"><span class="hljs-section">server</span> {
+    <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
+    <span class="hljs-attribute">server_name</span>  aaa.com www.aaa.com;
+
+    <span class="hljs-attribute">location</span> / {
+        <span class="hljs-attribute">root</span>   /root/svr/blog;
+        <span class="hljs-attribute">index</span>  index.html index.htm;
+    }
+
+    <span class="hljs-attribute">location</span> /bbs {
+        <span class="hljs-attribute">root</span> /root/svr/bbs; <span class="hljs-comment"># 注意这里就要加上 bbs</span>
+        <span class="hljs-attribute">index</span> index.html index.htm;
+    }
+}
+</code></pre>
+<p>上面实现效果是一样的</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

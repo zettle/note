@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="006-路由传参">006-路由传参</h1>
+<h2 id="1、params传参">1、params传参</h2>
+<p>即vue中的动态路由一个概念</p>
+<pre><code class="language-jsx"><span class="hljs-template-tag">{/* 导航条 */}</span><span class="xml">
+<span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/about/001&quot;</span>&gt;</span>About-001<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span> | 
+<span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/about/003&quot;</span>&gt;</span>About-002<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span> | 
+
+</span><span class="hljs-template-tag">{/* 路由插槽 */}</span><span class="xml">
+<span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about/:id&quot;</span> <span class="hljs-attr">component</span>=</span></span><span class="hljs-template-variable">{About}</span><span class="xml"><span class="hljs-tag"> /&gt;</span></span>
+</code></pre>
+<p>这样在<code>&lt;About /&gt;</code>组件就可以通过<code>this.props.match.params</code>获取parmas参数了</p>
+<pre><code class="language-jsx">{<span class="hljs-comment">/* About.jsx */</span>}
+export <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">About</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>{
+    render() {
+        console.log(<span class="hljs-keyword">this</span>.props.<span class="hljs-keyword">match</span>.params);
+        <span class="hljs-keyword">return</span> &lt;p&gt;<span class="hljs-number">111</span>&lt;/p&gt;;
+    }
+}
+</code></pre>
+<h2 id="2、search传参">2、search传参</h2>
+<p>即vue的query传参是一样的</p>
+<pre><code class="language-jsx"><span class="hljs-template-tag">{/* 导航条 */}</span><span class="xml">
+<span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/about?id=001&quot;</span>&gt;</span>About-001<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span> | 
+<span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/about?id=002&quot;</span>&gt;</span>About-002<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span> | 
+
+</span><span class="hljs-template-tag">{/* 路由插槽 */}</span><span class="xml">
+<span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=</span></span><span class="hljs-template-variable">{About}</span><span class="xml"><span class="hljs-tag"> /&gt;</span></span>
+</code></pre>
+<p>这样在<code>&lt;About /&gt;</code>组件就可以通过<code>this.props.location.search</code>获取search参数了</p>
+<pre><code class="language-jsx">{<span class="hljs-comment">/* About.jsx */</span>}
+export <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">About</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>{
+    render() {
+        console.log(<span class="hljs-keyword">this</span>.props.location.search);
+        <span class="hljs-keyword">return</span> &lt;p&gt;<span class="hljs-number">111</span>&lt;/p&gt;;
+    }
+}
+</code></pre>
+<ul>
+<li>注意<code>this.props.location.search</code>获取到的是<code>?name=xiaoming</code>这样的字符串，我们需要自己转为json格式</li>
+</ul>
+<h2 id="3、state传参">3、state传参</h2>
+<pre><code class="language-jsx"><span class="xml">{/* 导航条 */}
+<span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=</span></span><span class="hljs-template-variable">{{<span class="hljs-name">pathname:</span><span class="hljs-string">&#x27;/about&#x27;</span>, state: {id:<span class="hljs-string">&#x27;001&#x27;</span>}}</span><span class="xml"><span class="hljs-tag">}&gt;</span>About-001<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span> | 
+<span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=</span></span><span class="hljs-template-variable">{{<span class="hljs-name">pathname:</span><span class="hljs-string">&#x27;/about&#x27;</span>, state: {id:<span class="hljs-string">&#x27;001&#x27;</span>}}</span><span class="xml"><span class="hljs-tag">}&gt;</span>About-002<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span> | 
+
+{/* 路由插槽 */}
+<span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{About}</span> /&gt;</span></span>
+</code></pre>
+<p>这样在<code>&lt;About /&gt;</code>组件就可以通过<code>this.props.location.state</code>获取search参数了</p>
+<pre><code class="language-jsx">{<span class="hljs-comment">/* About.jsx */</span>}
+export <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">About</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>{
+    render() {
+        console.log(<span class="hljs-keyword">this</span>.props.location.state);
+        <span class="hljs-keyword">return</span> &lt;p&gt;<span class="hljs-number">111</span>&lt;/p&gt;;
+    }
+}
+</code></pre>
+<ul>
+<li>state传参数的时候，路由的<code>to</code>必须写成json格式，<code>state</code>也需要写成json格式</li>
+<li>state传递的参数不会在url上体现，<ul>
+<li>如果是history模式，刷新后state数据还是会在（<strong>这个和vue的很多区别，vue的会消失</strong>）。react的这种方式是把数据存在了浏览器的history里面了，所以刷新就还有，但要是新开窗口访问或者关掉浏览器重启访问，state数据是不会存在的</li>
+<li>如果是hash模式，则刷新后state数据就没有了，这是因为hash模式的，react-rouer-dom操作的是不是浏览器的history</li>
+</ul>
+</li>
+</ul>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

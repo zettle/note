@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="003-在centos的安装">003-在centos的安装</h1>
+<h2 id="1、下载">1、下载</h2>
+<p>在<a href="https://www.mongodb.com/try/download/community">官网</a>上没有centos版的，选择RHEL版，和centos同家公司的产品。</p>
+<p><img src="./img/003/linux.png" alt=""></p>
+<p>复制下载链接，在Centos上执行下载命令</p>
+<pre><code class="language-shell"><span class="hljs-attribute">wget</span> https://fastdl.mongodb.org/linux/mongodb-linux-x<span class="hljs-number">86</span>_<span class="hljs-number">64</span>-rhel<span class="hljs-number">70</span>-<span class="hljs-number">4</span>.<span class="hljs-number">2</span>.<span class="hljs-number">5</span>.tgz
+</code></pre>
+<h2 id="2、安装">2、安装</h2>
+<pre><code class="language-shell"><span class="hljs-comment"># 解压</span>
+<span class="hljs-attribute">tar</span> -zxvf mongodb-linux-x<span class="hljs-number">86</span>_<span class="hljs-number">64</span>-rhel<span class="hljs-number">70</span>-<span class="hljs-number">4</span>.<span class="hljs-number">2</span>.<span class="hljs-number">5</span>.tgz
+
+<span class="hljs-comment"># 把解压后的mongodb剪切到本地的local文件夹，并且重命名为mongodb</span>
+<span class="hljs-attribute">mv</span> mongodb-linux-x<span class="hljs-number">86</span>_<span class="hljs-number">64</span>-rhel<span class="hljs-number">70</span>-<span class="hljs-number">4</span>.<span class="hljs-number">2</span>.<span class="hljs-number">5</span>/ /usr/local/mongodb
+
+<span class="hljs-comment"># 进入mongodb</span>
+<span class="hljs-attribute">cd</span> /usr/local/mongodb
+
+<span class="hljs-comment"># 创建data、logs、conf文件夹用来存放数据和日志</span>
+<span class="hljs-attribute">mkdir</span> data
+<span class="hljs-attribute">mkdir</span> logs
+<span class="hljs-attribute">mkdir</span> conf
+
+<span class="hljs-comment"># 进入conf，创建mongodb.conf文件</span>
+<span class="hljs-attribute">cd</span> conf/
+<span class="hljs-attribute">touch</span> mongodb.conf
+
+<span class="hljs-comment"># 设置配置，内容如下</span>
+<span class="hljs-attribute">vim</span> mongodb.conf
+</code></pre>
+<p><code>mongodb.conf</code>配置内容：</p>
+<pre><code><span class="hljs-attr">dbpath</span>=/usr/local/mongodb/data
+<span class="hljs-attr">logpath</span>=/usr/local/mongodb/logs/mongodb.log
+<span class="hljs-attr">port</span>=<span class="hljs-number">28001</span>
+<span class="hljs-attr">bind_ip</span>=<span class="hljs-number">0.0</span>.<span class="hljs-number">0.0</span>
+<span class="hljs-attr">logappend</span>=<span class="hljs-literal">true</span>
+<span class="hljs-attr">fork</span>=<span class="hljs-literal">true</span>
+<span class="hljs-attr">auth</span>=<span class="hljs-literal">false</span>
+</code></pre>
+<ul>
+<li><code>bind_ip=0.0.0.0</code>: 的作用是设置所有IP都可以连接mongodb，如果设置成<code>127.0.0.1</code>的话，就只能在服务器本地访问，其他地方（比如window通过可视化工具）无法连接上</li>
+<li><code>fork=true</code>: 设置后台运行</li>
+<li><code>auth=true</code>: 开启认证服务，为了方便远程无密码连接先设置false</li>
+</ul>
+<h2 id="3、启动服务端服务">3、启动服务端服务</h2>
+<p>进入bin，执行mongod，并且让其去读取之前我们写好的配置</p>
+<pre><code class="language-shell"><span class="hljs-keyword">cd</span> <span class="hljs-string">../bin/</span>
+
+<span class="hljs-string">./mongod</span> <span class="hljs-params">--config=</span><span class="hljs-string">../conf/mongodb.conf</span>
+</code></pre>
+<p><img src="./img/003/linux-mongodb.png" alt=""></p>
+<p>可以通过<code>ps aux |grep mongodb</code>查看进程</p>
+<p><img src="./img/003/mongo-grep.png" alt=""></p>
+<h2 id="4、启动客户端验证">4、启动客户端验证</h2>
+<p>验证：执行bin下的mongo命令，因为我们之前配置文件里面指定了<code>port=28001</code>，所以执行mongo命令也需要指定那个端口，能进入控制台说明安装完成</p>
+<pre><code class="language-shell"><span class="hljs-string">./mongo</span> <span class="hljs-params">--port=28001</span>
+</code></pre>
+<p><img src="./img/003/linux-mongo.png" alt=""></p>
+<h2 id="5、配置全局环境变量">5、配置全局环境变量</h2>
+<p>通过上面的方式配置的<code>mongo/mongod</code>，每次需要进入到<code>/usr/local/mongodb-4.4.3/bin</code> 才能执行<code>mongo/mongod命令</code></p>
+<p>如果觉得麻烦，可以把改bin目录配置到环境变量里面，这样在任何目录都可以自行</p>
+<pre><code class="language-shell">vim <span class="hljs-regexp">/etc/</span>profile
+</code></pre>
+<p>在最后面添加</p>
+<pre><code><span class="hljs-attribute">MONGO_HOME</span>=/usr/local/mongodb-4.4.3/bin
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">PATH</span>=<span class="hljs-variable">$MONGO_HOME</span>:$PATH
+</code></pre>
+<p>然后重启</p>
+<pre><code class="language-shell"><span class="hljs-keyword">source</span> <span class="hljs-regexp">/etc/</span>profile
+</code></pre>
+<p>这样就可以随时执行nginx命令了</p>
+<pre><code class="language-shell">mongod --<span class="hljs-built_in">help</span> <span class="hljs-comment"># mongod</span>
+mongo --<span class="hljs-built_in">help</span> <span class="hljs-comment"># mongo</span>
+</code></pre>
+<h2 id="6、关闭mongodb">6、关闭mongodb</h2>
+<p>执行<code>killall mongod</code></p>
+<h2 id="7、远程连接">7、远程连接</h2>
+<p>新版的mongodb据说默认集成了，如果没有看到的的话可以用下面的方式自己安装，<a href="https://www.mongodb.com/download-center/compass">compass下载链接</a></p>
+<p><img src="./img/003/compass.png" alt=""></p>
+<p>选择需要的平台下载</p>
+<p><img src="./img/003/compass-1.png" alt=""></p>
+<p>推荐wind下载zip，用exe的没有让我们选择安装路径，都不知道装到哪儿了。用zip的解压即可运行</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="002-react-redux">002-react-redux</h1>
+<p>redux是第三方出的一个js库，和react没有大的关系，随着用的人越来越多，react官网团队推出了一个<a href="https://www.redux.org.cn/docs/react-redux/">react-redux</a>，用以简化redux的操作流程</p>
+<pre><code><span class="hljs-built_in">npm</span> i redux redux-thunk react-redux
+</code></pre>
+<ul>
+<li><code>redux</code>: redux核心库</li>
+<li><code>redux-thunk</code>: 让redux支持异步action</li>
+<li><code>react-redux</code>: facebook出品，简化<code>react+redux</code>开发</li>
+</ul>
+<p><a href="https://github.com/zettle/practice/tree/main/react-redux-learn">【项目demo】</a></p>
+<h2 id="1、如何使用react-redux">1、如何使用react-redux</h2>
+<h3 id="11-项目结构">1.1 项目结构</h3>
+<pre><code>├─ src
+│   ├─ components
+│   │   ├─ Calculator   <span class="hljs-comment">// Calculator组件</span>
+│   │   └─ Person       <span class="hljs-comment">// Person组件</span>
+│   │
+│   ├─ redux
+│   │   ├─ actions          <span class="hljs-comment">// 声明各个action</span>
+│   │   │   ├─ count<span class="hljs-selector-class">.js</span>
+│   │   │   └─ person<span class="hljs-selector-class">.js</span>
+│   │   ├─ reducers         <span class="hljs-comment">// 集合各个reducer，然后对外暴露</span>
+│   │   │   ├─ count<span class="hljs-selector-class">.js</span>
+│   │   │   ├─ person<span class="hljs-selector-class">.js</span> 
+│   │   │   └─ index<span class="hljs-selector-class">.js</span>  
+│   │   ├─ constant<span class="hljs-selector-class">.js</span>      <span class="hljs-comment">// 定义各个actionName常量</span>
+│   │   └─ store<span class="hljs-selector-class">.js</span>         <span class="hljs-comment">// redux的store</span>
+│   │
+│   ├─ App<span class="hljs-selector-class">.js</span>       <span class="hljs-comment">// 主组件</span>
+│   └─ index<span class="hljs-selector-class">.js</span>     <span class="hljs-comment">// 主入口</span>
+</code></pre>
+<h3 id="12-编写代码">1.2 编写代码</h3>
+<ol>
+<li>在<code>/src/index.js</code> 用 <code>&lt;Provider /&gt;</code> 组件包裹整个 <code>&lt;App /&gt;</code> 组件</li>
+</ol>
+<p>目的是让App所有的后代容器组件（<code>connet()()</code>返回的就是容器组件）接收到store</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-dom&#x27;</span>;
+<span class="hljs-keyword">import</span> {Provider} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-redux&#x27;</span>;
+<span class="hljs-keyword">import</span> App <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./App&#x27;</span>;
+<span class="hljs-keyword">import</span> store <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./redux/store&#x27;</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">React.StrictMode</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Provider</span> <span class="hljs-attr">store</span>=<span class="hljs-string">{store}</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">App</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Provider</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">React.StrictMode</span>&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;root&#x27;</span>)
+);
+</code></pre>
+<ol start="2">
+<li>在<code>/src/App.js</code>中引用要展示的2个组件<pre><code class="language-jsx"><span class="hljs-keyword">import</span> React, { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
+<span class="hljs-keyword">import</span> Calculator <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./components/Calculator&#x27;</span>;
+<span class="hljs-keyword">import</span> Person <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./components/Person&#x27;</span>;
+</code></pre>
+</li>
+</ol>
+<p>export default class App extends Component {
+    render() {
+        return (
+            <div>
+                <Calculator></Calculator>
+                <hr/>
+                <Person></Person>
+            </div>
+        )
+    }
+}</p>
+<pre><code>
+<span class="hljs-number">3</span>. 在`<span class="hljs-regexp">/src/</span>redux/store.js`编写redux主入口
+```js
+<span class="hljs-keyword">import</span> {createStore, applyMiddleware} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;redux&#x27;</span>;
+<span class="hljs-keyword">import</span> thunk <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;redux-thunk&#x27;</span>;
+<span class="hljs-comment">// 经过combineReducers()汇总后的reducer</span>
+<span class="hljs-keyword">import</span> reducers <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./reducers&#x27;</span>;
+
+export <span class="hljs-keyword">default</span> createStore(reducers, applyMiddleware(thunk));
+</code></pre>
+<ol start="4">
+<li>在<code>/src/redux/reducers/index.js</code>中维护好reducers的集合</li>
+</ol>
+<p>所有的reducers在这里集合然后再暴露给store</p>
+<pre><code class="language-js"><span class="hljs-keyword">import</span> {combineReducers} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;redux&#x27;</span>;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">count</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./count&#x27;</span>;
+<span class="hljs-keyword">import</span> person <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./person&#x27;</span>;
+
+<span class="hljs-comment">// 汇总所有的reducer变为一个总的reducer</span>
+export <span class="hljs-keyword">default</span> combineReducers({
+    myCount: <span class="hljs-keyword">count</span>, <span class="hljs-comment">// 这里的key在页面使用connect创建连接时候使用</span>
+    person
+});
+</code></pre>
+<ol start="5">
+<li>编写<code>&lt;Calculator /&gt;</code>组件的reducers和actions服务</li>
+</ol>
+<p>在<code>/src/redux/reducers/count.js</code>编写reducers</p>
+<pre><code class="language-js"><span class="hljs-keyword">import</span> { INCREMENT } from <span class="hljs-string">&#x27;../constant&#x27;</span>;
+
+const initState = <span class="hljs-number">0</span>;
+export <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span></span> <span class="hljs-built_in">count</span> (preState = initState, <span class="hljs-keyword">action</span>) {
+    // 根据<span class="hljs-keyword">type</span>决定如何加工数据，<span class="hljs-keyword">action</span>.<span class="hljs-keyword">type</span>=指定值的说明是页面发来的，没有<span class="hljs-keyword">action</span>的说明是初始化
+    switch(<span class="hljs-keyword">action</span>.<span class="hljs-keyword">type</span>) {
+        <span class="hljs-keyword">case</span> INCREMENT:
+            <span class="hljs-keyword">return</span> preState + <span class="hljs-keyword">action</span>.<span class="hljs-keyword">data</span>;
+        // <span class="hljs-keyword">case</span> ...:
+        //     <span class="hljs-keyword">return</span> ...;
+        <span class="hljs-keyword">default</span>:
+            <span class="hljs-keyword">return</span> preState;
+    }
+}
+</code></pre>
+<blockquote>
+<ul>
+<li>默认数据要放在前面是一个好习惯，这样一眼就知道默认数据是什么</li>
+<li>reducers本质是一个函数，里面根据<code>action.type</code>来做不同处理，没有<code>action.type</code>说明是数据初始化阶段</li>
+</ul>
+</blockquote>
+<p>在<code>/src/redux/action/count.js</code>编写actions</p>
+<pre><code class="language-js"><span class="hljs-keyword">import</span> {INCREMENT} from <span class="hljs-string">&#x27;../constant&#x27;</span>;
+
+// 创建同步{<span class="hljs-keyword">type</span>:<span class="hljs-string">&#x27;increment&#x27;</span>, <span class="hljs-keyword">data</span>}的<span class="hljs-keyword">action</span>
+export <span class="hljs-function"><span class="hljs-keyword">function</span></span> createAddAction (<span class="hljs-keyword">data</span>) {
+    <span class="hljs-keyword">return</span> {<span class="hljs-keyword">type</span>:INCREMENT, <span class="hljs-keyword">data</span>};
+}
+</code></pre>
+<ol start="6">
+<li>封装UI组件，将其转为容器组件</li>
+</ol>
+<p>编写<code>/src/components/Calculator/index.jsx</code></p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> React, { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
+<span class="hljs-keyword">import</span> {connect} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-redux&#x27;</span>;
+<span class="hljs-keyword">import</span> {createAddAction} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../../redux/actions/count&#x27;</span>;
+
+<span class="hljs-comment">// UI组件</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Count</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>{
+    state = {
+        <span class="hljs-attr">num</span>: <span class="hljs-number">0</span>
+    }
+    add () {
+        <span class="hljs-comment">// 调用下面connect定义好的dispatch</span>
+        <span class="hljs-built_in">this</span>.props.jia(<span class="hljs-number">2</span>);
+    }
+    <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span> {
+        <span class="hljs-keyword">const</span> {num, personLen} = <span class="hljs-built_in">this</span>.props;
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>这是Calculator组件，下面组件人数:{personLen}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>计算结果: {num}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span>=&gt;</span>this.add()}&gt;计算+2<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+        )
+    }
+}
+
+<span class="hljs-comment">// 使用connect()()转为容器组件</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> connect(
+    <span class="hljs-comment">// 定义的数据，将作为props传递`&lt;Count&gt;`组件</span>
+    <span class="hljs-function">(<span class="hljs-params">state</span>) =&gt;</span> {
+        <span class="hljs-keyword">return</span> {  
+            <span class="hljs-attr">num</span>: state.myCount
+        };
+    },
+    <span class="hljs-comment">// 定义的动作，将作为props传递`&lt;Count&gt;`组件</span>
+    <span class="hljs-function">(<span class="hljs-params">dispatch</span>) =&gt;</span> {
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-attr">jia</span>: <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> dispatch(createAddAction(data))
+        };
+    }
+)(Count);
+</code></pre>
+<blockquote>
+<ul>
+<li>使用react-redux有一个准则，就是UI组件里面不要看到任何redux（<code>state/dispatch</code>等字样）的代码，关于redux的代码都放到容器组件里面</li>
+<li><code>connect(&lt;函数A&gt;,&lt;函数B&gt;)(&lt;UI组件&gt;)</code>的作用是将组件转为容器组件，这样就可以接受到redux数据了<ul>
+<li>第1个参数是接受2个函数，其返回值将作为UI组件的props属性传递过去</li>
+<li>第2个参数传递我们的UI组件</li>
+</ul>
+</li>
+<li><code>函数B</code>除了可以是一个函数，也可以是一个JSON格式</li>
+</ul>
+</blockquote>
+<p>可以简写为下面</p>
+<pre><code class="language-jsx">export <span class="hljs-keyword">default</span> connect(
+    <span class="hljs-keyword">state</span> =&gt; ({
+        num: <span class="hljs-keyword">state</span>.myCount,
+        personLen: <span class="hljs-keyword">state</span>.person.length
+    }),
+    // 用json的写法
+    {
+        jia: (data) =&gt; createAddAction(data)  // redux发现这里是一个action，就会自动去派发
+    }
+)(Count);
+</code></pre>
+<p>自此，组件<code>&lt;Calculator /&gt;</code>封装完成</p>
+<ol start="7">
+<li><code>&lt;Person /&gt;</code>组件的异步action
+<code>&lt;Person /&gt;</code>组件的添加用户，是需要经过后台的（用setTimeout模拟）,这是一个异步action</li>
+</ol>
+<p>编写<code>/src/redux/actions/person.js</code></p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> {ADD_PERSON} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../constant&#x27;</span>;
+
+<span class="hljs-comment">// 同步action，本质是返回一个JSON格式，格式`{type:&lt;action名称&gt;, data:&lt;data&gt;}`</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> createAddPersonAction = <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> ({<span class="hljs-attr">type</span>: ADD_PERSON, data});
+
+<span class="hljs-comment">// 异步action，本质是返回一个函数，该函数接收dispatch方法，在处理完异步后，调用dispath触发同步action</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> createAddPersonAsyncAction = <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">disaptch</span>) =&gt;</span> {
+        <span class="hljs-comment">// 用setTimeout模拟网络请求</span>
+        <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+            disaptch(createAddPersonAction(data));
+        }, <span class="hljs-number">500</span>);
+    }
+};
+</code></pre>
+<blockquote>
+<p>异步action本质是一个返回一个函数</p>
+</blockquote>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

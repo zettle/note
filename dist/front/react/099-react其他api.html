@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="099-react其他api">099-react其他api</h1>
+<h2 id="-卸载">| 卸载</h2>
+<ul>
+<li><code>ReactDOM.unmountComponentAtNode(元素)</code>: 把组件从指定DOM的元素卸载掉<pre><code class="language-js"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+render () {
+  <span class="hljs-keyword">return</span> &lt;h1&gt;<span class="hljs-type">Hello</span>&lt;/h1&gt;
+}
+}
+<span class="hljs-type">ReactDOM</span>.render(&lt;<span class="hljs-type">App</span> /&gt;, document.getElementById(<span class="hljs-symbol">&#x27;roo</span>t&#x27;));
+</code></pre>
+</li>
+</ul>
+<p>setTimeout(() =&gt; {
+  ReactDOM.unmountComponentAtNode(document.getElementById(&#39;root&#39;)); // 卸载
+}, 1000);</p>
+<pre><code>&gt; 这个可以用在js里面，让弹窗插件消失
+
+
+
+
+<span class="hljs-meta">## | 虚拟节点</span>
+```js
+<span class="hljs-params">&lt;Fragment&gt;</span><span class="hljs-params">&lt;Fragment&gt;</span>
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

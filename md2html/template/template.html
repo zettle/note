@@ -21,16 +21,27 @@
 <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 $(() => {
+    // 做左侧的树状菜单
     const oIdDom = $('article [id]');
     const mdNav = $('#md-nav');
     let liStr = '';
     $.each(oIdDom, (i, idDom) => { 
         const level = idDom.nodeName.slice(-1);
-        const id$ = $(idDom);
-        const classNames = `level-${level}`;
-        liStr += `<li><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
     });
     mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
 });
 </script>
 </body>

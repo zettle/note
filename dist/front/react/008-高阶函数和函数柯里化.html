@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="008-高阶函数和函数柯里化">008-高阶函数和函数柯里化</h1>
+<h2 id="1、高阶函数">1、高阶函数</h2>
+<p>如果一个函数A能满足下面其中的一条，那么该函数就是一个高阶函数</p>
+<ul>
+<li>若函数A，接收的参数是一个函数，那么A就是一个高阶函数</li>
+<li>若调用函数A，返回值依旧是一个函数，那么A就是一个高阶函数</li>
+</ul>
+<p>js中我们已经见过很多的高阶函数了，比如<code>Promise/setTimeout/arr.map()</code></p>
+<h2 id="2、函数的柯里">2、函数的柯里</h2>
+<p>调用函数A，函数A返回的是一个函数（我们暂命名为函数B），调用函数B，实现多次接收参数，最后统一处理额编码方式</p>
+<pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sum</span> <span class="hljs-params">(a,b,c)</span> {</span>
+    <span class="hljs-keyword">return</span> a+b+c;
+}
+<span class="hljs-built_in">sum</span>();
+
+<span class="hljs-comment">// 函数柯里化</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sumTotal</span> <span class="hljs-params">(a)</span> {</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(b)</span> {</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(c)</span> {</span>
+            <span class="hljs-keyword">return</span> a+b+c;
+        }
+    }
+}
+sumTotal(<span class="hljs-number">1</span>)(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>);
+</code></pre>
+<p>从上面的例子中，调用<code>sumTotal()</code>会得到一个函数A，继续调用函数A，得到函数B。最后在一起计算<code>a+b+c</code></p>
+<p>那么函数柯里化在react使用场景:</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  state = {
+    username: &#x27;&#x27;,
+    password: &#x27;&#x27;
+  };
+  <span class="hljs-comment">// 这里就是一个函数柯里化</span>
+  saveFormData = (filedName) =&gt; {
+    <span class="hljs-keyword">return</span> (ev) =&gt; {
+      <span class="hljs-keyword">this</span>.setState({[filedName]: ev.target.value});
+    }
+  };
+  render () {
+    <span class="hljs-keyword">return</span> (
+      &lt;div&gt;
+        账号: &lt;input onChange={<span class="hljs-keyword">this</span>.saveFormData(<span class="hljs-symbol">&#x27;usernam</span>e&#x27;)} /&gt;
+        密码: &lt;input onChange={<span class="hljs-keyword">this</span>.saveFormData(<span class="hljs-symbol">&#x27;passwor</span>d&#x27;)} /&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

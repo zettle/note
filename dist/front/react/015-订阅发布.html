@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="015-订阅发布">015-订阅发布</h1>
+<p>react本身没有订阅发布功能，可以借助第3方库来实现，这里介绍一个<a href="https://www.npmjs.com/package/pubsub-js">pubsub-js</a></p>
+<p>用法</p>
+<pre><code class="language-js"><span class="hljs-comment">// 订阅，接收2个参数，第1个参数是事件名称</span>
+const token = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">PubSub</span>.</span></span>subscribe(&#x27;yoyo&#x27;,<span class="hljs-function"> (<span class="hljs-params">msg</span>, <span class="hljs-params">data</span>) =&gt;</span> {
+    console.log(msg, data);
+});
+
+<span class="hljs-comment">// 取消订阅</span>
+<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">PubSub</span>.</span></span>unsubscribe(token);
+
+<span class="hljs-comment">// 发布</span>
+<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">PubSub</span>.</span></span>publish(&#x27;yoyo&#x27;, {name:&#x27;xiaoming&#x27;,age:<span class="hljs-number">23</span>});
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

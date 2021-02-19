@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="016-setstate的详解">016-setState的详解</h1>
+<h2 id="1、setstate是一个异步的过程">1、setState()是一个异步的过程</h2>
+<pre><code class="language-js">this.<span class="hljs-built_in">set</span>State({
+    num: this.<span class="hljs-keyword">state</span>.num+<span class="hljs-number">1</span>
+});
+
+// 每次打印出来的都是还没+<span class="hljs-number">1</span>的值
+// 如果是获取DOM，也是获取到还没更新前的DOM数据
+console.<span class="hljs-keyword">log</span>(this.<span class="hljs-keyword">state</span>.num); 
+</code></pre>
+<p>当我们需要改变后的state时候，需要用到第2个参数</p>
+<pre><code class="language-js">this.<span class="hljs-built_in">set</span>State({
+    num: this.<span class="hljs-keyword">state</span>.num+<span class="hljs-number">1</span>
+}, () =&gt; {
+    // 获取到就是<span class="hljs-keyword">state</span>改变后的数据
+    // DOM也是完成了更新
+    console.<span class="hljs-keyword">log</span>(this.<span class="hljs-keyword">state</span>.num);
+});
+</code></pre>
+<h2 id="2、setstate可以接收一个函数">2、setState()可以接收一个函数</h2>
+<p>我们最常用的是下面的写法</p>
+<pre><code class="language-js">this.<span class="hljs-built_in">set</span>State({
+    num: this.<span class="hljs-keyword">state</span>.num+<span class="hljs-number">1</span>
+});
+</code></pre>
+<p>但是也可以传递一个函数进去</p>
+<pre><code class="language-js">this.<span class="hljs-built_in">set</span>State((<span class="hljs-keyword">state</span>, props) =&gt; {
+    return {num: <span class="hljs-keyword">state</span>.num+<span class="hljs-number">1</span>}
+});
+</code></pre>
+<ul>
+<li>该函数接收2个参数，当前的state和props数据，最后返回一个JSON，react会按照这个JSON去更新数据</li>
+<li>这样写的好处是，有state和props直接传递过来，就不需要通过<code>this.state.xxx/this.props.yyy</code>获取，直接用<code>state.xxx/props.yyy</code>既可获取</li>
+</ul>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

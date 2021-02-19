@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="003-redux的chrome扩展">003-redux的chrome扩展</h1>
+<p>redux也有chrome扩展插件可以将数据可视化</p>
+<ol>
+<li>安装<a href="https://chrome.zzzmh.cn/info?token=lmhkpmbekcpmknklioeibfkpmmfibljd">Redux-DevTools</a></li>
+</ol>
+<p>安装后，chrome多了个redux的图标</p>
+<p><img src="./img/chrome.png" alt=""></p>
+<p>当我们启动redux后，这个图标依旧是灰色的。</p>
+<p>是因为这个插件需要我们在代码里面配合改动</p>
+<ol start="2">
+<li>项目引入redux-devtools-extension</li>
+</ol>
+<p>安装: <code>npm i -D redux-devtools-extension</code></p>
+<p>引入，修改我们创建store的地方</p>
+<pre><code class="language-js"><span class="hljs-comment">// 修改`/src/redux/store.js`</span>
+
+<span class="hljs-keyword">import</span> {createStore, applyMiddleware} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;redux&#x27;</span>;
+<span class="hljs-keyword">import</span> thunk <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;redux-thunk&#x27;</span>;
+<span class="hljs-keyword">import</span> {composeWithDevTools} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;redux-devtools-extension&#x27;</span>;
+<span class="hljs-keyword">import</span> reducers <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./reducers&#x27;</span>;
+
+<span class="hljs-comment">// 用composeWithDevTools在包裹一层，然后传递给第2个参数</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> createStore(reducers, composeWithDevTools(applyMiddleware(thunk)));
+</code></pre>
+<ol start="3">
+<li>再启动项目</li>
+</ol>
+<p>可以看到再启动项目后，能看到图标亮了</p>
+<p><img src="./img/redux-devtool.png" alt=""></p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

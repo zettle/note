@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="014-配置代理">014-配置代理</h1>
+<p>create-react-app 构建的项目使用代理 proxy</p>
+<h2 id="1、在-packagejson-中配置">1、在 <code>package.json</code> 中配置</h2>
+<p>在<code>package.json</code>中配置，只能配置字符串，脚手架会现在本地react工程启的服务上找，找不到就会根据这里的代理去找</p>
+<p>缺点: 只能配置一个代理</p>
+<p>语法: 在<code>package.json</code>配置如下</p>
+<pre><code class="language-json">{
+    <span class="hljs-attr">&quot;proxy&quot;</span>: <span class="hljs-string">&quot;https://localhost:5000/api&quot;</span>
+}
+</code></pre>
+<blockquote>
+<p>比如node工程起的是<code>http://localhost:5000</code>，react工程起的是<code>http://localhost:3000</code>。那么这种配置会优先在<code>https://localhost:3000</code>找，找不到就去<code>http://localhost:5000</code>找</p>
+</blockquote>
+<h2 id="2、在-setupproxyjs-配置">2、在 <code>setupProxy.js</code> 配置</h2>
+<p>新建<code>/src/setupProxy.js</code>文件（一定是要这个路径和这个文件名），内容如下:</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> proxy = <span class="hljs-keyword">require</span>(<span class="hljs-string">&quot;http-proxy-middleware&quot;</span>);
+ 
+module.exports = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(app)</span> </span>{
+  app.<span class="hljs-keyword">use</span>(
+    proxy(<span class="hljs-string">&quot;/api&quot;</span>, {
+      target: <span class="hljs-string">&#x27;http://localhost:5000&#x27;</span>,
+      changeOrigin: <span class="hljs-keyword">true</span>, <span class="hljs-comment">// 控制服务器收到的请求头中Host的值</span>
+      pathRewrite: {<span class="hljs-string">&#x27;^api&#x27;</span>: <span class="hljs-string">&#x27;&#x27;</span>}
+    })
+  );
+  app.<span class="hljs-keyword">use</span>(
+    proxy(<span class="hljs-string">&quot;/chanel_api/**&quot;</span>, {
+      target: <span class="hljs-string">&quot;https://easy-mock.com/mock/5c0f31837214cf627b8d43f0/&quot;</span>,
+      changeOrigin: <span class="hljs-keyword">true</span>
+    })
+  );
+};
+</code></pre>
+<ul>
+<li><code>changeOrigin: true</code>: 这个是控制服务器收到的请求头中Host的值。</li>
+</ul>
+<p>比如node工程起的是<code>http://localhost:5000</code>，react工程起的是<code>http://localhost:3000</code>。</p>
+<p>设置为true，则服务器打印<code>Host=http://localhost:5000</code>，进而让服务器以为是自己服务发起的
+设置为false，则服务器打印<code>Host=http://localhost:3000</code>。</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

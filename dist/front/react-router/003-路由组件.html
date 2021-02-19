@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="003-路由组件">003-路由组件</h1>
+<p>像前面通过<code>&lt;Route path=&quot;/about&quot; component={About} /&gt;</code>，通过路由匹配自动展示的就是路由组件</p>
+<h2 id="1、路由组件的props">1、路由组件的props</h2>
+<p>路由匹配后，<code>react-router-dom</code>会自动传一些props给该组件</p>
+<p>分别有下面几个常用属性</p>
+<pre><code class="language-js">{
+<span class="hljs-symbol">    history:</span> {
+<span class="hljs-symbol">        action:</span> <span class="hljs-string">&quot;POP&quot;</span>
+<span class="hljs-symbol">        go:</span> (n) =&gt; {}          <span class="hljs-comment">// 编程式路由</span>
+<span class="hljs-symbol">        goBack:</span>() =&gt; {}        <span class="hljs-comment">// 编程式路由</span>
+<span class="hljs-symbol">        goForward:</span> () =&gt; {}    <span class="hljs-comment">// 编程式路由</span>
+<span class="hljs-symbol">        listen:</span> (listener) =&gt; {}
+<span class="hljs-symbol">        push:</span> (path, state) =&gt; {}      <span class="hljs-comment">// 编程式路由</span>
+<span class="hljs-symbol">        replace:</span> (path, state) =&gt; {}   <span class="hljs-comment">// 编程式路由</span>
+    },
+<span class="hljs-symbol">
+    location:</span> {
+<span class="hljs-symbol">        hash:</span> <span class="hljs-string">&quot;&quot;</span>
+<span class="hljs-symbol">        pathname:</span> <span class="hljs-string">&quot;/home&quot;</span>
+<span class="hljs-symbol">        search:</span> <span class="hljs-string">&quot;&quot;</span>
+<span class="hljs-symbol">        state:</span> undefined
+    },
+<span class="hljs-symbol">    
+    match:</span> {
+<span class="hljs-symbol">        isExact:</span> true
+<span class="hljs-symbol">        params:</span> {}, <span class="hljs-comment">// 获取到动态路由的参数</span>
+<span class="hljs-symbol">        path:</span> <span class="hljs-string">&quot;/home&quot;</span>
+<span class="hljs-symbol">        url:</span> <span class="hljs-string">&quot;/home&quot;</span>
+    }
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

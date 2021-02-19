@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="002-diff的升级">002-diff的升级</h1>
+<p>比如下面代码:</p>
+<pre><code class="language-html"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>标题<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span></span><span class="hljs-template-variable">{{<span class="hljs-name">age</span>}}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+</code></pre>
+<p>在vue@2中，会根据上面的DOM生成一个DOM树，如下:</p>
+<p><img src="./img/vue-2-tree.png" alt=""></p>
+<p>当数据发生改变，vue会生成一个新的虚拟DOM数，如下:</p>
+<p><img src="./img/vue-2-tree-diff.png" alt=""></p>
+<p>然后，从 <code>div</code> 开始一个个进行比较，最后发现是 <code>span</code> 改变了，那么就把span替换掉</p>
+<p>这样其实有点问题，像 <code>div/span</code> 是写死的，无论数据怎么变， <code>div/h1</code> 都不会变，其实是没有必要进行对比的，这就是vue@3所解决的diff算法。</p>
+<p>vue@3在创建DOM树的时候给DOM会发生变化的添加静态标识，当数据发生变化的时候，只对比有静态标识的DOM</p>
+<p><img src="./img/vue3-tree.png" alt=""></p>
+<p>验证上面的想法，在(官方在线编译vue代码)[<a href="https://vue-next-template-explorer.netlify.app/%5D%E4%B8%8A%E7%BC%96%E8%BE%91%E6%88%91%E4%BB%AC%E7%9A%84%E4%BB%A3%E7%A0%81%EF%BC%8C%E5%BE%97%E5%88%B0%E4%B8%8B%E9%9D%A2%E7%BB%93%E6%9E%9C%EF%BC%9A">https://vue-next-template-explorer.netlify.app/]上编辑我们的代码，得到下面结果：</a></p>
+<p><img src="./img/vue3-complier.png" alt=""></p>
+<p>从图中可以看出，有数据绑定的有 <code>1</code> 这个标识</p>
+<p>在vue@3中，像 <code>1</code> 的这种标识还有如下：</p>
+<ul>
+<li><code>1</code>: 动态文本节点，<code>text = 1</code></li>
+<li><code>2</code>: 动态class，<code>class = 1 &lt;&lt; 1</code> </li>
+<li><code>4</code>: 动态style，<code>style = 1 &lt;&lt; 2</code></li>
+<li><code>8</code>: 动态属性，不包含类名和样式，<code>props = 1 &lt;&lt; 3</code></li>
+<li><code>16</code>: 具有动态key属性，当key改变时，需要进行完整的diff比较，<code>full_props = 1 &lt;&lt; 4</code></li>
+<li><code>32</code>: 具有监听事件的节点，<code>hydrate_events = 1 &lt;&lt; 5</code></li>
+<li><code>64</code>: 一个不会改变子节点顺序的frament，<code>stable_fragment = 1 &lt;&lt; 6</code>
+等等</li>
+</ul>
+<p>这一部分定义在<a href="https://github.com/vuejs/vue-next/blob/master/packages/shared/src/patchFlags.ts">枚举里面</a></p>
+<h2 id="2、静态提升">2、静态提升</h2>
+<p>在 vue@2 中，无论元素是否参与更新，都要被重新创建，然后再渲染</p>
+<p>在 vue@3 中，对于不参与更新的元素，会做静态提升，只会被创建一次，在渲染的时候复用即可</p>
+<p>验证，还是借助<a href="https://vue-next-template-explorer.netlify.app">vue编译平台</a></p>
+<p>有下面代码:</p>
+<pre><code class="language-html"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>标题<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>标题<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>标题<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span></span><span class="hljs-template-variable">{{<span class="hljs-name">age</span>}}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+</code></pre>
+<p>如果没有静态提升，编译后是下面结果</p>
+<p><img src="./img/vue3-static.png" alt=""></p>
+<p>可以看出，每次数据发生改变的时候，会调用render，而render每次都有调用 <code>createNode</code> 去渲染3个写死的 <code>&lt;h1&gt;</code></p>
+<p>我们点击 <code>options - hoistatic</code> 让其开启静态提升功能</p>
+<p><img src="./img/vue3-static-2.png" alt=""></p>
+<p>相同的代码，得到下面的结果:</p>
+<p><img src="./img/vue3-static-3.png" alt=""></p>
+<p>可以看到，没有数据绑定的3个 <code>&lt;h1&gt;</code> 被提取到了 render 外面，当数据发生改变调用render，render里面直接拿外面创建好的，而不会又再调用render去创建 <code>&lt;h1&gt;</code></p>
+<h2 id="3、事件缓存">3、事件缓存</h2>
+<p>默认情况下，<code>@click</code> 会被视为动态绑定，所以每次都会去追踪它的变化。但是因为是同一个函数，其实没必要跟踪，直接缓存起来复用即可。</p>
+<p>还是借助<a href="https://vue-next-template-explorer.netlify.app">vue在线编译平台</a></p>
+<p>比如下面代码:</p>
+<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;say&quot;</span>&gt;</span>点击<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+</code></pre>
+<p>在开启事件缓存之前，编译结果如下:</p>
+<p><img src="./img/vue-click.png" alt=""></p>
+<p>可以开出，在开启事件缓存之前，编译后的代码有个静态标记 <code>8</code>。在前面diff算法中我们知道数字8表示属性绑定，每次数据发生改变，就会对比。</p>
+<p>但是在事件中，我们绑定的是一个函数，其实是没有必要进行对比的。</p>
+<p>开启事件缓存</p>
+<p><img src="./img/vue-click-2.png" alt=""></p>
+<p>开启事件缓存之后，相同代码编译结果</p>
+<p><img src="./img/vue-click-3.png" alt=""></p>
+<p>可以看出，现在已经没有静态标识了，当数据发生改变，也不会触发校验</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

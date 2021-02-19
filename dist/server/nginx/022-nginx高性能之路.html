@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="022-nginx高性能之路">022-nginx高性能之路</h1>
+<p><a href="https://www.cnblogs.com/architectforest/p/12795040.html">参考资料</a></p>
+<h4 id="1-配置worker_processes">1. 配置worker_processes</h4>
+<p><code>worker_processes</code>: work进程数。</p>
+<p>推荐设置: CPU数*核数，比如2个四核的CPU那么就设置为8</p>
+<p><code>worker_cpu_affinity</code>: 为每个进程分配cpu，比如下面的demo就是为8个进程分配到8个CPU中，当然可以写多个，或者将一个进程分配到多个CPU中</p>
+<p><a href="https://blog.csdn.net/u011957758/article/details/50959823">worker_cpu_affinity资料</a></p>
+<pre><code class="language-nginx"><span class="hljs-attribute">worker_processes</span>  <span class="hljs-number">8</span>;
+<span class="hljs-attribute">worker_cpu_affinity</span> <span class="hljs-number">00000001</span> <span class="hljs-number">00000010</span> <span class="hljs-number">00000100</span> <span class="hljs-number">00001000</span> <span class="hljs-number">00010000</span> <span class="hljs-number">00100000</span> <span class="hljs-number">01000000</span> <span class="hljs-number">10000000</span>;
+</code></pre>
+<h4 id="2-配置worker_rlimit_nofile">2. 配置worker_rlimit_nofile</h4>
+<p><code>worker_rlimit_nofile</code>: worker进程最大打开文件数。理论上应该是最多打开文件数（<code>ulimit -n</code>）于nginx进程数（<code>worker_processes</code>）相除，但是nginx分配请求并不是那么均匀，所有最好于<code>ulimit -n</code>的值保持一致</p>
+<p>现在在Linux2.6内核下开启文件打开数为65535，worker_rlimit_nofile就相应应该设置65535</p>
+<p>这是因为nginx调度时分配请求到进程并不是那么均衡，所以加入设置10240，总并发量达到3-4万就有进程可能超过10240了，这个时候就会返回502错误</p>
+<blockquote>
+<p>查看Linux最多打开文件数: <code>ulimit -n</code></p>
+</blockquote>
+<h4 id="3-优先epoll模型">3. 优先epoll模型</h4>
+<pre><code class="language-nginx"><span class="hljs-section">events</span> {
+    <span class="hljs-attribute">use</span> <span class="hljs-literal">epoll</span>;
+}
+</code></pre>
+<p>nginx优先使用epoll模型</p>
+<h4 id="4-配置worker_connections">4. 配置worker_connections</h4>
+<p>每个进程允许的最多连接数，理论上<code>一台centos服务器的最大连接数 = worker_connections * worker_processes</code></p>
+<p>推荐设置: 最多打开文件数（<code>ulimit -n</code>）相同</p>
+<pre><code class="language-nginx"><span class="hljs-section">events</span> {
+    <span class="hljs-attribute">worker_connections</span>  <span class="hljs-number">65535</span>;
+}
+</code></pre>
+<h4 id="5-配置keepalive_timeout">5. 配置keepalive_timeout</h4>
+<p>keepalive的超时时间</p>
+<p>浏览器经过握手链接服务器后，不会立即中断，后面的请求就会继续沿用上次的，称为keepalive。</p>
+<p>这个值对于同一个浏览器的请求是有帮助，但是对于不同浏览器请求就是无意的，比如有10万个用户同时请求一个链接的时候，这10万个请求是不同地方来的，都是首次建立链接，这个值太大了反而占据了较多cpu资源</p>
+<p>推荐设置: 20-60</p>
+<pre><code class="language-nginx"><span class="hljs-section">http</span> {
+    <span class="hljs-attribute">keepalive_timeout</span>  <span class="hljs-number">65</span>;
+}
+</code></pre>
+<h4 id="6-配置client_header_buffer_size">6. 配置client_header_buffer_size</h4>
+<p>客户端请求头部的缓冲区的大小，这个可以根据系统分页大小来设置，一般一个请求头打大小不会超过1K，不过由于一般系统分页都要大于1K，所以这里设置为分页大小</p>
+<pre><code class="language-nginx"><span class="hljs-section">http</span> {
+    <span class="hljs-attribute">client_header_buffer_size</span> <span class="hljs-number">4k</span>;
+}
+</code></pre>
+<blockquote>
+<p>查询系统分页大小的方法: <code>getconf PAGESIZE</code>， 比如得到的值是4096，那么就是4K，<code>4K=4096/1024</code></p>
+</blockquote>
+<blockquote>
+<p>也有client_header_buffer_size超过4K的情况，但即使是这样client_header_buffer_size也必须设置为“系统分页大小”的整数倍</p>
+</blockquote>
+<h4 id="7-配置open_file">7. 配置open_file</h4>
+<p>打开文件指定缓存，默认是没有开启的</p>
+<p>位置: <code>http - server - location</code></p>
+<ul>
+<li><code>open_file_cache</code>: max指缓存数量，推荐和“系统打开文件数”（<code>ulimit -n</code>）一致。inactive是指经过多长时间文件没被请求后删除缓存</li>
+<li><code>open_file_cache_valid</code>: 多长时间检查一次缓存的有效信息</li>
+<li><code>open_file_cache_min_uses</code>: open_file_cache指令中inactive参数时间内文件最少使用次数，如果超过这个次数，文件描述符一直是在缓存中打开的。比如设置<pre><code>open_file_cache <span class="hljs-attribute">max</span>=65535 <span class="hljs-attribute">inactive</span>=30s;
+open_file_cache_min_uses 2; 
+</code></pre>
+上次的意思是30s内，最少有2个文件在使用，那么这个缓存就不会失效</li>
+</ul>
+<pre><code class="language-nginx"><span class="hljs-section">http</span> {
+    <span class="hljs-attribute">open_file_cache</span> max=<span class="hljs-number">65535</span> inactive=<span class="hljs-number">30s</span>;
+    <span class="hljs-attribute">open_file_cache_valid</span> <span class="hljs-number">60s</span>;
+    <span class="hljs-attribute">open_file_cache_min_uses</span> <span class="hljs-number">2</span>;
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

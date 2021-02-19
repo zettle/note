@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="018-context通讯">018-context通讯</h1>
+<p>context特别适合祖孙组件通讯</p>
+<p>类似vue的<code>privide</code>和<code>inject</code>，用来解决如果跨了很多层级组件的时候，祖先组件和后代组件的数据通讯。</p>
+<h2 id="一、基本概念">一、基本概念</h2>
+<p>react有2个角色，一个是Provider，一个是Consumer。Provider在外成的组件，内部需要数据的，就用Consumer来读取。</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> Context = React.createContext();
+<span class="hljs-keyword">const</span> ContextProvider = Context.Provider; <span class="hljs-comment">// Context.Privider不是方法，是个组件</span>
+<span class="hljs-keyword">const</span> ContextConsumer = Context.Consumer; 
+
+<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>hello<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+    {/* value固定，不能改为其他 */}
+    <span class="hljs-tag">&lt;<span class="hljs-name">ContextProvider</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{person}</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">ContextConsumer</span>&gt;</span>
+            {(person) =&gt; {
+                return (
+                    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>姓名：{person.name}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+                        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;button&quot;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{person.sayHello}</span>&gt;</span>触发<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+                    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+                );
+            }}
+        <span class="hljs-tag">&lt;/<span class="hljs-name">ContextConsumer</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">ContextProvider</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+</code></pre>
+<p>在<code>ContextProvider</code>中，通过<code>value</code>属性往下层传递，后代组件通过函数并接受<code>value</code>得到传递过来的数据</p>
+<p>注意下，在Provider中的value属性名不能改成其他的。</p>
+<p>完整的代码如下</p>
+<pre><code class="language-js"><span class="hljs-comment">// personContext.js 代码（作为2端的中间通讯层）</span>
+
+<span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
+
+<span class="hljs-keyword">const</span> Context = React.createContext();
+<span class="hljs-keyword">const</span> ContextProvider = Context.Provider; <span class="hljs-comment">// Context.Privider不是方法，是个组件</span>
+<span class="hljs-keyword">const</span> ContextConsumer = Context.Consumer; 
+<span class="hljs-keyword">export</span> {ContextProvider, ContextConsumer};
+</code></pre>
+<pre><code class="language-js"><span class="hljs-comment">// App.js 代码（作为祖先组件）</span>
+<span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
+<span class="hljs-keyword">import</span> Son <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./Son&#x27;</span>;
+<span class="hljs-keyword">import</span> { ContextProvider } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./personContext&#x27;</span>;
+
+<span class="hljs-keyword">const</span> person = {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;小明&#x27;</span>,
+    sayHello () {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;hello&#x27;</span>);
+    }
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+    <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span> {
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>hello<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+                {/* value固定，不能改为其他 */}
+                <span class="hljs-tag">&lt;<span class="hljs-name">ContextProvider</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{person}</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">Son</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">Son</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">ContextProvider</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+        );
+    }
+}
+</code></pre>
+<pre><code class="language-js"><span class="hljs-comment">// Son.js 代码 （作为后台组件）</span>
+<span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
+<span class="hljs-keyword">import</span> { ContextConsumer } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./personContext&#x27;</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+    render () {
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>这是son组件<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">ContextConsumer</span>&gt;</span>
+                    {(person) =&gt; {
+                        return (
+                            <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                                <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>姓名：{person.name}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+                                <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;button&quot;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{person.sayHello}</span>&gt;</span>触发<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+                            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+                        );
+                    }}
+                <span class="hljs-tag">&lt;/<span class="hljs-name">ContextConsumer</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+        );
+    }
+}
+</code></pre>
+<h2 id="二、-改造成hoc">二、 改造成HOC</h2>
+<p>从上面可以看出<code>App.js</code>和<code>Son.js</code>其实就是一个组件（<code>ContextProvider</code> 和 <code>ContextConsumer</code>）包含这另外一个组件，这种就可以改造为HOC。</p>
+<p>比如<code>App.js</code>可以改造成下面的</p>
+<pre><code class="language-js"><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
+<span class="hljs-keyword">import</span> Son <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./Son&#x27;</span>;
+<span class="hljs-keyword">import</span> { ContextProvider } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./personContext&#x27;</span>;
+
+<span class="hljs-keyword">const</span> person = {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;小明&#x27;</span>,
+    sayHello () {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;hello&#x27;</span>);
+    }
+};
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">providerHoc</span> (<span class="hljs-params">Com</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-params">props</span> =&gt;</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ContextProvider</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{person}</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">Com</span> {<span class="hljs-attr">...props</span>}&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">Com</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">ContextProvider</span>&gt;</span></span>
+    )
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+    <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span> {
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Son</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">Son</span>&gt;</span></span>
+        );
+    }
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> providerHoc(App);
+</code></pre>
+<p><code>Son.js</code>可以改造成下面的</p>
+<pre><code class="language-js"><span class="hljs-keyword">import</span> <span class="hljs-type">React</span> from <span class="hljs-symbol">&#x27;reac</span>t&#x27;;
+<span class="hljs-keyword">import</span> { <span class="hljs-type">ContextConsumer</span> } from &#x27;./personContext&#x27;;
+
+function withComsumer (<span class="hljs-type">Com</span>) {
+    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WithComsumerCom</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+        render () {
+            <span class="hljs-keyword">return</span> (
+                &lt;<span class="hljs-type">ContextConsumer</span>&gt;
+                    {personInfo =&gt; {
+                        <span class="hljs-keyword">return</span> (
+                            <span class="hljs-comment">// 把personInfo作为参数再传递进去</span>
+                            &lt;<span class="hljs-type">Com</span> {...<span class="hljs-keyword">this</span>.props} personInfo={personInfo}&gt;&lt;/<span class="hljs-type">Com</span>&gt;
+                        );
+                    }}
+                &lt;/<span class="hljs-type">ContextConsumer</span>&gt;
+            );
+        }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-type">WithComsumerCom</span>;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Son</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+    render () {
+        <span class="hljs-keyword">return</span> (
+            &lt;div&gt;
+                &lt;h5&gt;这是<span class="hljs-type">Son</span>&lt;/h5&gt;
+                &lt;p&gt;姓名：{<span class="hljs-keyword">this</span>.props.personInfo.name}&lt;/p&gt;
+            &lt;/div&gt;
+        );
+    }
+}
+
+export <span class="hljs-keyword">default</span> withComsumer(<span class="hljs-type">Son</span>);
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

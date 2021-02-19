@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="014-nginx的location匹配">014-nginx的location匹配</h1>
+<p>location即定位的意思，可以把网站的不同uri部分，定位到不同的处理方式上</p>
+<h2 id="1、语法">1、语法</h2>
+<p>location语法如下:</p>
+<pre><code><span class="hljs-keyword">location</span> <span class="hljs-title">[=|~|~*|^-] [uri</span>] {
+}
+</code></pre>
+<p>中间的 <code>[=|~|~*|^~]</code> 是匹配的修饰符，可以省略</p>
+<ul>
+<li>省略不写，即<code>locaton [uri]</code>: 称为一般匹配<ul>
+<li>对当前路径及子路径下的所有对象都生效</li>
+</ul>
+</li>
+<li><code>locaton = [uri]</code>: 称为精准匹配<ul>
+<li>只对当前路径生效，不包括子路径</li>
+</ul>
+</li>
+<li><code>locaton [~|~*] [uri]</code>: 称为模式匹配<ul>
+<li>此处的uri可以用正则表达式</li>
+<li><code>~</code> 和 <code>~*</code> 的区别，前者区分字母大小写，后者不区分字母大小写</li>
+</ul>
+</li>
+<li><code>locaton ^~ [uri]</code>: 不使用正则表达式</li>
+</ul>
+<h2 id="2、如何发挥作用">2、如何发挥作用</h2>
+<p>上面几种匹配模式，有优先级区分</p>
+<p>第1优先级: <code>location = [uri]</code> 匹配到了就停止继续匹配</p>
+<p>第2优先级:  <code>locaton ^~ [uri]</code></p>
+<p>第3优先级:  <code>locaton [~|~*] [uri]</code></p>
+<p>第4优先级:  <code>locaton [uri]</code></p>
+<p><strong>场景1：</strong>看下面配置
+当访问 <code>http://aaa.com/</code> 有下面配置</p>
+<pre><code class="language-nginx"><span class="hljs-keyword">location</span> = / {
+    root /root/svr/aaa;
+    <span class="hljs-keyword">index</span> <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
+}
+
+<span class="hljs-keyword">location</span> / {
+    root   /root/svr/bbb;
+    <span class="hljs-keyword">index</span>  <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
+}
+</code></pre>
+<p>按照优先原则，应该展示的是 <code>/root/svr/aaa</code>， 但实际上展示的是 <code>/root/svr/bbb</code></p>
+<p>实际上，对于这种情况，nginx是怎么定位的</p>
+<ol>
+<li>精准匹配，命中 <code>location = /</code> 这精准匹配条，得到首页是index.html</li>
+<li>然后访问index.html，此次内部转跳uri已经是&#39;/index.html&#39;</li>
+<li>最终结果命中了 <code>location /</code>，最后访问 <code>/root/svr/bbb/index.html</code></li>
+</ol>
+<p>如果改为下面的配置</p>
+<pre><code class="language-nginx"><span class="hljs-keyword">location</span> = / {
+    root /root/svr/aaa;
+    <span class="hljs-keyword">index</span> aaa.html <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm; <span class="hljs-meta"># 这里多加一个aaa.html</span>
+}
+
+<span class="hljs-keyword">location</span> / {
+    root   /root/svr/bbb;
+    <span class="hljs-keyword">index</span>  <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
+}
+</code></pre>
+<p>当范围 <code>http://aaa.com/</code> 的时候，经历下面的过程</p>
+<ol>
+<li>精准匹配 <code>location = /</code> 命中，得到首页是aaa.html</li>
+<li>接着访问 <code>http://aaa.com/aaa.html</code>，此时内部转跳uri已经是<code>aaa.html</code></li>
+<li>命中一般匹配 <code>location /</code>，所以最终去读取 <code>/root/svr/bbb/aaa.html</code> 的内容</li>
+</ol>
+<p>如果改为下面配置</p>
+<pre><code class="language-nginx"><span class="hljs-keyword">location</span> = /<span class="hljs-keyword">index</span>.html {
+    root /root/svr/aaa;
+    <span class="hljs-keyword">index</span> <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
+}
+
+<span class="hljs-keyword">location</span> / {
+    root   /root/svr/bbb;
+    <span class="hljs-keyword">index</span>  <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="003-深入理解事件绑定的this问题">003-深入理解事件绑定的this问题</h1>
+<h2 id="1、问题">1、问题</h2>
+<p><a href="https://www.bilibili.com/video/BV1wy4y1D7JT?p=15">视频</a></p>
+<p>首先来看一个最简单经典的代码</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  constructor (props) {
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {
+      count: <span class="hljs-number">1</span>
+    };
+  }
+  add () {
+    console.log(<span class="hljs-keyword">this</span>); <span class="hljs-comment">// 这里的this=undefined</span>
+  }
+  render () {
+    <span class="hljs-keyword">return</span> &lt;button <span class="hljs-class"><span class="hljs-keyword">type</span></span>=<span class="hljs-string">&quot;button&quot;</span> onClick={<span class="hljs-keyword">this</span>.add}&gt;累加:{<span class="hljs-keyword">this</span>.state.count}&lt;/button&gt;
+  }
+};
+</code></pre>
+<p>我们都知道，通过这种方式调用的，<code>add()</code>方法里面的<code>this=undefined</code>，那么为什么是undefined呢</p>
+<h2 id="2、解析问题">2、解析问题</h2>
+<p>要明白这个事件，需要从class类入手</p>
+<pre><code class="language-js"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span> </span>{
+    <span class="hljs-title">constructor</span> (<span class="hljs-params">name</span>) {
+        <span class="hljs-built_in">this</span>.name = name; <span class="hljs-comment">// 放在实例上</span>
+    }
+    say () { <span class="hljs-comment">// 放在Person这个原型对象上</span>
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">this</span>);
+    }
+}
+<span class="hljs-keyword">const</span> p1 = <span class="hljs-keyword">new</span> Person(<span class="hljs-string">&#x27;小明&#x27;</span>);
+<span class="hljs-built_in">console</span>.log(p1);
+p1.say();
+</code></pre>
+<p><img src="./img/class.png" alt=""></p>
+<p>当执行<code>p1.say()</code>的时候，<code>say()</code>里面的this就是指向p1这个实例</p>
+<p>假如改成下面的代码</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> p1 = <span class="hljs-keyword">new</span> Person(<span class="hljs-string">&#x27;小明&#x27;</span>);
+<span class="hljs-keyword">const</span> xx = p1.say; <span class="hljs-regexp">// 先赋值给一个变量
+xx(); //</span> 再通过变量调用，那么这个时候 `say()` 里面的<span class="hljs-built_in">this</span>就是<span class="hljs-literal">undefined</span>了
+</code></pre>
+<p>这个就是class的特点了，只有通过实例调用的，即上面的<code>p1.say()</code> 。方法里面的this才会指向实例</p>
+<p>而第2中情况，是把方法赋值给了一个变量，然后再调用该变量<code>xx()</code>，这种是函数的直接调用。</p>
+<p>而js基础知道，函数的直接调用，里面的this应该为window的。</p>
+<pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">yy</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">this</span>); <span class="hljs-comment">// 函数直接调用，this=window</span>
+}
+yy();
+</code></pre>
+<p>然而在上面的例子，我们看到的<code>this=underfined</code>。这又是为什么呢？</p>
+<p>这是class类的另外一个特性，class类会将其定义的所有方法，都默认内部开启严格模式，所以<a href="https://www.cnblogs.com/mengfangui/archive/2017/12/02/7954585.html">this不敢指向全局对象</a>，只能指向undefined</p>
+<pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">yy</span> (<span class="hljs-params"></span>) </span>{
+<span class="hljs-meta">    &#x27;use strict&#x27;</span>
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">this</span>); <span class="hljs-comment">// 因为开启了严格模式，所以这个this=underfined</span>
+}
+yy();
+</code></pre>
+<p>最后，我们回到react代码</p>
+<pre><code class="language-jsx"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;button&quot;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.add}</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+</code></pre>
+<p>中<code>onClick={this.add}</code>是发生了什么事</p>
+<p>首先<code>this.add</code>没有<code>()</code>说明不会调用，而是取出这个函数然后交给onClick做为回调。当点击事件发生的时候，js从堆里面直接拿出那个函数执行，这种情况根本不是通过<code>实例.方法</code>的方法去调用，是直接调用的+类方法默认开启严格模式，所以<code>this=underfined</code></p>
+<h2 id="3、加个bind为什么就可以">3、加个bind为什么就可以</h2>
+<p><a href="https://www.bilibili.com/video/BV1wy4y1D7JT?p=16&amp;spm_id_from=pageDriver">视频</a></p>
+<p>为了解决上面的问题，我们常会用下面的写法</p>
+<pre><code class="language-jsx"><span class="hljs-function"><span class="hljs-keyword">constructor</span> <span class="hljs-params">(props)</span> <span class="hljs-comment">{
+  super(props);
+  this.state = {
+    count: 1
+  }</span>;</span>
+  this.add = this.add.bind(this); <span class="hljs-comment">// 加上这一句就可以</span>
+}
+</code></pre>
+<p>那么为什么加上这一句就可能了呢，我们知道bind是改变this的指向</p>
+<p>首先要明白等号右侧的<code>this.add</code>做了什么事，它会先去App的实例上找，这个时候App实例还没有呢，肯定找不到，就会沿着原型链找，知道找到了App原型上，这个时候就找到了。</p>
+<p>然后<code>this.add.bind(this)</code>改变了this指向，<code>bind()</code>得到的是一个新函数，不会执行函数</p>
+<p>然后就到了等号左边<code>this.add = this.add(this)</code>，这个等号的左边<code>this.add</code>就会实例上多了个<code>add()</code>方法</p>
+<p><img src="./img/class-1.png" alt=""></p>
+<p>当点击事件触发了，实例还是那个的有<code>add()</code>就会直接调用，而不会调用到App类上的</p>
+<p>为了清楚这层关系，我们方法名起个不一样的</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-title">constructor</span> (<span class="hljs-params">props</span>) {
+    <span class="hljs-built_in">super</span>(props);
+    <span class="hljs-built_in">this</span>.state = {
+      <span class="hljs-attr">count</span>: <span class="hljs-number">1</span>
+    };
+    <span class="hljs-built_in">this</span>.say = <span class="hljs-built_in">this</span>.add.bind(<span class="hljs-built_in">this</span>);
+  }
+  add () {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">this</span>);
+  }
+  render () {
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-comment">&lt;!-- 写this.say没有问题，this指向正常 --&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;button&quot;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.say}</span>&gt;</span>111<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+        <span class="hljs-comment">&lt;!-- 写this.add有问题，this指向正常 --&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;button&quot;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.add}</span>&gt;</span>222<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    )
+  }
+};
+</code></pre>
+<h2 id="4、推荐写法">4、推荐写法</h2>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  state = {
+    name: <span class="hljs-symbol">&#x27;xiaomin</span>g&#x27;,
+    age: <span class="hljs-number">23</span>
+  }
+  say = () =&gt; { <span class="hljs-comment">// 用属性+箭头函数的方式</span>
+    console.log(<span class="hljs-keyword">this</span>.state.name);
+  }
+  render () {
+    <span class="hljs-keyword">return</span> &lt;button <span class="hljs-class"><span class="hljs-keyword">type</span></span>=<span class="hljs-string">&quot;button&quot;</span> onClick={<span class="hljs-keyword">this</span>.say}&gt;按钮{<span class="hljs-keyword">this</span>.state.name}&lt;/button&gt;;
+  }
+};
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

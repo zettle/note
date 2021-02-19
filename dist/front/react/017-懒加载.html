@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="017-懒加载">017-懒加载</h1>
+<p>react自带懒加载功能，可以懒加载路由，懒加载组件。这些场景统统可以用<code>lazy() + &lt;Suspense /&gt;</code>来实现</p>
+<h2 id="1、路由懒加载">1、路由懒加载</h2>
+<p>见<a href="./react-router/008-%E8%B7%AF%E7%94%B1%E6%87%92%E5%8A%A0%E8%BD%BD.html">react-router/008-路由懒加载</a></p>
+<h2 id="2、懒加载组件">2、懒加载组件</h2>
+<p>有时候一个组件太大，我们想要异步加载这个组件</p>
+<p>在父组件使用异步加载这个组件</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> {Component, lazy, Suspense} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
+<span class="hljs-keyword">const</span> Count = lazy(<span class="hljs-function">() =&gt;</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">&#x27;./components/Count&#x27;</span>));
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>{
+    render () {
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">Suspense</span> <span class="hljs-attr">fallback</span>=<span class="hljs-string">{</span>&lt;<span class="hljs-attr">h1</span>&gt;</span>loading.....<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>}&gt;
+                    <span class="hljs-tag">&lt;<span class="hljs-name">Count</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;xiaoming&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">Count</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">Suspense</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+        );
+    }
+};
+</code></pre>
+<blockquote>
+<ul>
+<li>fallback传入的是一个组件，当处于加载中的时候回展示这个组件</li>
+<li>本地测试，把网速调成3G就可以看出loading效果</li>
+<li>loading组件不能再异步加载，一定要同步加载</li>
+</ul>
+</blockquote>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="002-nginx的安装">002-nginx的安装</h1>
+<p>nginx是C语言开发的，安装ngixn需要经过c编译再安装</p>
+<h2 id="1、安装依赖">1、安装依赖</h2>
+<ul>
+<li><p><code>gcc-c++</code>: 编译C语言用到</p>
+</li>
+<li><p><code>pcre</code>: 一个Perl库，包括perl兼容的正则表达式库。nginx的http模块使用pcre来解析正则表达式</p>
+</li>
+<li><p><code>zlib</code>: nginx使用zlib对http包的内容进行gzip，所以需要在linux上安装zlib库</p>
+</li>
+<li><p><code>openssl</code>: nginx不仅支持http协议，还支持https（即在 ssl 协议上传输 http），所以需要在linux安装openssl库。</p>
+<pre><code class="language-shell"><span class="hljs-comment">yum</span> <span class="hljs-comment">install</span> <span class="hljs-literal">-</span><span class="hljs-comment">y</span> <span class="hljs-comment">gcc</span><span class="hljs-literal">-</span><span class="hljs-comment">c</span>++
+</code></pre>
+</li>
+</ul>
+<p>yum install -y pcre pcre-devel</p>
+<p>yum install -y zlib zlib-devel</p>
+<p>yum install -y openssl openssl-devel</p>
+<pre><code>
+
+
+<span class="hljs-comment">## 2、下载对应版本</span>
+从[官网](http:<span class="hljs-regexp">//</span>nginx.org<span class="hljs-regexp">/en/</span>download.html)下载对应版本
+
+![](.<span class="hljs-regexp">/img/</span>nginx-down.png)
+
+
+
+<span class="hljs-comment">## 3.上传到服务器</span>
+上传到`<span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/temp/</span>nginx-temp`里面，执行解压命令`tar -zxvf nginx-<span class="hljs-number">1.18</span>.<span class="hljs-number">0</span>.tar.gz`
+
+解压后的路径`<span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/temp/</span>nginx-temp/nginx-<span class="hljs-number">1.18</span>.<span class="hljs-number">0</span>`
+
+![](.<span class="hljs-regexp">/img/</span>nginx-tar.png)
+
+
+
+<span class="hljs-comment">## 4、安装nginx</span>
+<span class="hljs-number">1</span>. 进入解压后的目录，执行configure
+```shell
+cd nginx-<span class="hljs-number">1.18</span>.<span class="hljs-number">0</span>
+
+./configure  <span class="hljs-comment"># 执行configure命令，执行完会生成Makefile</span>
+</code></pre>
+<p><img src="./img/nginx-makefile.png" alt=""></p>
+<blockquote>
+<p>执行configure的时候，可以带参数</p>
+</blockquote>
+<pre><code class="language-shell">./configure \
+--prefix=/usr \                              <span class="hljs-comment"># 指向安装目录</span>
+--sbin-path=<span class="hljs-regexp">/usr/</span>sbin/nginx \                <span class="hljs-comment"># 指向（执行）程序文件（nginx）</span>
+--conf-path=<span class="hljs-regexp">/etc/</span>nginx/nginx.conf \          <span class="hljs-comment"># 指向配置文件</span>
+--error-log-path=<span class="hljs-regexp">/var/</span>log<span class="hljs-regexp">/nginx/</span>error.log \  <span class="hljs-comment"># 指向log</span>
+--http-log-path=<span class="hljs-regexp">/var/</span>log<span class="hljs-regexp">/nginx/</span>access.log \  <span class="hljs-comment"># 指向http-log</span>
+--pid-path=<span class="hljs-regexp">/var/</span>run<span class="hljs-regexp">/nginx/</span>nginx.pid \        <span class="hljs-comment"># 指向pid</span>
+--lock-path=<span class="hljs-regexp">/var/</span>lock/nginx.lock \           <span class="hljs-comment"># （安装文件锁定，防止安装文件被别人利用，或自己误操作。）</span>
+--user=nginx \
+--group=nginx \
+--with-http_ssl_module \                     <span class="hljs-comment"># 启用ngx_http_ssl_module支持（使支持https请求，需已安装openssl）</span>
+--with-http_flv_module \                     <span class="hljs-comment"># 启用ngx_http_flv_module支持（提供寻求内存使用基于时间的偏移量文件）</span>
+--with-http_stub_status_module \             <span class="hljs-comment"># 启用ngx_http_stub_status_module支持（获取nginx自上次启动后到现在为止的工作状态）</span>
+--with-http_gzip_static_module \             <span class="hljs-comment"># 启用ngx_http_gzip_static_module支持（在线实时压缩输出数据流）</span>
+--http-client-body-temp-path=<span class="hljs-regexp">/var/</span>tmp<span class="hljs-regexp">/nginx/</span>client/ \   <span class="hljs-comment"># 设定http客户端请求临时文件路径</span>
+--http-proxy-temp-path=<span class="hljs-regexp">/var/</span>tmp<span class="hljs-regexp">/nginx/</span>proxy/ \          <span class="hljs-comment"># 设定http代理临时文件路径</span>
+--http-fastcgi-temp-path=<span class="hljs-regexp">/var/</span>tmp<span class="hljs-regexp">/nginx/</span>fcgi/ \         <span class="hljs-comment"># 设定http fastcgi临时文件路径</span>
+--http-uwsgi-temp-path=<span class="hljs-regexp">/var/</span>tmp<span class="hljs-regexp">/nginx/u</span>wsgi \           <span class="hljs-comment"># 设定http uwsgi临时文件路径</span>
+--http-scgi-temp-path=<span class="hljs-regexp">/var/</span>tmp<span class="hljs-regexp">/nginx/</span>scgi \             <span class="hljs-comment"># 设定http scgi临时文件路径</span>
+--with-pcre <span class="hljs-comment"># 启用pcre库</span>
+</code></pre>
+<p>执行<code>./configure --help</code>可以查看所有支持的参数</p>
+<p>一般的，执行这个就可以</p>
+<pre><code>./configure <span class="hljs-string">\</span>
+    --prefix=/usr/local/nginx-<span class="hljs-number">1.18</span>.<span class="hljs-number">0</span> <span class="hljs-string">\</span>
+    --<span class="hljs-keyword">with</span>-http_stub_status_module <span class="hljs-string">\</span>
+    --<span class="hljs-keyword">with</span>-http_ssl_module
+</code></pre>
+<ul>
+<li><code>--prefix</code>: 指定安装目录</li>
+<li><code>--with-http_stub_status_module</code>: 可以查看nginx的运行状态，详见<a href="./009-nginx%E7%8A%B6%E6%80%81.md">009-nginx状态</a></li>
+<li><code>--with-http_ssl_module</code>: 支持https</li>
+</ul>
+<ol start="2">
+<li>执行编译安装<pre><code class="language-shell"><span class="hljs-built_in">make</span>  <span class="hljs-meta"># 编译</span>
+<span class="hljs-built_in">make</span> install  <span class="hljs-meta"># 安装</span>
+</code></pre>
+</li>
+</ol>
+<p>nginx默认安装在<code>/usr/local/nginx/</code>这里，进入该目录</p>
+<p><img src="./img/nginx-tree.png" alt=""></p>
+<ol start="3">
+<li>启动nginx<pre><code class="language-shell"><span class="hljs-string">./nginx</span>            <span class="hljs-comment"># 启动nginx</span>
+</code></pre>
+</li>
+</ol>
+<p>ps aux|grep nginx  # 查看进程</p>
+<p>./nginx -s stop    # 停止nginx</p>
+<pre><code>启动nginx后，就可以通过浏览器访问`http:<span class="hljs-regexp">//</span><span class="hljs-number">59.110</span>.<span class="hljs-number">21.75</span>/`
+
+![](.<span class="hljs-regexp">/img/</span>nginx-brower.png)
+
+
+
+
+<span class="hljs-comment">#### 5. 配置命令到环境变量</span>
+通过上面的方式配置的nginx，每次需要进入到`<span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/nginx/</span>sbin` 才能执行nginx命令，如果觉得麻烦，可以把nginx命令配置到环境变量里面，这样在任何目录都可以自行
+
+```shell
+vim <span class="hljs-regexp">/etc/</span>profile
+</code></pre>
+<p>在最后面添加</p>
+<pre><code><span class="hljs-attribute">NGINX_HOME</span>=/usr/local/nginx/sbin
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">PATH</span>=<span class="hljs-variable">$NGINX_HOME</span>:$PATH
+</code></pre>
+<p><img src="./img/nginx-path.png" alt=""></p>
+<blockquote>
+<p>截图里面是因为以前自己还配置过node的环境变量</p>
+</blockquote>
+<p>然后重启</p>
+<pre><code><span class="hljs-keyword">source</span> <span class="hljs-regexp">/etc/</span>profile
+</code></pre>
+<p>这样就可以随时执行nginx命令了</p>
+<pre><code class="language-shell"><span class="hljs-attribute">nginx</span> -v  <span class="hljs-comment"># 小写v 查看nginx版本</span>
+nginx -V  <span class="hljs-comment"># 大写V 查看当初安装nginx的命令</span>
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -1,10 +1,12 @@
 const fs = require('fs');
 const ejs = require('ejs');
 const glob = require('glob');
+const path  = require('path');
 const shell = require('shelljs');
 const marked = require('marked');
 const hljs = require('highlight.js');
 const { promisify } = require('util');
+const { resolve } = require('./tools');
 const { readTmplHtml, tmplAssetsPath } = require('./readTpml');
 
 const globAsync = promisify(glob);
@@ -51,27 +53,61 @@ async function handSingleMdFile (options, fileFullPath) {
  **************/
 async function md2html (options) {
     const {source, output, mdConf} = options;
-
-    // 静态css的处理
-    shell.rm('-rf', output + '/assets');
-    shell.cp('-R', tmplAssetsPath, output);
     
-    // md文件的处理
-    const files = await globAsync(`${source}/**/*.md`);
-    files.forEach(file => {
-        handSingleMdFile(options, file);
-    });
+    // // md文件的处理
+    // const files = await globAsync(`${source}/**/*.md`);
+    // files.forEach(file => {
+    //     handSingleMdFile(options, file);
+    // });
 
-    // img文件的处理
-    const imgDirs = await globAsync(`${source}/**/*/img`);
-    const regStr = `${source.replace(/\\/g, '/')}(.*)/img$`;
-    imgDirs.forEach(imgDir => {
-        const res = imgDir.match(new RegExp(regStr));
-        if (!shell.test('-d', `${output}${res[1]}`)) {
-            shell.mkdir('-p', `${output}${res[1]}`);
-        }
-        shell.cp('-r', imgDir, `${output}${res[1]}`);
+    // // img文件的处理
+    // const imgDirs = await globAsync(`${source}/**/*/img`);
+    // const regStr = `${source.replace(/\\/g, '/')}(.*)/img$`;
+    // imgDirs.forEach(imgDir => {
+    //     const res = imgDir.match(new RegExp(regStr));
+    //     if (!shell.test('-d', `${output}${res[1]}`)) {
+    //         shell.mkdir('-p', `${output}${res[1]}`);
+    //     }
+    //     shell.cp('-r', imgDir, `${output}${res[1]}`);
+    // });
+
+    // // 静态css的处理
+    // const outputDir = resolve(output);
+    // console.log('===', tmplAssetsPath, outputDir);
+    // shell.cp('-r', tmplAssetsPath, outputDir);
+
+    // 生成index.html
+    generIndexHtml(options);
+}
+
+async function generIndexHtml (options) {
+    const {source} = options;
+    const srcDirs = fs.readdirSync(source);
+    console.log('srcDirs', srcDirs);
+    srcDirs.forEach(srcDir => {
+        generIndexSingle(srcDir, options); // 为每个目录生产一个index.html
     });
+    // const templHtml = await readFileAsync(resolve('./dirTemplate/index.ejs'), 'utf8');
+    // const tttt = 'front';
+    // const tarDir = path.resolve(output, tttt);
+    // const dirs = fs.readdirSync(tarDir);
+    // const aLinks = dirs.map(dir => {
+    //     const aLink = `./${tttt}/${dir}/index.html`;
+    //     return aLink;
+    // });
+    // const html = await ejs.render(templHtml, { aLinks, publicPath }, {async: true});
+    // console.log('html', `${tarDir}/index.html`);
+    // writeFileAsync(`${tarDir}/index.html`, html)
+}
+
+async function generIndexSingle (srcDir, options) {
+    const {source, output, publicPath} = options;
+    const tarDir = path.resolve(output, srcDir); // E:\workspace\note\dist\front
+    // console.log('srcDir', srcDir);
+    // console.log('tarDir', tarDir);
+    const files = await globAsync(`${tarDir}/**/*.html`);
+    console.log(files.split('/dist'));
+
 }
 
 module.exports = md2html;

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="005-路由匹配">005-路由匹配</h1>
+<h2 id="1、switch组件">1、switch组件</h2>
+<p>首先看个例子</p>
+<pre><code class="language-jsx"><span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/home&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{Home}</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{About}</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{Test}</span> /&gt;</span>
+</code></pre>
+<ul>
+<li>当用户访问<code>http://localhost:3000/home</code>的时候，展示的是<code>&lt;Home /&gt;</code>组件</li>
+<li>当用户访问<code>http://localhost:3000/about</code>的时候，<code>&lt;About /&gt;</code> 和 <code>&lt;Test /&gt;</code> 都会展示出来</li>
+</ul>
+<p>路由匹配规则: <strong>会从上往下，一个个匹配</strong></p>
+<p>在实际项目中，一般一个url对应一个路由组件，显然这种匹配规则性能上照成浪费</p>
+<p>因此我们引入<code>&lt;Switch /&gt;</code>组件，当匹配到了一个的时候，就不继续往下走了</p>
+<pre><code class="language-jsx"><span class="hljs-tag">&lt;<span class="hljs-name">Switch</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/home&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{Home}</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{About}</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{Test}</span> /&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">Switch</span>&gt;</span>
+</code></pre>
+<p>当用户访问<code>http://localhost:3000/about</code>的时候，只展示<code>&lt;About /&gt;</code>组件。</p>
+<h2 id="2、exact严格匹配">2、exact严格匹配</h2>
+<pre><code class="language-jsx"><span class="hljs-template-tag">{/* 导航条 */}</span><span class="xml">
+<span class="hljs-tag">&lt;<span class="hljs-name">nav</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/home&quot;</span>&gt;</span>Home<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span> | 
+    <span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/about&quot;</span>&gt;</span>About<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span> | 
+    <span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/about/a/b&quot;</span>&gt;</span>About/a/b<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span> | 
+<span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+
+</span><span class="hljs-template-tag">{/* 路由插槽 */}</span><span class="xml">
+<span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/home&quot;</span> <span class="hljs-attr">component</span>=</span></span><span class="hljs-template-variable">{Home}</span><span class="xml"><span class="hljs-tag"> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=</span></span><span class="hljs-template-variable">{About}</span><span class="xml"><span class="hljs-tag"> /&gt;</span></span>
+</code></pre>
+<ul>
+<li>当用户访问<code>http://localhost:3000/home</code>的时候，展示的是<code>&lt;Home /&gt;</code>组件</li>
+<li>当用户访问<code>http://localhost:3000/about</code>的时候，展示的是<code>&lt;About /&gt;</code>组件</li>
+<li>当用户访问<code>http://localhost:3000/about/a/b</code>的时候，展示的是<code>&lt;About /&gt;</code>组件</li>
+<li>当用户访问<code>http://localhost:3000/a/about/b</code>的时候，什么都不展示</li>
+</ul>
+<p>路由匹配规则: <strong>模糊匹配，顺序需要保持一致</strong></p>
+<blockquote>
+<p>可以这么理解<code>&lt;NavLink to=&quot;/about/a/b&quot;&gt;About/a/b&lt;/NavLink&gt;</code>，react-router-dom会将其解析为我有<code>[/about, /a, /b]</code>。匹配路由的时候，会将<code>&lt;Route path=&quot;/about&quot; component={About} /&gt;</code>解析为我需要<code>[/about]</code>，然后一个个按照顺序匹配，匹配对了就成功</p>
+</blockquote>
+<p>精准匹配: 要所有路径都一样才能匹配成功</p>
+<pre><code class="language-jsx"><span class="hljs-template-tag">{/* <span class="hljs-name">exact</span>开启精准匹配，url路径多了或者少了都不能匹配  */}</span><span class="xml">
+<span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">exact</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=</span></span><span class="hljs-template-variable">{Test}</span><span class="xml"><span class="hljs-tag"> /&gt;</span></span>
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') > 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>
