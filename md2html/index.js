@@ -54,27 +54,27 @@ async function handSingleMdFile (options, fileFullPath) {
 async function md2html (options) {
     const {source, output, mdConf} = options;
     
-    // // md文件的处理
-    // const files = await globAsync(`${source}/**/*.md`);
-    // files.forEach(file => {
-    //     handSingleMdFile(options, file);
-    // });
+    // md文件的处理
+    const files = await globAsync(`${source}/**/*.md`);
+    files.forEach(file => {
+        handSingleMdFile(options, file);
+    });
 
-    // // img文件的处理
-    // const imgDirs = await globAsync(`${source}/**/*/img`);
-    // const regStr = `${source.replace(/\\/g, '/')}(.*)/img$`;
-    // imgDirs.forEach(imgDir => {
-    //     const res = imgDir.match(new RegExp(regStr));
-    //     if (!shell.test('-d', `${output}${res[1]}`)) {
-    //         shell.mkdir('-p', `${output}${res[1]}`);
-    //     }
-    //     shell.cp('-r', imgDir, `${output}${res[1]}`);
-    // });
+    // img文件的处理
+    const imgDirs = await globAsync(`${source}/**/*/img`);
+    const regStr = `${source.replace(/\\/g, '/')}(.*)/img$`;
+    imgDirs.forEach(imgDir => {
+        const res = imgDir.match(new RegExp(regStr));
+        if (!shell.test('-d', `${output}${res[1]}`)) {
+            shell.mkdir('-p', `${output}${res[1]}`);
+        }
+        shell.cp('-r', imgDir, `${output}${res[1]}`);
+    });
 
-    // // 静态css的处理
-    // const outputDir = resolve(output);
-    // console.log('===', tmplAssetsPath, outputDir);
-    // shell.cp('-r', tmplAssetsPath, outputDir);
+    // 静态css的处理
+    const outputDir = resolve(output);
+    console.log('===', tmplAssetsPath, outputDir);
+    shell.cp('-r', tmplAssetsPath, outputDir);
 
     // 生成index.html
     generIndexHtml(options);
@@ -106,7 +106,7 @@ async function generIndexSingle (srcDir, options) {
     // console.log('srcDir', srcDir);
     // console.log('tarDir', tarDir);
     const files = await globAsync(`${tarDir}/**/*.html`);
-    console.log(files.split('/dist'));
+    console.log(files);
 
 }
 
