@@ -38,7 +38,7 @@ $(() => {
     // 将<a>加个target
     const aDoms = $('a');
     $.each(aDoms, (_,aDom) => {
-        if ($(aDom).attr('href').indexOf('#') > 0) {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
             $(aDom).attr('target', '_blank');
         }
     });

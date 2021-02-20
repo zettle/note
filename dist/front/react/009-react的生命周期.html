@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/note/assets/style.css" />
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -163,7 +163,7 @@ $(() => {
     // 将<a>加个target
     const aDoms = $('a');
     $.each(aDoms, (_,aDom) => {
-        if ($(aDom).attr('href').indexOf('#') > 0) {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
             $(aDom).attr('target', '_blank');
         }
     });

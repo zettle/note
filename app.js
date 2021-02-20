@@ -5,8 +5,10 @@ function resolve (filePath) {
     return path.resolve(__dirname, filePath);
 }
 
+console.log('NODE_ENV', process.env.NODE_ENV);
+
 md2html({
-    publicPath: 'note', // 要看gitee上给的是什么
+    publicPath: process.env.NODE_ENV=== 'production' ? 'node' : 'dist', // 生产note， 本地dist 
     source: resolve('./src'),
     output: resolve('./dist'),
     mdConf: {}

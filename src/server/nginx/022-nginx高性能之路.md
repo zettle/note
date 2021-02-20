@@ -2,7 +2,7 @@
 
 [参考资料](https://www.cnblogs.com/architectforest/p/12795040.html)
 
-#### 1. 配置worker_processes
+## 1. 配置worker_processes
 
 `worker_processes`: work进程数。
 
@@ -18,7 +18,7 @@ worker_cpu_affinity 00000001 00000010 00000100 00001000 00010000 00100000 010000
 ```
 
 
-#### 2. 配置worker_rlimit_nofile
+## 2. 配置worker_rlimit_nofile
 
 `worker_rlimit_nofile`: worker进程最大打开文件数。理论上应该是最多打开文件数（`ulimit -n`）于nginx进程数（`worker_processes`）相除，但是nginx分配请求并不是那么均匀，所有最好于`ulimit -n`的值保持一致
 
@@ -29,7 +29,7 @@ worker_cpu_affinity 00000001 00000010 00000100 00001000 00010000 00100000 010000
 > 查看Linux最多打开文件数: `ulimit -n`
 
 
-#### 3. 优先epoll模型
+## 3. 优先epoll模型
 ```nginx
 events {
     use epoll;
@@ -39,7 +39,7 @@ nginx优先使用epoll模型
 
 
 
-#### 4. 配置worker_connections
+## 4. 配置worker_connections
 每个进程允许的最多连接数，理论上`一台centos服务器的最大连接数 = worker_connections * worker_processes`
 
 推荐设置: 最多打开文件数（`ulimit -n`）相同
@@ -50,7 +50,7 @@ events {
 ```
 
 
-#### 5. 配置keepalive_timeout
+## 5. 配置keepalive_timeout
 keepalive的超时时间
 
 浏览器经过握手链接服务器后，不会立即中断，后面的请求就会继续沿用上次的，称为keepalive。
@@ -66,7 +66,7 @@ http {
 
 
 
-#### 6. 配置client_header_buffer_size
+## 6. 配置client_header_buffer_size
 客户端请求头部的缓冲区的大小，这个可以根据系统分页大小来设置，一般一个请求头打大小不会超过1K，不过由于一般系统分页都要大于1K，所以这里设置为分页大小
 
 ```nginx
@@ -81,7 +81,7 @@ http {
 
 
 
-#### 7. 配置open_file
+## 7. 配置open_file
 打开文件指定缓存，默认是没有开启的
 
 位置: `http - server - location`
