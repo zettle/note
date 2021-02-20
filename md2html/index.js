@@ -73,7 +73,6 @@ async function md2html (options) {
 
     // 静态css的处理
     const outputDir = resolve(output);
-    console.log('===', tmplAssetsPath, outputDir);
     shell.cp('-r', tmplAssetsPath, outputDir);
 
     // 生成index.html
@@ -81,33 +80,26 @@ async function md2html (options) {
 }
 
 async function generIndexHtml (options) {
-    const {source} = options;
-    const srcDirs = fs.readdirSync(source);
-    console.log('srcDirs', srcDirs);
-    srcDirs.forEach(srcDir => {
-        generIndexSingle(srcDir, options); // 为每个目录生产一个index.html
+    const {output, publicPath} = options;
+    const regDirPath = output.replace(/\\/g, '/');
+    const files = await globAsync(output + '/**/*.html');
+
+    const fileObj = {};
+    files.forEach(file => {
+        const arr = file.replace(regDirPath+'/', '').split('/'); // [ 'front', 'react-redux', '001-redux介绍.html' ]
+        const [firstDir, secondDir, fileName] = arr;
+        if (!fileObj[firstDir]) {
+            fileObj[firstDir] = {};
+        }
+        if (!fileObj[firstDir][secondDir]) {
+            fileObj[firstDir][secondDir] = [];
+        }
+        fileObj[firstDir][secondDir].push(fileName)
     });
-    // const templHtml = await readFileAsync(resolve('./dirTemplate/index.ejs'), 'utf8');
-    // const tttt = 'front';
-    // const tarDir = path.resolve(output, tttt);
-    // const dirs = fs.readdirSync(tarDir);
-    // const aLinks = dirs.map(dir => {
-    //     const aLink = `./${tttt}/${dir}/index.html`;
-    //     return aLink;
-    // });
-    // const html = await ejs.render(templHtml, { aLinks, publicPath }, {async: true});
-    // console.log('html', `${tarDir}/index.html`);
-    // writeFileAsync(`${tarDir}/index.html`, html)
-}
 
-async function generIndexSingle (srcDir, options) {
-    const {source, output, publicPath} = options;
-    const tarDir = path.resolve(output, srcDir); // E:\workspace\note\dist\front
-    // console.log('srcDir', srcDir);
-    // console.log('tarDir', tarDir);
-    const files = await globAsync(`${tarDir}/**/*.html`);
-    console.log(files);
-
+    const templHtml = await readFileAsync(resolve('./dirTemplate/index.ejs'), 'utf8');
+    const html = await ejs.render(templHtml, { fileObj, publicPath }, {async: true});
+    writeFileAsync(`${output}/index.html`, html)
 }
 
 module.exports = md2html;

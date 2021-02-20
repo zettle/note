@@ -6,7 +6,7 @@ function resolve (filePath) {
 }
 
 md2html({
-    publicPath: 'dist',
+    publicPath: 'note', // 要看gitee上给的是什么
     source: resolve('./src'),
     output: resolve('./dist'),
     mdConf: {}

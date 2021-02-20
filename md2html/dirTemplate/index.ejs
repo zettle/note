@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>目录</title>
 </head>
 <body>
-    <ul>
-        <% aLinks.forEach(function(alink){ %>
+<% for (var firstDir in fileObj) {%>
+<div>
+    <h1><%= firstDir %></h1>
+    <% for (var secondDir in fileObj[firstDir]) {%>
+        <h2><%= secondDir %></h2>
+        <ol>
+            <% for (var fileName of fileObj[firstDir][secondDir]) {%>
             <li>
-                <a href="<%= alink %>"></a>
+                <a href="./<%= firstDir + '/' + secondDir + '/' + fileName %>"><%= fileName %></a>
             </li>
-        <% }); %>
-        
-    </ul>
+            <% } %>
+        </ol>
+    <% } %>
+</div>
+<% } %>
 </body>
 </html>
