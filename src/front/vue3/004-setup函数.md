@@ -2,11 +2,11 @@
 
 
 ## 1、setup的执行时机
-执行顺序: `beforeCreated -> setup -> created`
+执行顺序: `setup -> beforeCreated -> created`
 
 在vue2中，我们知道，到了`created()`组件刚刚被创建好，并且组件的data和methods已经初始化好了
 
-而`setup()`在`created()`之前，所以`setup()`中是无法使用`data/methods`
+而`setup()`在`beforeCreated()`之前，所以`setup()`中是无法使用`data/methods`
 
 所以vue为了避免我们错误的使用，它直接将`setup()`中的this设置undefined
 ```js
