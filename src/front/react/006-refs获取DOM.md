@@ -20,7 +20,7 @@ class App extends React.Component {
 
 
 
-## 2、回调函数的ref - 推荐使用
+## 2、回调函数的ref - 次推荐使用
 当给ref传入一个回调函数的时候，react会自动调用该函数，并且将当前DOM对象作为参数传递给回调函数
 
 那么就可以在回调函数中将该DOM赋值给类组件实例的属性上

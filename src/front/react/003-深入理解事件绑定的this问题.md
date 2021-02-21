@@ -82,7 +82,7 @@ yy();
 ```
 中`onClick={this.add}`是发生了什么事
 
-首先`this.add`没有`()`说明不会调用，而是取出这个函数然后交给onClick做为回调。当点击事件发生的时候，js从堆里面直接拿出那个函数执行，这种情况根本不是通过`实例.方法`的方法去调用，是直接调用的+类方法默认开启严格模式，所以`this=underfined`
+首先`this.add`没有`()`说明不会调用，而是取出这个函数然后交给onClick做为回调。当点击事件发生的时候，js从堆里面直接拿出那个函数执行，这种情况根本不是通过`实例.方法`的方法去调用，是直接调用的，加上类方法默认开启严格模式，所以`this=underfined`
 
 
 
@@ -153,6 +153,21 @@ class App extends React.Component {
   }
   render () {
     return <button type="button" onClick={this.say}>按钮{this.state.name}</button>;
+  }
+};
+```
+或者箭头函数
+```jsx
+class App extends React.Component {
+  state = {
+    name: 'xiaoming',
+    age: 23
+  }
+  say () { // 定义类的方法
+    console.log(this.state.name);
+  }
+  render () {
+    return <button type="button" onClick={() => this.say()}>按钮{this.state.name}</button>;
   }
 };
 ```
