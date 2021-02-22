@@ -31,13 +31,20 @@ vue@3在创建DOM树的时候给DOM会发生变化的添加静态标识，当数
 从图中可以看出，有数据绑定的有 `1` 这个标识
 
 在vue@3中，像 `1` 的这种标识还有如下：
-* `1`: 动态文本节点，`text = 1`
-* `2`: 动态class，`class = 1 << 1` 
-* `4`: 动态style，`style = 1 << 2`
-* `8`: 动态属性，不包含类名和样式，`props = 1 << 3`
-* `16`: 具有动态key属性，当key改变时，需要进行完整的diff比较，`full_props = 1 << 4`
-* `32`: 具有监听事件的节点，`hydrate_events = 1 << 5`
-* `64`: 一个不会改变子节点顺序的frament，`stable_fragment = 1 << 6`
+
+* TEXT = 1,             // --取值是1---表示具有动态textContent的元素
+* CLASS = 1 << 1,       // --取值是2---表示有动态Class的元素
+* STYLE = 1 << 2,       // --取值是4---表示动态样式（静态如style="color: pink"，也会提升至动态）
+* PROPS = 1 << 3,       // --取值是8--- 表示具有非类/样式动态道具的元素。
+* FULL_PROPS = 1 << 4,  // --取值是16---表示带有动态键的道具的元素，与上面三种相斥
+* HYDRATE_EVENTS = 1 << 5,      // --取值是32---表示带有事件监听器的元素
+* STABLE_FRAGMENT = 1 << 6,     // --取值是64---表示其子顺序不变，不会改变自顺序的片段。 
+* KEYED_FRAGMENT = 1 << 7,      // --取值是128---表示带有键控或部分键控子元素的片段。
+* UNKEYED_FRAGMENT = 1 << 8,    // --取值是256---子节点无key绑定的片段（fragment）
+* NEED_PATCH = 1 << 9,      // --取值是512---表示只需要非属性补丁的元素，例如ref或hooks
+* DYNAMIC_SLOTS = 1 << 10,  // --取值是1024---表示具有动态插槽的元素
+
+
 等等
 
 这一部分定义在[枚举里面](https://github.com/vuejs/vue-next/blob/master/packages/shared/src/patchFlags.ts)
