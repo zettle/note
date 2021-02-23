@@ -16,7 +16,13 @@ setup() {
 ```
 
 
+
+## 2、setup不能加async
 `setup()`只能是同步不能死异步，比如加个`async`之后，界面会出不来
 ```js
 async setup() {}
 ```
+
+
+## 3、setup的参数
+`setup(props, content)`

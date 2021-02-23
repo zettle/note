@@ -1,6 +1,6 @@
 # 020-组件teleport
 
-称为“传送门”组件
+称为“传送门”组件，类似于React的`<Portal />`
 
 ## 1、场景
 
@@ -34,3 +34,24 @@ vue会通过`document.querySelect()`查到上面的to指定的DOM
     ...
 </teleport>
 ```
+
+
+## 3、同时多个teleport
+当同时有多个`<teleport />`的时候，会依次全部添加进入
+
+```html
+<teleport to="#box">AAA</teleport>
+<teleport to="#box">BBB</teleport>
+```
+
+结果
+```html
+<div id="box">
+  AAA
+  BBB
+</div>
+```
+
+## 4、特点
+* 因为真实DOM接口已经脱离了父组件，所以在父组件无法捕获到`<teleport />`里面的事件冒泡
+

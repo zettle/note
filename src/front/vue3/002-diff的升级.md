@@ -1,5 +1,8 @@
 # 002-diff的升级
 
+[资料](https://mp.weixin.qq.com/s/1OXAGxMKxiqlZ4n6lbg34g)
+
+
 比如下面代码:
 ```html
 <div>
