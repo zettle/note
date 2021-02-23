@@ -1,8 +1,8 @@
-# 008-readonly和shallowReadonly
+# 009-readonly和shallowReadonly
 
 这章涉及api: `readonly()/shallowReadonly()`
 
-我们知道，修改一个reactive会引起js和html的更新，但如果被`readonly()`包转一层，那么这个变量就变成了只读属性，修改会报错，html和js都不会更新
+我们知道，修改一个reactive会引起js和html的更新，但如果是`readonly()`，那么这个变量就变成了只读属性，修改会报错，html和js都不会更新
 ```js
 const person = reactive({
     a: {
