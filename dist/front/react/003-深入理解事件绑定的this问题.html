@@ -73,7 +73,7 @@ yy();
 <pre><code class="language-jsx"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;button&quot;</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.add}</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
 </code></pre>
 <p>中<code>onClick={this.add}</code>是发生了什么事</p>
-<p>首先<code>this.add</code>没有<code>()</code>说明不会调用，而是取出这个函数然后交给onClick做为回调。当点击事件发生的时候，js从堆里面直接拿出那个函数执行，这种情况根本不是通过<code>实例.方法</code>的方法去调用，是直接调用的+类方法默认开启严格模式，所以<code>this=underfined</code></p>
+<p>首先<code>this.add</code>没有<code>()</code>说明不会调用，而是取出这个函数然后交给onClick做为回调。当点击事件发生的时候，js从堆里面直接拿出那个函数执行，这种情况根本不是通过<code>实例.方法</code>的方法去调用，是直接调用的，加上类方法默认开启严格模式，所以<code>this=underfined</code></p>
 <h2 id="3、加个bind为什么就可以">3、加个bind为什么就可以</h2>
 <p><a href="https://www.bilibili.com/video/BV1wy4y1D7JT?p=16&amp;spm_id_from=pageDriver">视频</a></p>
 <p>为了解决上面的问题，我们常会用下面的写法</p>
@@ -127,6 +127,20 @@ yy();
   }
   render () {
     <span class="hljs-keyword">return</span> &lt;button <span class="hljs-class"><span class="hljs-keyword">type</span></span>=<span class="hljs-string">&quot;button&quot;</span> onClick={<span class="hljs-keyword">this</span>.say}&gt;按钮{<span class="hljs-keyword">this</span>.state.name}&lt;/button&gt;;
+  }
+};
+</code></pre>
+<p>或者箭头函数</p>
+<pre><code class="language-jsx"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  state = {
+    name: <span class="hljs-symbol">&#x27;xiaomin</span>g&#x27;,
+    age: <span class="hljs-number">23</span>
+  }
+  say () { <span class="hljs-comment">// 定义类的方法</span>
+    console.log(<span class="hljs-keyword">this</span>.state.name);
+  }
+  render () {
+    <span class="hljs-keyword">return</span> &lt;button <span class="hljs-class"><span class="hljs-keyword">type</span></span>=<span class="hljs-string">&quot;button&quot;</span> onClick={() =&gt; <span class="hljs-keyword">this</span>.say()}&gt;按钮{<span class="hljs-keyword">this</span>.state.name}&lt;/button&gt;;
   }
 };
 </code></pre>

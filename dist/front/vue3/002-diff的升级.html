@@ -13,6 +13,7 @@
     <div class="main">
         <article class="markdown-body">
             <h1 id="002-diff的升级">002-diff的升级</h1>
+<p><a href="https://mp.weixin.qq.com/s/1OXAGxMKxiqlZ4n6lbg34g">资料</a></p>
 <p>比如下面代码:</p>
 <pre><code class="language-html"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>标题<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
@@ -32,15 +33,19 @@
 <p>从图中可以看出，有数据绑定的有 <code>1</code> 这个标识</p>
 <p>在vue@3中，像 <code>1</code> 的这种标识还有如下：</p>
 <ul>
-<li><code>1</code>: 动态文本节点，<code>text = 1</code></li>
-<li><code>2</code>: 动态class，<code>class = 1 &lt;&lt; 1</code> </li>
-<li><code>4</code>: 动态style，<code>style = 1 &lt;&lt; 2</code></li>
-<li><code>8</code>: 动态属性，不包含类名和样式，<code>props = 1 &lt;&lt; 3</code></li>
-<li><code>16</code>: 具有动态key属性，当key改变时，需要进行完整的diff比较，<code>full_props = 1 &lt;&lt; 4</code></li>
-<li><code>32</code>: 具有监听事件的节点，<code>hydrate_events = 1 &lt;&lt; 5</code></li>
-<li><code>64</code>: 一个不会改变子节点顺序的frament，<code>stable_fragment = 1 &lt;&lt; 6</code>
-等等</li>
+<li>TEXT = 1,             // --取值是1---表示具有动态textContent的元素</li>
+<li>CLASS = 1 &lt;&lt; 1,       // --取值是2---表示有动态Class的元素</li>
+<li>STYLE = 1 &lt;&lt; 2,       // --取值是4---表示动态样式（静态如style=&quot;color: pink&quot;，也会提升至动态）</li>
+<li>PROPS = 1 &lt;&lt; 3,       // --取值是8--- 表示具有非类/样式动态道具的元素。</li>
+<li>FULL_PROPS = 1 &lt;&lt; 4,  // --取值是16---表示带有动态键的道具的元素，与上面三种相斥</li>
+<li>HYDRATE_EVENTS = 1 &lt;&lt; 5,      // --取值是32---表示带有事件监听器的元素</li>
+<li>STABLE_FRAGMENT = 1 &lt;&lt; 6,     // --取值是64---表示其子顺序不变，不会改变自顺序的片段。 </li>
+<li>KEYED_FRAGMENT = 1 &lt;&lt; 7,      // --取值是128---表示带有键控或部分键控子元素的片段。</li>
+<li>UNKEYED_FRAGMENT = 1 &lt;&lt; 8,    // --取值是256---子节点无key绑定的片段（fragment）</li>
+<li>NEED_PATCH = 1 &lt;&lt; 9,      // --取值是512---表示只需要非属性补丁的元素，例如ref或hooks</li>
+<li>DYNAMIC_SLOTS = 1 &lt;&lt; 10,  // --取值是1024---表示具有动态插槽的元素</li>
 </ul>
+<p>等等</p>
 <p>这一部分定义在<a href="https://github.com/vuejs/vue-next/blob/master/packages/shared/src/patchFlags.ts">枚举里面</a></p>
 <h2 id="2、静态提升">2、静态提升</h2>
 <p>在 vue@2 中，无论元素是否参与更新，都要被重新创建，然后再渲染</p>
@@ -66,7 +71,7 @@
 <p>默认情况下，<code>@click</code> 会被视为动态绑定，所以每次都会去追踪它的变化。但是因为是同一个函数，其实没必要跟踪，直接缓存起来复用即可。</p>
 <p>还是借助<a href="https://vue-next-template-explorer.netlify.app">vue在线编译平台</a></p>
 <p>比如下面代码:</p>
-<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;say&quot;</span>&gt;</span>点击<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<pre><code class="language-html">&lt;<span class="hljs-keyword">button</span> @click=<span class="hljs-string">&quot;say&quot;</span>&gt;点击&lt;/<span class="hljs-keyword">button</span>&gt;
 </code></pre>
 <p>在开启事件缓存之前，编译结果如下:</p>
 <p><img src="./img/vue-click.png" alt=""></p>

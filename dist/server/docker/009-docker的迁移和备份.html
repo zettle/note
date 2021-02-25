@@ -26,7 +26,7 @@
 <p>用nginx，我们自己改点index.html的内容，形成自己的nginx镜像</p>
 <ol>
 <li><p>启动nginx镜像，映射到宿主机的7002端口</p>
-<pre><code class="language-shell"><span class="hljs-attribute">docker</span> run -di -p <span class="hljs-number">7002</span>:<span class="hljs-number">80</span> nginx
+<pre><code class="language-shell">docker <span class="hljs-keyword">run</span><span class="bash"> -di -p 7002:80 nginx</span>
 </code></pre>
 </li>
 <li><p>访问<code>http://59.110.21.75:7002</code></p>

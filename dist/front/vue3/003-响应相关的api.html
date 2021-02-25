@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="003-响应相关的api">003-响应相关的api</h1>
+<ul>
+<li><code>ref()</code>: 声明简单类型的数据</li>
+<li><code>reactive()</code>: 声明JSON类型的数据</li>
+<li><code>isRef()</code>: 判断是否是ref类型</li>
+<li><code>isReactive()</code>: 判断是否是reactive类型</li>
+<li><code>shallowRef()</code>: 只监听<code>.value</code>的变化</li>
+<li><code>shallowReactive()</code>: 只监听JSON第1层的变化</li>
+<li><code>triggerRef(refImpl)</code>: 根据refImpl的最新数据更新html</li>
+<li><code>toRaw()</code>: 返回reactive的原始引用（内存地址）</li>
+<li><code>markRaw()</code>: 被声明原始引用，无论怎么变都不会引起html更新</li>
+<li><code>toRef(obj, key)</code>: 将某个obj的某个属性转为ObjectRefImpl类型</li>
+<li><code>toRefs()</code>: 解构reactive，在写html变量的时候方便点</li>
+<li><code>customRef</code>: 自定义ref函数</li>
+<li><code>readonly</code>: 每一层都是自读</li>
+<li><code>shallowReadonly</code>: 第1层是自读</li>
+</ul>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -14,11 +14,11 @@
         <article class="markdown-body">
             <h1 id="013-nginx重写">013-nginx重写</h1>
 <h2 id="1、常用重写命令">1、常用重写命令</h2>
-<pre><code class="language-nginx"><span class="hljs-keyword">if</span> (条件) {} <span class="hljs-comment"># 设定条件，再进行重写</span>
-<span class="hljs-built_in">set</span> <span class="hljs-comment"># 设置变量</span>
-<span class="hljs-built_in">return</span> <span class="hljs-comment"># 返回状态码</span>
-<span class="hljs-built_in">break</span> <span class="hljs-comment"># 跳出rewrite</span>
-rewrite <span class="hljs-comment"># 重写</span>
+<pre><code class="language-nginx"><span class="hljs-keyword">if</span> (条件) {} <span class="hljs-meta"># 设定条件，再进行重写</span>
+set <span class="hljs-meta"># 设置变量</span>
+<span class="hljs-keyword">return</span> <span class="hljs-meta"># 返回状态码</span>
+<span class="hljs-keyword">break</span> <span class="hljs-meta"># 跳出rewrite</span>
+rewrite <span class="hljs-meta"># 重写</span>
 </code></pre>
 <h2 id="2、if判断">2、if判断</h2>
 <p>格式:</p>
@@ -136,7 +136,7 @@ rewrite <span class="hljs-comment"># 重写</span>
 }
 </code></pre>
 <p>上面的等同<code>break</code></p>
-<pre><code class="language-nginx"><span class="hljs-keyword">if</span> (<span class="hljs-symbol">$fastcgi</span>_script_name = ie.html) {
+<pre><code class="language-nginx"><span class="hljs-keyword">if</span> ($fastcgi_script_name = ie.html) {
     rewrite ^.*% ie.html;
     <span class="hljs-keyword">break</span>;
 }

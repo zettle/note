@@ -41,7 +41,7 @@
 </code></pre>
 <p>执行构建并且启动镜像</p>
 <pre><code class="language-shell">docker build -f ./dockerFile -t xmcentos .
-docker <span class="hljs-built_in">run</span> -<span class="hljs-keyword">it</span> xmcentos
+docker <span class="hljs-keyword">run</span><span class="bash"> -it xmcentos</span>
 </code></pre>
 <p>可以看到控制台输出了<code>xiaoming</code></p>
 <p><img src="./img/104/xmcentos.png" alt=""></p>
@@ -52,7 +52,7 @@ docker <span class="hljs-built_in">run</span> -<span class="hljs-keyword">it</sp
 </code></pre>
 <p>执行构建并且启动镜像</p>
 <pre><code class="language-shell">docker build -f ./dockerFile -t xhcentos .
-docker <span class="hljs-built_in">run</span> -<span class="hljs-keyword">it</span> xhcentos
+docker <span class="hljs-keyword">run</span><span class="bash"> -it xhcentos</span>
 </code></pre>
 <p>可以看到控制台只输出了<code>xiaohong</code>，并没有输出<code>xiaoming</code></p>
 <p><img src="./img/104/xhcentos.png" alt=""></p>

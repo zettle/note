@@ -28,12 +28,12 @@
 | permanent  | 返回301永久重定向，浏览器会显示跳出后的URL地址    |</p>
 <h3 id="11-例子，重定向wwwaaacom到aaacom">1.1 例子，重定向<a href="http://www.aaa.com%E5%88%B0aaa.com">www.aaa.com到aaa.com</a></h3>
 <p>下面举个例子，比如现在<code>http://aaa.com</code>和<code>http://www.aaa.com</code>，在nginx配置如下</p>
-<pre><code class="language-nginx"><span class="hljs-section">server</span> {
-    <span class="hljs-attribute">listen</span>       <span class="hljs-number">80</span>;
-    <span class="hljs-attribute">server_name</span>  aaa www.aaa;
-    <span class="hljs-attribute">location</span> / {
-        <span class="hljs-attribute">root</span>   /root/svr/aaa;
-        <span class="hljs-attribute">index</span>  index.html index.htm;
+<pre><code class="language-nginx"><span class="hljs-keyword">server</span> {
+    <span class="hljs-keyword">listen</span>       <span class="hljs-number">80</span>;
+    server_name  aaa www.aaa;
+    <span class="hljs-keyword">location</span> / {
+        root   /root/svr/aaa;
+        <span class="hljs-keyword">index</span>  <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
     }
 }
 </code></pre>

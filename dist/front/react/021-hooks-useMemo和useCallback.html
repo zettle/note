@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="021-hooks-usememo和usecallback">021-hooks-useMemo和useCallback</h1>
+<h2 id="1、usememo">1、useMemo</h2>
+<p>类似vue的computed，首先我们来看下面这个场景</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ChildFun</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">const</span> [count, setCount] = useState(<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">const</span> [name, setName] = useState(<span class="hljs-string">&#x27;小明&#x27;</span>);
+    <span class="hljs-comment">// 将count*2</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doubleCount</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;执行了doubleCount&#x27;</span>);
+        <span class="hljs-keyword">return</span> count*<span class="hljs-number">2</span>;
+    }
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;child-fun&quot;</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> setCount(count+1)}&gt;{doubleCount()}<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> setName(name+&#x27;a&#x27;)}&gt;{name}<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}
+</code></pre>
+<p>按钮一展示的文案是<code>{count*2}</code>，无论我们只改变了count的值还是改变name的值，都会触发<code>doubleCount()</code>的调用，如下:</p>
+<p><img src="./img/useMemo-1.gif" alt=""></p>
+<p>当我们支持改变name的值的时候，其实执行<code>doubleCount()</code>是一种浪费行为。所以可以用<code>useMemo()</code>来声明一个计算属性</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ChildFun</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">const</span> [count, setCount] = useState(<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">const</span> [name, setName] = useState(<span class="hljs-string">&#x27;小明&#x27;</span>);
+    
+    <span class="hljs-keyword">const</span> doubleCount = useMemo(<span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;执行了doubleCount&#x27;</span>);
+        <span class="hljs-keyword">return</span> count*<span class="hljs-number">2</span>;
+    }, [count]);
+
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;child-fun&quot;</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> setCount(count+1)}&gt;{doubleCount}<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> setName(name+&#x27;a&#x27;)}&gt;{name}<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}
+</code></pre>
+<ul>
+<li><code>useMemo()</code>接受第2个参数是一个数组，数组里面有元素改变了，就会触发<code>useMemo()</code>的回调。</li>
+</ul>
+<p>比如硬是这么写，那么count/name改变都会触发里面的回调</p>
+<pre><code class="language-jsx">const doubleCount = useMemo(() =&gt; {
+    console.log(<span class="hljs-string">&#x27;执行了doubleCount&#x27;</span>);
+    <span class="hljs-keyword">return</span><span class="hljs-built_in"> count</span>*<span class="hljs-number">2</span>;
+}, <span class="hljs-built_in">[count</span>,<span class="hljs-built_in"> name</span>]); // 明明回调里面没有用<span class="hljs-built_in">到name</span>，还硬要写上
+</code></pre>
+<h3 id="11-同时改变状态">1.1 同时改变状态</h3>
+<p>当多次调用改变状态的时候，<code>useMemo()</code>只会执行一次</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ChildFun</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">const</span> [count, setCount] = useState(<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">const</span> [name, setName] = useState(<span class="hljs-string">&#x27;小明&#x27;</span>);
+
+    <span class="hljs-keyword">const</span> doubleCount = useMemo(<span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;执行了doubleCount&#x27;</span>);
+        <span class="hljs-keyword">return</span> (count*<span class="hljs-number">2</span>)+name;
+    }, [count, name]);
+
+    <span class="hljs-comment">// 同时改变name/count的值，useMemo()也是只执行一次</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">say</span> (<span class="hljs-params"></span>) </span>{
+        setCount(count+<span class="hljs-number">1</span>);
+        setName(name+<span class="hljs-string">&#x27;a&#x27;</span>);
+    }
+
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;child-fun&quot;</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{</span> () =&gt;</span> say() }&gt;{doubleCount}<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}
+</code></pre>
+<h2 id="2、usecallback">2、useCallback</h2>
+<p>和<code>useMemo()</code>作用类似，也是当依赖列表数据发生改变的时候，才会触发回调</p>
+<p>和<code>useMemo()</code>不同，<code>useMemo()</code>返回的是一个值并将其缓存，<code>useCallback()</code>返回的是一个函数并将其缓存</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ChildFun</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">const</span> [count, setCount] = useState(<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">const</span> [name, setName] = useState(<span class="hljs-string">&#x27;小明&#x27;</span>);
+
+    <span class="hljs-keyword">const</span> doubleCount = useMemo(<span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;useMemo&#x27;</span>);
+        <span class="hljs-keyword">return</span> count*<span class="hljs-number">2</span>;
+    }, [count]);
+
+    <span class="hljs-keyword">const</span> doubleCountFn = useCallback(<span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;useCallback&#x27;</span>);
+        <span class="hljs-keyword">return</span> count*<span class="hljs-number">2</span>;
+    }, [count]);
+
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;child-fun&quot;</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>count: {count}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>doubleCount: {doubleCount}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>doubleCountFn: {doubleCountFn()}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{</span> () =&gt;</span> setCount(count+1) }&gt;改变count<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{</span> () =&gt;</span> setName(name+&#x27;a&#x27;) }&gt;改变name<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}
+</code></pre>
+<p>所以在html中，要写成<code>doubleCountFn()</code>这种形式</p>
+<ul>
+<li>当点击 “改变name” 按钮去改变 name 变量的值，发现 <code>doubleCountFn()</code> 里面的会执行一次。 这里要正确的理解 <code>useCallback()</code>返回的是一个函数并将其缓存，这里缓存的是函数这个本身，并不代表不会被调用触发，在改变 name 变量后，触发了<code>render()</code>，而html中有句<code>&lt;p&gt;doubleCountFn: {doubleCountFn()}&lt;/p&gt;</code> 这里会调用一次函数，所以函数方法体执行了，导致我们的 <code>useCallback()</code> 明明没有依赖 name变量，name变量一改变也会调用方法体，所以看到控制台会打印1次</li>
+</ul>
+<p><strong>如何验证函数有缓存起来</strong></p>
+<p>我们可以借用Set数据结构，如果前后函数都是同一个，那么存不到Set里面去</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ChildFun</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">const</span> [count, setCount] = useState(<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">const</span> [name, setName] = useState(<span class="hljs-string">&#x27;小明&#x27;</span>);
+
+    <span class="hljs-keyword">const</span> doubleCountFn = useCallback(<span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-keyword">return</span> count*<span class="hljs-number">2</span>;
+    }, [count]);
+    mySet.add(doubleCountFn);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;size&#x27;</span>, mySet.size);
+
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;child-fun&quot;</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>count: {count}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>doubleCountFn: {doubleCountFn()}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{</span> () =&gt;</span> setCount(count+1) }&gt;改变count<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{</span> () =&gt;</span> setName(name+&#x27;a&#x27;) }&gt;改变name<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}
+</code></pre>
+<ul>
+<li>当依赖项 count 变量改变的时候，<code>set.size</code>里面会累加，说明存进去的是一个新函数了。当改变 name 变量的时候，<code>set.size</code>不变，说明存进去的是旧函数，set不允许存重复元素</li>
+</ul>
+<p><strong>使用场景</strong></p>
+<p>在传递给子组件的时候，子组件通过<code>useEffect()</code>监听普通函数和<code>useCallback()</code>返回的函数，就会有不同现象</p>
+<pre><code class="language-jsx"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ChildFun</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">const</span> [count, setCount] = useState(<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">const</span> [name, setName] = useState(<span class="hljs-string">&#x27;小明&#x27;</span>);
+
+    <span class="hljs-keyword">const</span> doubleCountFn = useCallback(<span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-keyword">return</span> count*<span class="hljs-number">2</span>;
+    }, [count]);
+    
+    <span class="hljs-keyword">const</span> double2 = <span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-keyword">return</span> count*<span class="hljs-number">2</span>;
+    };
+
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;child-fun&quot;</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>count: {count}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>doubleCountFn: {doubleCountFn()}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{</span> () =&gt;</span> setCount(count+1) }&gt;改变count<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{</span> () =&gt;</span> setName(name+&#x27;a&#x27;) }&gt;改变name<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+            <span class="hljs-tag">&lt;<span class="hljs-name">Grandson</span> <span class="hljs-attr">cb</span>=<span class="hljs-string">{doubleCountFn}</span> <span class="hljs-attr">cc</span>=<span class="hljs-string">{double2}</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">Grandson</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Grandson</span> (<span class="hljs-params">props</span>) </span>{
+    useEffect(<span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;useEffect1执行了&#x27;</span>);
+    }, [props.cb])
+
+    useEffect(<span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;useEffect2执行了&#x27;</span>);
+    }, [props.cc])
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>this is 孙子<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}
+</code></pre>
+<p>现象: <code>useEffect()</code>当依赖发生改变的时候，会执行回调函数，上面<code>props.cb</code>是经过<code>useCallback()</code>处理的函数（依赖于count变量），当我们改变 name 变量的时候，<code>useCallback()</code>返回的还是原来的函数，所以 <code>&lt;Grandson cb={doubleCountFn} /&gt;</code> 中传递 props.cb 还是原来的函数，</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

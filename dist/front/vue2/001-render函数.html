@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="001-render函数">001-render函数</h1>
+<p>一般我们定义组件的html是通过<code>&lt;template&gt;</code></p>
+<pre><code class="language-vue"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span>
+    </span><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><span class="xml">
+<span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span></span>
+<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> </span></span><span class="xquery">{
+   <span class="hljs-built_in"> name</span>: <span class="hljs-string">&#x27;HelloWorld&#x27;</span>
+}</span><span class="xml">
+<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span>
+</code></pre>
+<p>有时候我们借助render函数更加方便，vue底层也是将<code>&lt;template&gt;</code>转为render函数的</p>
+<pre><code class="language-vue"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;HelloWorld&#x27;</span>,
+    <span class="hljs-attr">props</span>: {
+        <span class="hljs-attr">msg</span>: <span class="hljs-built_in">String</span>
+    },
+    render (h) {
+        <span class="hljs-keyword">return</span> h(<span class="hljs-string">&#x27;div&#x27;</span>, {}, <span class="hljs-string">&#x27;Hello World&#x27;</span>)
+    }
+}
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span>
+</code></pre>
+<p>结果为:</p>
+<pre><code class="language-html">&lt;<span class="hljs-keyword">div</span>&gt;Hello World&lt;/<span class="hljs-keyword">div</span>&gt;
+</code></pre>
+<p>render的h函数接受3个参数:</p>
+<ul>
+<li>第1个参数是标签，也可以是自定义组件</li>
+<li>第2个参数是一个JSON，支持下面字段<pre><code class="language-js">{
+  props: {}, <span class="hljs-regexp">//</span> 作为props传递给子组件
+  attrs: {}, <span class="hljs-regexp">//</span> 作为DOM的attrs属性
+  on: {}, <span class="hljs-regexp">//</span> 加事件
+  scopedSlots: {} <span class="hljs-regexp">//</span> 传递具名插槽
+}
+</code></pre>
+</li>
+<li>第3个参数接受字符串或数组，如果是字符串就是标签的文字，如果是数组，则数组每个元素表示一个标签</li>
+</ul>
+<h2 id="1、又render又template的情况">1、又render又template的情况</h2>
+<p>如果又有render函数又有<code>&lt;template&gt;</code>，vue只会认<code>&lt;template&gt;</code></p>
+<pre><code class="language-vue"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span>
+    </span><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>111<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><span class="xml">
+<span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span></span>
+<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> </span></span><span class="xquery">{
+   <span class="hljs-built_in"> name</span>: <span class="hljs-string">&#x27;HelloWorld&#x27;</span>,
+    props: {
+        msg: String
+    }</span><span class="xml">,
+    render (h) </span><span class="xquery">{
+        <span class="hljs-keyword">return</span> h(<span class="hljs-string">&#x27;div&#x27;</span>, {}</span><span class="xml"><span class="javascript">, <span class="hljs-string">&#x27;Hello World&#x27;</span>)
+    }
+}
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span>
+</code></pre>
+<p>结果为</p>
+<pre><code class="language-html">&lt;<span class="hljs-keyword">div</span>&gt;<span class="hljs-number">111</span>&lt;/<span class="hljs-keyword">div</span>&gt;
+</code></pre>
+<h2 id="2、-定义属性">2、 定义属性</h2>
+<p>h函数的第2个参数接受一个<code>{attrs:{}, on: {}}</code>的JSON格式，其中<code>attrs</code>为定义属性，<code>on</code>为添加监听事件</p>
+<pre><code class="language-vue">render (h) {
+    <span class="hljs-keyword">return</span> h(<span class="hljs-string">&#x27;div&#x27;</span>, {
+        attrs: { 
+            <span class="hljs-class"><span class="hljs-keyword">class</span>:<span class="hljs-type">&#x27;warp&#x27;</span>, 
+            <span class="hljs-type">id:&#x27;box&#x27; </span></span>
+        },
+        on: {
+            click: () =&gt; {
+                <span class="hljs-keyword">this</span>.say(); <span class="hljs-comment">// 调用methods的方法</span>
+            }
+        }
+    }, <span class="hljs-string">&#x27;Hello World&#x27;</span>)
+},
+methods: {
+    say () {
+        console.log(<span class="hljs-string">&#x27;say fun&#x27;</span>);
+    }
+}
+</code></pre>
+<p>结果:</p>
+<pre><code class="language-html">&lt;div <span class="hljs-keyword">class</span>=&quot;<span class="hljs-symbol">warp</span>&quot; <span class="hljs-symbol">id</span>=&quot;<span class="hljs-symbol">box</span>&quot;&gt;<span class="hljs-symbol">Hello</span> <span class="hljs-symbol">World</span>&lt;/<span class="hljs-symbol">div</span>&gt;
+</code></pre>
+<h2 id="3、创建子标签">3、创建子标签</h2>
+<p>render的h函数的第3个参数，可以再调用h函数</p>
+<pre><code class="language-vue">render (<span class="hljs-keyword">h</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">h</span>(&#x27;ul&#x27;, {}, [
+        &#x27;Hello World&#x27;,
+        <span class="hljs-built_in">h</span>(&#x27;<span class="hljs-keyword">li</span>&#x27;, {}, &#x27;第1个<span class="hljs-keyword">li</span>&#x27;), <span class="hljs-comment">// 创建li标签</span>
+        <span class="hljs-built_in">h</span>(&#x27;<span class="hljs-keyword">li</span>&#x27;, {}, &#x27;第2个<span class="hljs-keyword">li</span>&#x27;),
+        <span class="hljs-built_in">h</span>(&#x27;<span class="hljs-keyword">li</span>&#x27;, {}, &#x27;第3个<span class="hljs-keyword">li</span>&#x27;)
+    ])
+}
+</code></pre>
+<p>结果</p>
+<pre><code class="language-html">&lt;ul&gt;
+    Hello World
+    &lt;<span class="hljs-built_in">li</span>&gt;第<span class="hljs-number">1</span>个<span class="hljs-built_in">li</span>&lt;/<span class="hljs-built_in">li</span>&gt;
+    &lt;<span class="hljs-built_in">li</span>&gt;第<span class="hljs-number">2</span>个<span class="hljs-built_in">li</span>&lt;/<span class="hljs-built_in">li</span>&gt;
+    &lt;<span class="hljs-built_in">li</span>&gt;第<span class="hljs-number">3</span>个<span class="hljs-built_in">li</span>&lt;/<span class="hljs-built_in">li</span>&gt;
+&lt;/ul&gt;
+</code></pre>
+<h2 id="4、创建自定义组件">4、创建自定义组件</h2>
+<p>h的第1个参数除了字符串，还可以是我们定义的组件，这个时候，第3个参数就会作为slot传递给子组件</p>
+<pre><code class="language-vue"><span class="hljs-keyword">return</span> h(Son, {
+    props: {
+        count: <span class="hljs-keyword">this</span>.age
+    },
+    attrs: { 
+        <span class="hljs-class"><span class="hljs-keyword">class</span>:<span class="hljs-type">&#x27;warp&#x27;</span>, 
+        <span class="hljs-type">id:&#x27;box&#x27; </span></span>
+    },
+    on: {
+        <span class="hljs-comment">// 监听子组件emit来的数据</span>
+        confirm: (<span class="hljs-keyword">data</span>) =&gt; {
+            console.log(<span class="hljs-string">&#x27;子组件发来的数据&#x27;</span>, <span class="hljs-keyword">data</span>);
+        }
+    }
+}, <span class="hljs-string">&#x27;Hello World&#x27;</span>); <span class="hljs-comment">// 作为默认slot传递过去</span>
+</code></pre>
+<h2 id="5、传递具名slot">5、传递具名slot</h2>
+<p>通过上面我们知道，第3个参数会作为默认插槽传递给子组件</p>
+<p>当子组件有多个插槽的时候，我们需要在第2个参数中传递<code>{scopedSlots}</code></p>
+<pre><code class="language-vue">render (h) {
+    <span class="hljs-keyword">return</span> h(Son, {
+        props: {
+            count: <span class="hljs-keyword">this</span>.age
+        },
+        attrs: { 
+            <span class="hljs-class"><span class="hljs-keyword">class</span>:<span class="hljs-type">&#x27;warp&#x27;</span>, 
+            <span class="hljs-type">id:&#x27;box&#x27; </span></span>
+        },
+        on: {
+            <span class="hljs-comment">// 监听子组件emit来的数据</span>
+            confirm: (<span class="hljs-keyword">data</span>) =&gt; {
+                console.log(<span class="hljs-string">&#x27;子组件发来的数据&#x27;</span>, <span class="hljs-keyword">data</span>);
+            }
+        },
+        scopedSlots: {
+            <span class="hljs-comment">// 这里的key将传递给同名`&lt;slot name=&quot;foot&quot;&gt;`</span>
+            foot: (scope) =&gt; {
+                <span class="hljs-keyword">return</span> h(<span class="hljs-string">&#x27;button&#x27;</span>, {}, <span class="hljs-string">&#x27;按钮&#x27;</span>)
+            }
+        }
+    }, <span class="hljs-string">&#x27;Hello World&#x27;</span>)
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

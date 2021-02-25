@@ -44,12 +44,12 @@
 <p>第4优先级:  <code>locaton [uri]</code></p>
 <p><strong>场景1：</strong>看下面配置
 当访问 <code>http://aaa.com/</code> 有下面配置</p>
-<pre><code class="language-nginx"><span class="hljs-keyword">location</span> = / {
+<pre><code class="language-nginx">location = / {
     root /root/svr/aaa;
     <span class="hljs-keyword">index</span> <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
 }
 
-<span class="hljs-keyword">location</span> / {
+location / {
     root   /root/svr/bbb;
     <span class="hljs-keyword">index</span>  <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
 }

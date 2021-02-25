@@ -97,11 +97,11 @@
 }
 </code></pre>
 <p>定义store</p>
-<pre><code class="language-js">`<span class="hljs-regexp">/src/</span>redux/store.js` 内容
+<pre><code class="language-js"><span class="hljs-string">`/src/redux/store.js`</span> 内容
 <span class="hljs-keyword">import</span> {createStore} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;redux&#x27;</span>;
 <span class="hljs-keyword">import</span> countReducer <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./count_reducer&#x27;</span>
 
-export <span class="hljs-keyword">default</span> createStore(countReducer); <span class="hljs-comment">// 暴露store</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> createStore(countReducer); <span class="hljs-comment">// 暴露store</span>
 </code></pre>
 <ol start="2">
 <li>修改页面代码<pre><code class="language-jsx"><span class="hljs-keyword">import</span> React, { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>

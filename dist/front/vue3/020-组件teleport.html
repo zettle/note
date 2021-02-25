@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="020-组件teleport">020-组件teleport</h1>
+<p>称为“传送门”组件，类似于React的<code>&lt;Portal /&gt;</code></p>
+<h2 id="1、场景">1、场景</h2>
+<p>在vue2中，我们定义一个弹窗组件Alter.vue</p>
+<pre><code class="language-html">&lt;div <span class="hljs-class"><span class="hljs-keyword">class</span></span>=<span class="hljs-string">&quot;alert-box&quot;</span> v-<span class="hljs-keyword">if</span>=<span class="hljs-string">&quot;isShow&quot;</span>&gt;
+    &lt;span <span class="hljs-class"><span class="hljs-keyword">class</span></span>=<span class="hljs-string">&quot;close&quot;</span> <span class="hljs-meta">@click</span>=<span class="hljs-string">&quot;$emit(&#x27;update:isShow&#x27;, !isShow)&quot;</span>&gt;<span class="hljs-type">X</span>&lt;/span&gt;
+    <span class="hljs-keyword">this</span> is alter component
+&lt;/div&gt;
+</code></pre>
+<p>然后在父组件引用，子组件的html结构是在父组件里面，但是我们往往想要放在body上</p>
+<pre><code class="language-html"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">teleport</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;body&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;alert-box&quot;</span> <span class="hljs-attr">v-if</span>=<span class="hljs-string">&quot;isShow&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;close&quot;</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;$emit(&#x27;update:isShow&#x27;, !isShow)&quot;</span>&gt;</span>X<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+        this is alter component
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">teleport</span>&gt;</span></span>
+</code></pre>
+<p>vue会通过<code>document.querySelect()</code>查到上面的to指定的DOM</p>
+<p><img src="./img/telep.png" alt=""></p>
+<h2 id="2、属性">2、属性</h2>
+<p><code>&lt;teleport /&gt;</code>上有个属性disabled，设置为true表示禁止传送门功能，那就和普通组件一样的展示方式</p>
+<pre><code class="language-html">&lt;teleport to=<span class="hljs-string">&quot;body&quot;</span> <span class="hljs-function">:disabled</span>=<span class="hljs-string">&quot;true&quot;</span>&gt;
+    <span class="hljs-string">...</span>
+&lt;<span class="hljs-string">/teleport</span>&gt;
+</code></pre>
+<h2 id="3、同时多个teleport">3、同时多个teleport</h2>
+<p>当同时有多个<code>&lt;teleport /&gt;</code>的时候，会依次全部添加进入</p>
+<pre><code class="language-html"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">teleport</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;#box&quot;</span>&gt;</span>AAA<span class="hljs-tag">&lt;/<span class="hljs-name">teleport</span>&gt;</span></span>
+<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">teleport</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;#box&quot;</span>&gt;</span>BBB<span class="hljs-tag">&lt;/<span class="hljs-name">teleport</span>&gt;</span></span>
+</code></pre>
+<p>结果</p>
+<pre><code class="language-html">&lt;<span class="hljs-keyword">div</span> id=<span class="hljs-string">&quot;box&quot;</span>&gt;
+  <span class="hljs-keyword">AAA</span>
+  BBB
+&lt;/<span class="hljs-keyword">div</span>&gt;
+</code></pre>
+<h2 id="4、特点">4、特点</h2>
+<ul>
+<li>因为真实DOM接口已经脱离了父组件，所以在父组件无法捕获到<code>&lt;teleport /&gt;</code>里面的事件冒泡</li>
+</ul>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

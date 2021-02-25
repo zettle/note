@@ -34,11 +34,11 @@ vim <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/mongod
 </code></pre>
 <p>把<code>auth=false</code>改为<code>auth=true</code></p>
 <p>重启mongod服务</p>
-<pre><code class="language-shell"><span class="hljs-comment"># 关闭mongod服务</span>
+<pre><code class="language-shell"><span class="hljs-meta"># 关闭mongod服务</span>
 killall mongod
 
-<span class="hljs-comment"># 启动mongod服务</span>
-mongod --config=..<span class="hljs-regexp">/conf/m</span>ongodb.conf
+<span class="hljs-meta"># 启动mongod服务</span>
+mongod --config=../conf/mongodb.conf
 </code></pre>
 <h2 id="3、客户端连接服务">3、客户端连接服务</h2>
 <p>因为有了账号密码，所以连接命令改为<code>mongo --port=28001 -u admin -p</code>

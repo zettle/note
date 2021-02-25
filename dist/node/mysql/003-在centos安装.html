@@ -48,7 +48,7 @@ vim <span class="hljs-regexp">/etc/my</span>.cnf.d/client.cnf
 <span class="hljs-literal">default</span>-character-<span class="hljs-keyword">set</span>=utf8
 </code></pre>
 <ol start="2">
-<li>修改<code>server.cnf</code>配置<pre><code class="language-shell"><span class="hljs-selector-tag">vim</span> /<span class="hljs-selector-tag">etc</span>/<span class="hljs-selector-tag">my</span><span class="hljs-selector-class">.cnf</span><span class="hljs-selector-class">.d</span>/<span class="hljs-selector-tag">server</span><span class="hljs-selector-class">.cnf</span>
+<li>修改<code>server.cnf</code>配置<pre><code class="language-shell"><span class="hljs-keyword">vim</span> /etc/my.<span class="hljs-keyword">cnf</span>.d/server.<span class="hljs-keyword">cnf</span>
 </code></pre>
 找到<code>[mysqld]</code>的地方，新加配置如下:<pre><code class="language-conf"><span class="hljs-section">[mysqld]</span>
 <span class="hljs-attr">init_connect</span> = <span class="hljs-string">&#x27;SET collation_connection = utf8_general_ci&#x27;</span>

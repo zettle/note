@@ -44,12 +44,12 @@
 <img src="./img/show-dbs.png" alt=""></li>
 </ol>
 <p>需要执行下面命令登录下账号</p>
-<pre><code class="language-shell">use <span class="hljs-literal">admin</span>
-<span class="hljs-comment"># admin/123456 是启动容器时候设置的密码</span>
+<pre><code class="language-shell">use admin
+<span class="hljs-meta"># admin/123456 是启动容器时候设置的密码</span>
 db.auth(<span class="hljs-string">&#x27;admin&#x27;</span>, <span class="hljs-string">&#x27;123456&#x27;</span>)
 
-<span class="hljs-comment"># 登录成功就有权限查询数据了</span>
-<span class="hljs-literal">show</span> dbs
+<span class="hljs-meta"># 登录成功就有权限查询数据了</span>
+show dbs
 </code></pre>
 <p><img src="./img/auth.png" alt=""></p>
 

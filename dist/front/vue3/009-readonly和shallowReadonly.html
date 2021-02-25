@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="009-readonly和shallowreadonly">009-readonly和shallowReadonly</h1>
+<p>这章涉及api: <code>readonly()/shallowReadonly()</code></p>
+<p>我们知道，修改一个reactive会引起js和html的更新，但如果是<code>readonly()</code>，那么这个变量就变成了只读属性，修改会报错，html和js都不会更新</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> person = reactive(<span class="hljs-comment">{
+    a: {
+        b: {
+            c: 1
+        }</span>
+    }
+});
+<span class="hljs-keyword">const</span> personOnly = <span class="hljs-keyword">readonly</span>(person); <span class="hljs-comment">// 返回也是一个Proxy{}对象</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">updatePersonOnlyAge</span> <span class="hljs-params">()</span> <span class="hljs-comment">{
+    personOnly.a.b.c += 1; // vue会警告，并且js和html都不会更新
+    person.a.b.c += 1; // 通过reactive去修改的，js和html都会正常更新
+}</span></span>
+</code></pre>
+<p><code>readonly()</code>会将每一层都设置为只读属性，如果想要只设置第1层的，就使用<code>shallowReadonly()</code></p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> person2 = reactive(<span class="hljs-comment">{
+    a: {
+        b: {
+            c: 1
+        }</span>
+    }
+});
+<span class="hljs-keyword">const</span> personOnly2 = shallowReadonly(person2);
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">updatePersonOnly2Age</span> <span class="hljs-params">()</span> <span class="hljs-comment">{
+    personOnly2.a = {b:{c:100}</span>};</span> <span class="hljs-comment">// a只读，vue会警告，html和js都不会更新</span>
+    personOnly2.a.b = <span class="hljs-string">&#x27;xiaoming&#x27;</span>; <span class="hljs-comment">// a.b非只读，html和js都会更新</span>
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

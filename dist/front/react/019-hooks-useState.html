@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="019-hooks">019-hooks</h1>
+<p>在react16之前，函数组件，没有<code>state/refs/生命周期</code>，只有props</p>
+<p>react16之后，为函数组件添加了hooks功能，使其拥有和类组件一样的<code>state/refs/生命周期</code></p>
+<p>hooks是为函数组件为生</p>
+<pre><code class="language-jsx"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">App</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span></span>
+}
+
+ReactDOM.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">App</span> /&gt;</span></span>, <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;root&#x27;</span>));
+</code></pre>
+<p>我们知道，函数组件是没有state状态的</p>
+<p>所以hooks的出现改变了这一现象</p>
+<h2 id="1、usestate">1、useState</h2>
+<p><code>useState()</code>方法</p>
+<ul>
+<li>接收一个值，该值会作为默认值</li>
+<li>返回一个数组，数组第1个元素是设置的值，第2个元素是改变值的方法</li>
+</ul>
+<pre><code class="language-jsx"><span class="hljs-keyword">import</span> {useState} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Child</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">const</span> [count, setCount] = useState(<span class="hljs-number">0</span>); <span class="hljs-comment">// 调用第2个方法既可改变值</span>
+    <span class="hljs-keyword">const</span> changeCount = <span class="hljs-function">() =&gt;</span> {
+        setCount(count+<span class="hljs-number">1</span>);
+    }
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+            {count} 
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{changeCount}</span>&gt;</span>改变<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    )
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

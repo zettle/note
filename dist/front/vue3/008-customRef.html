@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="008-customref">008-customRef</h1>
+<p>这章涉及api: <code>customRef()</code></p>
+<p><code>customRef()</code>可以让我们自己定义一个ref函数</p>
+<p>自定义函数格式: </p>
+<pre><code class="language-js"><span class="hljs-comment">// 自定义一个ref函数</span>
+<span class="hljs-comment">// 接受一个参数，这个参数是内存中ref的值</span>
+<span class="hljs-comment">// 里面return customRef()</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">useDebouncedRef</span></span>(value) {
+    <span class="hljs-keyword">return</span> customRef((track, trigger) =&gt; {
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-keyword">get</span> () {},
+
+            <span class="hljs-comment">// 这里的newVal是我们每次调用 .value=12 中的12</span>
+            <span class="hljs-comment">// 这里的set()在初始化的时候不会调</span>
+            <span class="hljs-keyword">set</span> (<span class="hljs-keyword">new</span><span class="hljs-type">Val</span>) {} 
+        }
+    });
+}
+</code></pre>
+<p>比如我们自定义一个ref函数</p>
+<pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">useDebouncedRef</span></span>(value) {
+    <span class="hljs-keyword">return</span> customRef((track, trigger) =&gt; {
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-keyword">get</span> () {
+                console.log(<span class="hljs-string">&#x27;get&#x27;</span>, value);
+                <span class="hljs-keyword">return</span> value;
+            },
+            <span class="hljs-keyword">set</span> (<span class="hljs-keyword">new</span><span class="hljs-type">Val</span>) {
+                console.log(<span class="hljs-string">&#x27;set&#x27;</span>, value, <span class="hljs-keyword">new</span><span class="hljs-type">Val</span>);
+                value = <span class="hljs-keyword">new</span><span class="hljs-type">Val</span>;
+            }
+        }
+    });
+}
+const data = useDebouncedRef(<span class="hljs-number">1</span>);
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">change</span></span>() {
+    data.value+=<span class="hljs-number">1</span>;
+}
+</code></pre>
+<ul>
+<li>页面刚刷新的时候，如果html中有用到data变量，就会触发set，整个过程不会触发get</li>
+</ul>
+<p><img src="./img/custom-1.gif" alt=""></p>
+<ul>
+<li>并且每次点击按钮，会发现先执行了get，再执行了set。这是为什么呢</li>
+</ul>
+<p>首先，页面刚刷新的时候的get，是因为html中用到了，就会触发1次。</p>
+<p>接着点击按钮触发<code>change()</code>，里面代码是<code>data.value+=1</code>等价于<code>data.value=data.value+1</code>，这里的等号右边的<code>data.value</code>拿了1次，所以触发了get，然后赋值给等号左边的<code>data.value</code>，触发了set</p>
+<ul>
+<li>这么写，当改变data的值的时候，html并不会更新。要触发html的更新，就需要<code>track()/trigger()</code>这2个函数上场了</li>
+</ul>
+<p><code>track()</code>: 告诉vue这个数据是需要追踪变化的</p>
+<p><code>trigger()</code>: 告诉vue更新html界面</p>
+<pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">useDebouncedRef</span>(<span class="hljs-params">value</span>) </span>{
+    <span class="hljs-keyword">let</span> timeout;
+    <span class="hljs-keyword">return</span> customRef(<span class="hljs-function">(<span class="hljs-params">track, trigger</span>) =&gt;</span> {
+        <span class="hljs-keyword">return</span> {
+            get () {
+                track();
+                <span class="hljs-keyword">return</span> value;
+            },
+            set (newVal) {
+                <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;set&#x27;</span>, value, newVal);
+                <span class="hljs-built_in">clearTimeout</span>(timeout);
+                timeout = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+                    value = newVal; <span class="hljs-comment">// 改变js里面的值</span>
+                    trigger(); <span class="hljs-comment">// 更新html模板</span>
+                }, <span class="hljs-number">1000</span>);
+            }
+        }
+    });
+}
+<span class="hljs-keyword">const</span> data = useDebouncedRef(<span class="hljs-number">1</span>);
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">change</span>(<span class="hljs-params"></span>) </span>{
+    data.value+=<span class="hljs-number">1</span>;
+    <span class="hljs-built_in">console</span>.log(data.value); <span class="hljs-comment">// 这里得到的是加之前的值，因为设置自定义ref函数里面有个延长器</span>
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="012-函数组件">012-函数组件</h1>
+<p>在vue2中，我们可以通过<code>&lt;template functional&gt;</code>定义一个函数组件</p>
+<p>在vue3中，这个函数组件被移除了，<a href="https://v3.cn.vuejs.org/guide/migration/functional-components.html#%E6%A6%82%E8%A7%88">官网</a>说在vue3中，类组件和函数组件已经性能已经很接近，没必要去用函数组件</p>
+<p>如果一定要在vue3中声明函数组件，那可以用h函数</p>
+<h2 id="1、在vue3中声明函数组件">1、在vue3中声明函数组件</h2>
+<pre><code class="language-vue"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<span class="hljs-keyword">import</span> { h } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;vue&quot;</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">FunCom</span> (<span class="hljs-params">props, context</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(context); <span class="hljs-comment">// 和setup的context参数类似{attrs, emit, slots}</span>
+    <span class="hljs-keyword">return</span> h(<span class="hljs-string">&#x27;div&#x27;</span>, {}, props.name);
+}
+<span class="hljs-comment">// 定义props</span>
+FunCom.props = {
+    <span class="hljs-attr">name</span>: <span class="hljs-built_in">String</span>
+};
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span>
+</code></pre>
+<ul>
+<li>因为是函数，所以定义组件props只能通过<code>FunCom.props</code>的形式</li>
+</ul>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

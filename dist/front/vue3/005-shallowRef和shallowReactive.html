@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="005-shallowref和shallowreactive">005-shallowRef和shallowReactive</h1>
+<p>这章涉及api: <code>shallowReactive()/shallowRef()/triggerRef()</code></p>
+<p>跟vue2一样，vue3会对每一层都进行响应式监听，即每一层都是Proxy，但是也是比较消耗性能</p>
+<pre><code class="language-js"><span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = reactive({
+    <span class="hljs-title">a</span>: {
+        <span class="hljs-title">b</span>: {
+            <span class="hljs-title">c</span>: 1
+        }
+    }
+});</span>
+<span class="hljs-title">console</span>.log(<span class="hljs-class"><span class="hljs-keyword">data</span>); // <span class="hljs-type">Proxy</span>{}对象</span>
+<span class="hljs-title">console</span>.log(<span class="hljs-class"><span class="hljs-keyword">data</span>.a); // <span class="hljs-type">Proxy</span>{}对象</span>
+<span class="hljs-title">console</span>.log(<span class="hljs-class"><span class="hljs-keyword">data</span>.a.b); // <span class="hljs-type">Proxy</span>{}对象</span>
+</code></pre>
+<h2 id="1、shallowreactive">1、shallowReactive()</h2>
+<p><code>shallowReactive()</code>声明的就只会在第1层加上监听</p>
+<pre><code class="language-js"><span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = shallowReactive({
+    <span class="hljs-title">a</span>: {
+        <span class="hljs-title">b</span>: {
+            <span class="hljs-title">c</span>: 1
+        }
+    }
+});</span>
+<span class="hljs-title">console</span>.log(<span class="hljs-class"><span class="hljs-keyword">data</span>);  // <span class="hljs-type">Proxy</span>{}对象</span>
+<span class="hljs-title">console</span>.log(<span class="hljs-class"><span class="hljs-keyword">data</span>.a); // 普通<span class="hljs-type">JSON</span>对象</span>
+// 修改 <span class="hljs-class"><span class="hljs-keyword">data</span>.a 会引起html更新</span>
+// 吸怪 <span class="hljs-class"><span class="hljs-keyword">data</span>.a.b 不会引起html更新</span>
+</code></pre>
+<p>如果声明的是一个数组，则修改数组下面会引起html更新</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> <span class="hljs-keyword">data</span> = shallowReactive([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]);
+<span class="hljs-keyword">data</span>[<span class="hljs-number">1</span>] = <span class="hljs-string">&#x27;a&#x27;</span>; <span class="hljs-comment">// 引起html更新</span>
+</code></pre>
+<h2 id="2、shallowref">2、shallowRef()</h2>
+<p><code>shallowRef()</code>监听的是<code>.value</code>的变化</p>
+<pre><code class="language-js"><span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = shallowRef({
+    <span class="hljs-title">a</span>: {
+        <span class="hljs-title">b</span>: {
+            <span class="hljs-title">c</span>: 1
+        }
+    }
+});</span>
+<span class="hljs-title">console</span>.log(<span class="hljs-class"><span class="hljs-keyword">data</span>);   // <span class="hljs-type">RefImpl</span>{}对象</span>
+<span class="hljs-title">console</span>.log(<span class="hljs-class"><span class="hljs-keyword">data</span>.value); // 普通<span class="hljs-type">JSON</span>对象</span>
+// 修改 <span class="hljs-class"><span class="hljs-keyword">data</span>.value 会引起界面变化</span>
+// 修改 <span class="hljs-class"><span class="hljs-keyword">data</span>.value.a 不会引起界面变化</span>
+</code></pre>
+<p>如果<code>shallowRef()</code>声明的是一个数组也是如此，只有<code>.value</code>会更新html</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> <span class="hljs-keyword">data</span> = shallowRef([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]);
+<span class="hljs-keyword">data</span>.value=<span class="hljs-string">&#x27;a&#x27;</span> <span class="hljs-comment">// 引起html更新</span>
+<span class="hljs-keyword">data</span>.value[<span class="hljs-number">0</span>]=<span class="hljs-string">&#x27;a&#x27;</span> <span class="hljs-comment">// 不引起html更新</span>
+</code></pre>
+<h2 id="3、-triggerref">3、 triggerRef()</h2>
+<p>从<code>shallowRef()</code>的特性我们知道，如果修改的非<code>.value</code>层的变化是不会引起html更新的。</p>
+<p>但vue3提供了一个api可以让我们在更新数据后，自己手动更新html</p>
+<pre><code class="language-js"><span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = shallowRef({
+    <span class="hljs-title">a</span>: {
+        <span class="hljs-title">b</span>: {
+            <span class="hljs-title">c</span>: 1
+        }
+    }
+});</span>
+<span class="hljs-title">function</span> change () {
+    <span class="hljs-class"><span class="hljs-keyword">data</span>.value.a.b = 1;</span>
+    triggerRef(<span class="hljs-class"><span class="hljs-keyword">data</span>); // 手动触发更新，vue会更新<span class="hljs-keyword">data</span>的最新值去更新html</span>
+}
+</code></pre>
+<blockquote>
+<p>vue3只提供了<code>triggerRef()</code>但没有提供<code>triggerReactive()</code>，说以如果是<code>shallowReactive()</code>声明的对象是无法实现这种功能</p>
+</blockquote>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

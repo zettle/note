@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="004-is属性">004-is属性</h1>
+<p>vue中的<code>is</code>接受一个组件，然后会替代标签所在位置，一般和<code>&lt;component&gt;</code>组件一起使用</p>
+<h2 id="1、is用在component组件上">1、is用在component组件上</h2>
+<pre><code class="language-vue">&lt;component <span class="hljs-symbol">:is=<span class="hljs-string">&quot;SonTree&quot;</span>&gt;&lt;/component&gt;</span>
+
+<span class="hljs-keyword">import</span> SonTree from <span class="hljs-string">&#x27;../components/SonTree.vue&#x27;</span>;
+export default {
+    data () {
+        <span class="hljs-keyword">return</span> {
+            SonTree
+        }
+    }
+}
+</code></pre>
+<p>vue渲染的时候，会用<code>&lt;SonTree&gt;</code>这个直接渲染</p>
+<h2 id="2、is用在html标签或自定义组件上">2、is用在html标签或自定义组件上</h2>
+<p><code>is</code>如果作为属性传递给html标签或者自定义组件上，会将其视为<code>&lt;component /&gt;</code>一样效果</p>
+<p>可以简单的认为<code>is</code>是很强势的，一旦用了，不论是什么标签，都和<code>&lt;component /&gt;</code>一样</p>
+<pre><code class="language-vue">&lt;div <span class="hljs-symbol">:is=<span class="hljs-string">&quot;SonTree&quot;</span>&gt;&lt;/div&gt;</span>
+&lt;box-warp <span class="hljs-symbol">:is=<span class="hljs-string">&quot;SonTree&quot;</span>&gt;&lt;/box-warp&gt;</span>
+
+<span class="hljs-keyword">import</span> BoxWarp from <span class="hljs-string">&#x27;../components/BoxWarp.vue&#x27;</span>;
+<span class="hljs-keyword">import</span> SonTree from <span class="hljs-string">&#x27;../components/SonTree.vue&#x27;</span>;
+export default {
+    <span class="hljs-symbol">components:</span> { BoxWarp },
+    data () {
+        <span class="hljs-keyword">return</span> {
+            SonTree
+        }
+    }
+}
+</code></pre>
+<p>想上面<code>&lt;box-warp&gt;</code>组件，被<code>is</code>修饰后，整个组件被替换成<code>&lt;SonTree&gt;</code>的了，<code>&lt;box-warp&gt;</code>组件连初始化都不会触发</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

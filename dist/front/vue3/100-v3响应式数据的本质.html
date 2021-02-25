@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/node/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/node/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/node/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="200-v3响应式数据的本质">200-v3响应式数据的本质</h1>
+<h2 id="1、资料来源">1、资料来源</h2>
+<ol>
+<li><a href="https://www.bilibili.com/video/BV14k4y117LL?p=27">v3响应数据本质【上】</a></li>
+<li><a href="https://www.bilibili.com/video/BV14k4y117LL?p=28">v3响应数据本质【下】</a></li>
+<li><a href="https://www.bilibili.com/video/BV14k4y117LL?p=29">手写shallowReactive和shallowRef</a></li>
+<li><a href="https://www.bilibili.com/video/BV14k4y117LL?p=30">手写reactive和ref</a></li>
+<li><a href="https://www.bilibili.com/video/BV14k4y117LL?p=31">手写shallowReadonly</a></li>
+</ol>
+<p><a href="https://github.com/zettle/practice/tree/main/%E6%A8%A1%E6%8B%9Fvue3%E7%9A%84%E5%87%A0%E4%B8%AA%E5%93%8D%E5%BA%94api">编写后的代码</a></p>
+<h2 id="2、proxy的用法">2、Proxy的用法</h2>
+<p>Proxy可以在对象外层加一层拦截，但获取/设置对象值的时候，先经过这层拦截</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> person = {name:&#x27;小明&#x27;,age:<span class="hljs-number">12</span>};
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">state</span> = new Proxy(person, {
+    get (obj, key) {
+        console.<span class="hljs-keyword">log</span>(&#x27;get&#x27;, obj, key);
+        return obj[key];
+    },
+    <span class="hljs-built_in">set</span> (obj, key, newVal) {
+        console.<span class="hljs-keyword">log</span>(&#x27;<span class="hljs-built_in">set</span>&#x27;, obj, key, newVal);
+        obj[key] = newVal;
+        // vue在这里去更新html
+    }
+});
+<span class="hljs-keyword">state</span>.name = &#x27;小红&#x27;; // 触发<span class="hljs-built_in">set</span>钩子
+console.<span class="hljs-keyword">log</span>(<span class="hljs-keyword">state</span>.name); // 触发get钩子
+
+// proxy的好处，如果属性原先没有的也会触发钩子
+<span class="hljs-keyword">state</span>.sex = &#x27;女&#x27;; // 触发<span class="hljs-built_in">set</span>钩子
+</code></pre>
+<p>除了JSON，对于数组一样适用</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> arr = [<span class="hljs-string">&#x27;a&#x27;</span>, <span class="hljs-string">&#x27;b&#x27;</span>, <span class="hljs-string">&#x27;c&#x27;</span>];
+<span class="hljs-keyword">const</span> state = <span class="hljs-keyword">new</span> Proxy(arr, {
+    <span class="hljs-built_in">get</span> (obj, <span class="hljs-built_in">key</span>) {
+        console.<span class="hljs-built_in">log</span>(<span class="hljs-string">&#x27;get&#x27;</span>, obj, <span class="hljs-built_in">key</span>);
+        <span class="hljs-keyword">return</span> obj[<span class="hljs-built_in">key</span>];
+    },
+    <span class="hljs-built_in">set</span> (obj, <span class="hljs-built_in">key</span>, newVal) {
+        console.<span class="hljs-built_in">log</span>(<span class="hljs-string">&#x27;set&#x27;</span>, obj, <span class="hljs-built_in">key</span>, newVal);
+        obj[<span class="hljs-built_in">key</span>] = newVal;
+    }
+});
+state.push(<span class="hljs-string">&#x27;d&#x27;</span>); <span class="hljs-comment">// 往数组添加一个元素</span>
+</code></pre>
+<p>然而上面的会报错，错误信息:<code>Uncaught TypeError: &#39;set&#39; on proxy: trap returned falsish for property &#39;3&#39;</code></p>
+<p><img src="./img/proxy-set.png" alt=""></p>
+<p>我们来解析下控制台这些信息，对于<code>state.push(&#39;d&#39;)</code>这句话，做了哪些动作:</p>
+<ol>
+<li>获取state上的<code>push()</code>方法，这也就是为什么第1句是触发get钩子，<code>key=push</code></li>
+<li><code>push()</code>是往数组最后添加一个元素，所以需要知道数组的长度，获取数组的length属性，又触发了get钩子，<code>key=length</code></li>
+<li>接着<code>push()</code>往数组最后位置添加，就触发了set钩子</li>
+<li>正常来说，等到最后位置添加好后，应该去修改数组的length，使其+1。</li>
+</ol>
+<p>但是上面代码执行完第3步就停止了，是因为我们并没有在set中<code>return true</code>。有这个return，js才知道第3不完成了，才会继续走。</p>
+<p>所以代码改为:</p>
+<pre><code class="language-js"><span class="hljs-keyword">set</span> (obj, key, <span class="hljs-keyword">new</span><span class="hljs-type">Val</span>) {
+    console.log(<span class="hljs-string">&#x27;set&#x27;</span>, obj, key, <span class="hljs-keyword">new</span><span class="hljs-type">Val</span>);
+    obj[key] = <span class="hljs-keyword">new</span><span class="hljs-type">Val</span>;
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; <span class="hljs-comment">// 加上这一句即可</span>
+}
+</code></pre>
+<p><strong>Proxy只会拦截第1层</strong></p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = {
+    name: &#x27;xiaoming&#x27;,
+    a: {
+        b: { 
+            c: <span class="hljs-number">1</span> 
+        }
+    }
+};
+<span class="hljs-keyword">const</span> <span class="hljs-keyword">state</span> = new Proxy(obj, {
+    get (obj, key) {
+        console.<span class="hljs-keyword">log</span>(&#x27;get&#x27;, key);
+        return obj[key];
+    },
+    <span class="hljs-built_in">set</span> (obj, key, newVal) {
+        console.<span class="hljs-keyword">log</span>(&#x27;<span class="hljs-built_in">set</span>&#x27;, key);
+        obj[key] = newVal;
+        return true;
+    }
+});
+<span class="hljs-keyword">state</span>.name = &#x27;小红&#x27;; // 触发<span class="hljs-number">1</span>次<span class="hljs-built_in">set</span>
+<span class="hljs-keyword">state</span>.a.b.c = <span class="hljs-number">1</span>;    // 触发<span class="hljs-number">1</span>次get，因为有`<span class="hljs-keyword">state</span>.a`
+<span class="hljs-keyword">state</span>.a.b = <span class="hljs-number">3</span>;      // 触发<span class="hljs-number">1</span>次get，因为有`<span class="hljs-keyword">state</span>.a`
+</code></pre>
+<p>从上面可以看出，只有对第1层属性设置/获取的时候，才会触发get/set</p>
+<h2 id="3、-封装一个shallowreactive和shallowref">3、 封装一个shallowReactive和shallowRef</h2>
+<p>从上面Proxy的特性，就不难封装一个<code>shallowReactive/shallowRef</code>了</p>
+<p>我们知道shallowReactive只监听第1层，这个和proxy完全一样。</p>
+<p>而shallowRef只监听<code>.value</code>层，我们将其传入的参数A，再包装一层即可<code>{value:参数A}</code></p>
+<pre><code class="language-js"><span class="hljs-comment">// 封装一个shallowReactive</span>
+function shallowReactive (obj) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Proxy(obj, {
+        <span class="hljs-built_in">get</span> (obj, <span class="hljs-built_in">key</span>) {
+            console.<span class="hljs-built_in">log</span>(<span class="hljs-string">&#x27;get&#x27;</span>, <span class="hljs-built_in">key</span>);
+            <span class="hljs-keyword">return</span> obj[<span class="hljs-built_in">key</span>];
+        },
+        <span class="hljs-built_in">set</span> (obj, <span class="hljs-built_in">key</span>, newVal) {
+            console.<span class="hljs-built_in">log</span>(<span class="hljs-string">&#x27;set&#x27;</span>, <span class="hljs-built_in">key</span>);
+            obj[<span class="hljs-built_in">key</span>] = newVal;
+            console.<span class="hljs-built_in">log</span>(<span class="hljs-string">&#x27;更新html&#x27;</span>);<span class="hljs-comment">// vue在这里更新html</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+        }
+    });
+}
+<span class="hljs-keyword">const</span> state = shallowReactive({
+    name: <span class="hljs-string">&#x27;小明&#x27;</span>,
+    a: {
+        b: {
+            c: <span class="hljs-number">1</span>
+        }
+    }
+});
+state.name = <span class="hljs-string">&#x27;小红&#x27;</span>; <span class="hljs-comment">// 触发set</span>
+state.a.b.c = <span class="hljs-number">3</span>; <span class="hljs-comment">// 不会触发set,就不会html更新</span>
+state.a.b = <span class="hljs-number">4</span>; <span class="hljs-comment">// 不会触发set,就不会html更新</span>
+
+
+<span class="hljs-comment">// 封装一个shallowRef</span>
+function shallowRef (value) {
+    <span class="hljs-keyword">return</span> shallowReactive({value});
+}
+<span class="hljs-keyword">const</span> state2 = shallowRef({
+    name: <span class="hljs-string">&#x27;小明&#x27;</span>,
+    a: {
+        b: {
+            c: <span class="hljs-number">1</span>
+        }
+    }
+});
+state2.value.a = <span class="hljs-number">11</span>; <span class="hljs-comment">// 不会触发set，所以不会更新html</span>
+state2.value = <span class="hljs-number">1</span>; <span class="hljs-comment">// 触发set，所以更新html</span>
+</code></pre>
+<h2 id="4、-封装一个reactive和ref">4、 封装一个reactive和ref</h2>
+<p><code>reactive/ref</code>和<code>shallowReactive/shallowRef</code>的区别是每一层都监听，那么我们只要变量下对象的属性，判断该属性的value是否为一个对象，是的话就将其再封装成一个proxy。</p>
+<p>说白了这是一个递归调用，结束添加是对象value不是一个对象</p>
+<p>要考虑数组和json格式2种</p>
+<pre><code class="language-js"><span class="hljs-comment">// 封装一个reactive</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">reactive</span>(<span class="hljs-params">obj</span>) </span>{
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> obj !== <span class="hljs-string">&#x27;object&#x27;</span>) {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;传递进来的不是一个object类型&#x27;</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+    <span class="hljs-comment">// obj是一个数组，那么就遍历数组，看每个原始是否为对象</span>
+    <span class="hljs-comment">// 比如 obj=[{name:&#x27;小明&#x27;}, {name:&#x27;小红&#x27;}] 这种情况</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Array</span>.isArray(obj)) {
+        obj.forEach(<span class="hljs-function">(<span class="hljs-params">item, index</span>) =&gt;</span> {
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> item === <span class="hljs-string">&#x27;object&#x27;</span>) {
+                obj[index] = reactive(item); <span class="hljs-comment">// 重新赋值给原来的位置</span>
+            }
+        });
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-comment">// obj是一个JSON对象的情况，就需要看每个属性的value是否为一个对象</span>
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> [key, value] <span class="hljs-keyword">of</span> <span class="hljs-built_in">Object</span>.entries(obj)) {
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&#x27;object&#x27;</span>) {
+                obj[key] = reactive(value);
+            }
+        }
+    }
+    <span class="hljs-keyword">return</span> shallowReactive(obj);
+}
+
+<span class="hljs-keyword">const</span> state3 = reactive([{<span class="hljs-attr">name</span>:<span class="hljs-string">&#x27;小明&#x27;</span>}, {<span class="hljs-attr">a</span>: {<span class="hljs-attr">b</span>: {<span class="hljs-attr">c</span>: <span class="hljs-number">1</span>}}}]);
+state3[<span class="hljs-number">0</span>].name = <span class="hljs-string">&#x27;小红&#x27;</span>; <span class="hljs-comment">// 触发set，更新html</span>
+state3[<span class="hljs-number">1</span>].a.b.c = <span class="hljs-number">1</span>; <span class="hljs-comment">// 触发set，更新html</span>
+
+<span class="hljs-keyword">const</span> state4 = reactive({<span class="hljs-attr">a</span>: {<span class="hljs-attr">b</span>: {<span class="hljs-attr">c</span>:<span class="hljs-number">1</span>}}});
+state4.a.b.c = <span class="hljs-number">12</span>; <span class="hljs-comment">// 触发set，更新html</span>
+</code></pre>
+<p>对于封装<code>ref()</code>就更简单了，基于<code>reactive()</code>包装一层<code>.value</code>即可</p>
+<pre><code class="language-js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ref</span> <span class="hljs-params">(value)</span> </span>{
+    <span class="hljs-keyword">return</span> reactive({value});
+}
+<span class="hljs-keyword">const</span> state5 = ref({a: {b: {c: <span class="hljs-number">1</span>}}});
+state5.value.a.b.c = <span class="hljs-number">12</span>;
+</code></pre>
+<h2 id="5、封装一个shallowreadonly和readonly">5、封装一个shallowReadonly和readonly</h2>
+<p>我们知道<code>shallowReadonly()</code>是控制第1层属性只读，那么我们只要把Proxy的<code>set()</code>中设置值的代码去掉即可</p>
+<pre><code class="language-js">function shallowReadonly(obj) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Proxy(obj, {
+        <span class="hljs-built_in">get</span> (obj, <span class="hljs-built_in">key</span>) {
+            console.<span class="hljs-built_in">log</span>(<span class="hljs-string">&#x27;get&#x27;</span>, <span class="hljs-built_in">key</span>);
+            <span class="hljs-keyword">return</span> obj[<span class="hljs-built_in">key</span>];
+        },
+        <span class="hljs-built_in">set</span> (obj, <span class="hljs-built_in">key</span>, newVal) {
+            console.<span class="hljs-built_in">log</span>(<span class="hljs-string">&#x27;set&#x27;</span>, <span class="hljs-built_in">key</span>);
+            <span class="hljs-comment">// 去掉这2句并给下warn警告</span>
+            <span class="hljs-comment">// obj[key] = newVal; </span>
+            <span class="hljs-comment">// console.log(&#x27;更新html&#x27;);</span>
+            console.warn(`${<span class="hljs-built_in">key</span>}属性为只读`);
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+        }
+    });
+}
+<span class="hljs-keyword">const</span> state6 = shallowReadonly({a: {b: {c:<span class="hljs-number">1</span>}}});
+state6.a = <span class="hljs-number">12</span>;<span class="hljs-comment">// 异常，只读</span>
+state6.a.b.c = <span class="hljs-number">111</span>; <span class="hljs-comment">// js会变，html不会更新</span>
+</code></pre>
+<p>如果是<code>reactive+shallowReadony</code>一起使用也是和vue一样的效果</p>
+<pre><code class="language-js"><span class="hljs-attribute">const</span> state<span class="hljs-number">7</span> = reactive({a: {b: {c:<span class="hljs-number">1</span>}}});
+<span class="hljs-attribute">const</span> state<span class="hljs-number">8</span> = shallowReadonly(state<span class="hljs-number">7</span>);
+<span class="hljs-attribute">state8</span>.a = <span class="hljs-number">12</span>;// 异常，只读
+<span class="hljs-attribute">state8</span>.a.b.c = <span class="hljs-number">111</span>; // js会变，html也会更新
+</code></pre>
+<p>而<code>readonly()</code>其实也是类似，去递归对象的value，每一层都加<code>shallowReadonly()</code></p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>
