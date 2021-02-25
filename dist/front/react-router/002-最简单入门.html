@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/note/assets/style.css" />
+<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/dist/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -18,35 +18,33 @@
 <span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-dom&#x27;</span>;
 <span class="hljs-keyword">import</span> {BrowserRouter} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-router-dom&#x27;</span>;
 <span class="hljs-keyword">import</span> App <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./App&#x27;</span>;
+ReactDOM.render(
+ <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">BrowserRouter</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">App</span> /&gt;</span>
+ <span class="hljs-tag">&lt;/<span class="hljs-name">BrowserRouter</span>&gt;</span></span>,
+ <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;root&#x27;</span>)
+);
 </code></pre>
 </li>
 </ol>
-<p>ReactDOM.render(
-    <BrowserRouter>
-        <App />
-    </BrowserRouter>, 
-    document.getElementById(&#39;root&#39;)
-);</p>
-<pre><code>
-* `<span class="javascript">BrowserRouter</span>`: history模式
-* `<span class="javascript">HashRouter</span>`: hash模式
-
-
-
-<span class="hljs-number">2.</span> 在`<span class="javascript">/src/App.jsx</span>`定义好路由导航和插槽
-```<span class="javascript">jsx
-<span class="hljs-keyword">import</span> React, { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
+<ul>
+<li><code>BrowserRouter</code>: history模式</li>
+<li><code>HashRouter</code>: hash模式</li>
+</ul>
+<ol start="2">
+<li>在<code>/src/App.jsx</code>定义好路由导航和插槽</li>
+</ol>
+<pre><code class="language-js"><span class="hljs-keyword">import</span> React, { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
 <span class="hljs-keyword">import</span> {Link, Route} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-router-dom&#x27;</span>
 <span class="hljs-keyword">import</span> About <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./components/About&#x27;</span>
 <span class="hljs-keyword">import</span> Home <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./components/Home&#x27;</span>
-
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">App</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>{
     <span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span> {
         <span class="hljs-keyword">return</span> (
             <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
                 {/* 导航条 */}
                 <span class="hljs-tag">&lt;<span class="hljs-name">nav</span>&gt;</span>
-                    <span class="hljs-tag">&lt;<span class="hljs-name">Link</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/home&quot;</span>&gt;</span>Home<span class="hljs-tag">&lt;/<span class="hljs-name">Link</span>&gt;</span> | 
+                    <span class="hljs-tag">&lt;<span class="hljs-name">Link</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/home&quot;</span>&gt;</span>Home<span class="hljs-tag">&lt;/<span class="hljs-name">Link</span>&gt;</span> |
                     <span class="hljs-tag">&lt;<span class="hljs-name">Link</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/about&quot;</span>&gt;</span>About<span class="hljs-tag">&lt;/<span class="hljs-name">Link</span>&gt;</span>
                 <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
 
@@ -59,7 +57,7 @@
 
         )
     }
-};</span>
+};
 </code></pre>
 <p>这样匹配后，当路由路径匹配正确了，react就会展示对应的组件</p>
 

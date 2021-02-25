@@ -64,16 +64,16 @@ export default class App extends Component {
 ```js
 `/src/redux/count_reducer.js` 内容
 /*******************************
- * reducer的作用: 初始化数据（页面一打开的时候） + 更新数据 
- * 
+ * reducer的作用: 初始化数据（页面一打开的时候） + 更新数据
+ *
  * redux初始化数据
  *      preState=undefined
  *      action={type:'@@redux/INIT随机字符串'}
- * 
+ *
  * redux更新数据
  *      preState=当前state数据
  *      action={type:派发来的事件, data:派发来的数据}
- ******************************/ 
+ ******************************/
 const initState = 0; // 初始化值
 export default function countReducer(preState = initState, action) {
     const {type, data} = action;
@@ -90,7 +90,7 @@ export default function countReducer(preState = initState, action) {
 
 定义store
 ```js
-`/src/redux/store.js` 内容
+// `/src/redux/store.js` 内容
 import {createStore} from 'redux';
 import countReducer from './count_reducer'
 
@@ -98,10 +98,10 @@ export default createStore(countReducer); // 暴露store
 ```
 
 2. 修改页面代码
-```jsx
-import React, { Component } from 'react'
-import store from './redux/store'
 
+```js
+import React, { Component } from 'react';
+import store from './redux/store';
 export default class App extends Component {
     componentDidMount() {
         // 监听redux数据改变
@@ -209,17 +209,18 @@ switch(type) {
 
 
 1. 通过`npm i redux-thunk`后，修改`/src/redux/store.js`的内容
+
 ```js
 import {createStore, applyMiddleware} from 'redux'
 import thunk from 'redux-thunk'
 import countReducer from './count_reducer';
-
 // 多了个redux-thunk中间件，需要用applyMiddleware()
 export default createStore(countReducer, applyMiddleware(thunk));
 ```
 
 
 2. 就可以用异步action了
+
 ```js
 // 异步加
 addAsync () {
@@ -228,7 +229,7 @@ addAsync () {
     }, 1000);
 }
 ```
-改下为
+改为
 ```js
 addAsync () {
     // 派发异步action
@@ -254,4 +255,3 @@ addAsync () {
     store.dispatch(createAddAsyncAction(1, 500));
 }
 ```
-

@@ -2,7 +2,7 @@
 
 redux是第三方出的一个js库，和react没有大的关系，随着用的人越来越多，react官网团队推出了一个[react-redux](https://www.redux.org.cn/docs/react-redux/)，用以简化redux的操作流程
 
-```
+```bash
 npm i redux redux-thunk react-redux
 ```
 * `redux`: redux核心库
@@ -14,7 +14,7 @@ npm i redux redux-thunk react-redux
 ## 1、如何使用react-redux
 
 ### 1.1 项目结构
-```
+```text
 ├─ src
 │   ├─ components
 │   │   ├─ Calculator   // Calculator组件
@@ -26,8 +26,8 @@ npm i redux redux-thunk react-redux
 │   │   │   └─ person.js
 │   │   ├─ reducers         // 集合各个reducer，然后对外暴露
 │   │   │   ├─ count.js
-│   │   │   ├─ person.js 
-│   │   │   └─ index.js  
+│   │   │   ├─ person.js
+│   │   │   └─ index.js
 │   │   ├─ constant.js      // 定义各个actionName常量
 │   │   └─ store.js         // redux的store
 │   │
@@ -37,9 +37,7 @@ npm i redux redux-thunk react-redux
 
 
 ### 1.2 编写代码
-1. 在`/src/index.js` 用 `<Provider />` 组件包裹整个 `<App />` 组件
-
-目的是让App所有的后代容器组件（`connet()()`返回的就是容器组件）接收到store
+1. 在`/src/index.js` 用 `<Provider />` 组件包裹整个 `<App />` 组件。目的是让App所有的后代容器组件（`connet()()`返回的就是容器组件）接收到store
 
 ```jsx
 import React from 'react';
@@ -59,11 +57,11 @@ ReactDOM.render(
 ```
 
 2. 在`/src/App.js`中引用要展示的2个组件
+
 ```jsx
 import React, { Component } from 'react';
 import Calculator from './components/Calculator';
 import Person from './components/Person';
-
 export default class App extends Component {
     render() {
         return (
@@ -78,18 +76,19 @@ export default class App extends Component {
 ```
 
 3. 在`/src/redux/store.js`编写redux主入口
+
 ```js
 import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 // 经过combineReducers()汇总后的reducer
 import reducers from './reducers';
-
 export default createStore(reducers, applyMiddleware(thunk));
 ```
 
 4. 在`/src/redux/reducers/index.js`中维护好reducers的集合
 
 所有的reducers在这里集合然后再暴露给store
+
 ```js
 import {combineReducers} from 'redux';
 
@@ -171,7 +170,7 @@ class Count extends Component {
 export default connect(
     // 定义的数据，将作为props传递`<Count>`组件
     (state) => {
-        return {  
+        return {
             num: state.myCount
         };
     },

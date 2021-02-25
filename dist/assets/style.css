@@ -46,3 +46,6 @@ img {
         display: none;
     }
 }
+p {
+    text-indent: 2em;
+}
