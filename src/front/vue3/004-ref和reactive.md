@@ -1,4 +1,4 @@
-# 004-res和reactive
+# 004-ref和reactive
 
 这章涉及api: `ref()/reactive()/isReactive()/isRef()`
 
