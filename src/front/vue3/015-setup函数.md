@@ -25,4 +25,11 @@ async setup() {}
 
 
 ## 3、setup的参数
-`setup(props, content)`
+`setup(props, content)` 
+* `props`: 父组件传递来的属性
+* `content`: content有下面几个属性
+    * `attrs`: 非props属性和非emits的事件
+    * `emit`: 相当于vue2的`$emit()`
+    * `expose`: 暴露给父组件的方法
+    * `props`: props属性
+    * `slots`: 父组件传递过来的slot
