@@ -50,6 +50,15 @@ function cancel () {
 ```
 
 
+### 1.5 onInvalidate
+`onInvalidate`函数回作为第3个参数得到，在每次watch之前会被调用
+```js
+const count = ref (0);
+watch(count, (newVal, oldVal, onInvalidate) => {
+    onInvalidate(() => {})
+});
+```
+
 
 
 
@@ -67,14 +76,29 @@ watchEffect(() => {
 ```
 
 
-### 2.1 watchEffect的执行时机
+### 2.1 watchEffect的执行时机flush
+flush默认值: `pre`
+
 `watchEffect()`发生在`onBeforeMount/onBeforeUpdate`之前
-如果设置
+如果设置`flush:'post'`
 ```js
 watchEffect(() => {}, { flush: 'post' })
 ```
 就可以让`watchEffect()`发生在`onBeforeMount/onBeforeUpdate`之后，`onMounted/onUpdated`之前。
 
+```js
+watchEffect(() => {}, { flush: 'sync' });
+```
+`{flush:'sync'}`即同步触发，和值改变同步进行。这种方式效率低，很少用到
+
+```js
+// 当值改变
+flush: 'sync';
+flush: 'pre'
+onBeforeUpdate()
+flush: 'post'
+onUpdated()
+```
 
 
 ### 2.2 onInvalidate参数
