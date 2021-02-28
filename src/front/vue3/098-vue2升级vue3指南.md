@@ -62,7 +62,20 @@ setup () {
         ctx.$http();
     }  
 }
-````
+```
+`app.config.globalProperties`本质是往所有的组件传递一个顶级的props，当组件内定义了一个相同名字的props，这个全局props会被覆盖掉
+
+```js
+props: {
+    $http: String
+}
+setup () {
+    const {ctx} = getCurrentInstance(); // 一定要放在setup里面
+    function clickHandle () {
+        ctx.$http; // 这里得到的是父组件传递过来的数据 
+    }  
+}
+```
 
 
 

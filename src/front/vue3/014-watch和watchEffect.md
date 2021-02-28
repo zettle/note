@@ -67,3 +67,28 @@ watchEffect(() => {
 ```
 
 
+### 2.1 watchEffect的执行时机
+`watchEffect()`发生在`onBeforeMount/onBeforeUpdate`之前
+如果设置
+```js
+watchEffect(() => {}, { flush: 'post' })
+```
+就可以让`watchEffect()`发生在`onBeforeMount/onBeforeUpdate`之后，`onMounted/onUpdated`之前。
+
+
+
+### 2.2 onInvalidate参数
+`watchEffect((onInvalidate) => {})`中的回调函数接收一个onInvalidate参数
+
+该参数会在触发watch函数之前调用
+
+```js
+watchEffect(async (onInvalidate) => {
+    const token = await fetch('http://baidu.com');
+    
+    onInvalidate(() => {
+        console.log('执行副作用之前');
+        token.close(); // 取消回调
+    });
+});
+```

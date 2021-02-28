@@ -33,3 +33,14 @@ async setup() {}
     * `expose`: 暴露给父组件的方法
     * `props`: props属性
     * `slots`: 父组件传递过来的slot
+
+
+### 3.1 props
+不要去结构props，否则会失去响应式
+```js
+setup (props) {
+    const {name} = props;
+    const age = props.age;
+}
+```
+上面这些行为都是不允许的，因为得到的`name/age`是普通数据了，失去了响应式
