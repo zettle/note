@@ -1,4 +1,4 @@
-# 002-react-redux
+# 004-react-redux
 
 redux是第三方出的一个js库，和react没有大的关系，随着用的人越来越多，react官网团队推出了一个[react-redux](https://www.redux.org.cn/docs/react-redux/)，用以简化redux的操作流程
 
