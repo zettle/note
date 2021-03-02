@@ -1,8 +1,10 @@
 # 013-provider和inject
 
-vue3中使用`provide/inject`通讯
+vue3中使用`provide/inject`通讯，只能用于`setup()`里面，不能在嵌套一层
 
-在父组件`provide(<keyName>, <data>)`
+在父组件`provide(<keyName>, <data>)`，在子组件通过`inject(<keyName>)`接受
+
+
 
 ```js
 const stu2 = reactive({name:'xiaohong', age:1});

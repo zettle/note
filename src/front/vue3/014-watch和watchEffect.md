@@ -38,6 +38,13 @@ watch([()=>person1.age, ()=>person1.name], ([newAge, oldAge], [newName, oldName]
 });
 ```
 
+也可以用这种写法
+```js
+watch(() => [person1.age, person1.name], (newArr, oldArr) => {
+    console.log('watch-4', newArr, oldArr);
+});
+```
+
 
 ### 1.4 停止监听
 `watch()`返回一个函数，称为stop函数，当想要停止监听的就执行下该函数
@@ -51,7 +58,7 @@ function cancel () {
 
 
 ### 1.5 onInvalidate
-`onInvalidate`函数回作为第3个参数得到，在每次watch之前会被调用
+`onInvalidate`函数回作为第3个参数得到，在每次watch之前会被调用，这个和`watchEffect`一样
 ```js
 const count = ref (0);
 watch(count, (newVal, oldVal, onInvalidate) => {
