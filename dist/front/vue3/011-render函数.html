@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -38,11 +38,11 @@
 }
 </code></pre>
 <p>等价vue3下面代码:</p>
-<pre><code class="language-vue"><span class="hljs-selector-tag">render</span> () {
-    <span class="hljs-selector-tag">return</span> <span class="hljs-selector-tag">h</span>(<span class="hljs-string">&#x27;div&#x27;</span>, {
-        <span class="hljs-attribute">id</span>: <span class="hljs-string">&#x27;box&#x27;</span>,
-        <span class="hljs-attribute">class</span>: <span class="hljs-string">&#x27;warp&#x27;</span>,
-        onClick () {}
+<pre><code class="language-vue">render () {
+    <span class="hljs-keyword">return</span> h(<span class="hljs-string">&#x27;div&#x27;</span>, {
+        id: <span class="hljs-string">&#x27;box&#x27;</span>,
+        <span class="hljs-class"><span class="hljs-keyword">class</span>: <span class="hljs-type">&#x27;warp&#x27;</span>,
+        <span class="hljs-type">onClick </span></span>() {}
     }, <span class="hljs-string">&#x27;Hello World&#x27;</span>)
 }
 </code></pre>

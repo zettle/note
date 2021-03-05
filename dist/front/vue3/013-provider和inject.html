@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="013-provider和inject">013-provider和inject</h1>
+<p>vue3中使用<code>provide/inject</code>通讯，只能用于<code>setup()</code>里面，不能在嵌套一层</p>
+<p>在父组件<code>provide(&lt;keyName&gt;, &lt;data&gt;)</code>，在子组件通过<code>inject(&lt;keyName&gt;)</code>接受</p>
+<pre><code class="language-js"><span class="hljs-attribute">const</span> stu<span class="hljs-number">2</span> = reactive({name:&#x27;xiaohong&#x27;, age:<span class="hljs-number">1</span>});
+<span class="hljs-attribute">provide</span>(&#x27;stu<span class="hljs-number">2</span>&#x27;, stu<span class="hljs-number">2</span>);
+</code></pre>
+<p>在父组件<code>inject(&lt;keyName&gt;)</code>即可</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> person2 = inject(<span class="hljs-string">&#x27;stu2&#x27;</span>);
+</code></pre>
+<h2 id="1、providerinject特点">1、provider/inject特点</h2>
+<p>由<code>provider/inject</code>，父组件提供给子组件的数据，如果子组件修改了也会同样影响到父组件。</p>
+<p>一般我们不建议这么做，父组件提供数据，那就应该由父组件去修改这些数据，正确做法是父组件再<code>provider/inject</code>一个事件给子组件，子组件去触发这个事件</p>
+<pre><code class="language-js"><span class="hljs-comment">// 父组件</span>
+<span class="hljs-keyword">const</span> stu2 = reactive({<span class="hljs-attr">name</span>:<span class="hljs-string">&#x27;xiaohong&#x27;</span>, <span class="hljs-attr">age</span>:<span class="hljs-number">1</span>});
+provide(<span class="hljs-string">&#x27;stu2&#x27;</span>, <span class="hljs-keyword">readonly</span>(stu2)); <span class="hljs-comment">// 用readonly包装一层，子组件就无法修改了</span>
+provide(<span class="hljs-string">&#x27;changeStu&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">info</span>) =&gt;</span> { <span class="hljs-comment">// 提供修改的方式给子组件</span>
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;info&#x27;</span>, info);
+});
+<span class="hljs-comment">// 子组件</span>
+<span class="hljs-keyword">const</span> person2 = inject(<span class="hljs-string">&#x27;stu2&#x27;</span>);
+<span class="hljs-keyword">const</span> changeStu = inject(<span class="hljs-string">&#x27;changeStu&#x27;</span>);
+<span class="hljs-keyword">const</span> update = <span class="hljs-function">() =&gt;</span> {
+    changeStu(<span class="hljs-number">100</span>); <span class="hljs-comment">// 调用父组件提供过来的方式</span>
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

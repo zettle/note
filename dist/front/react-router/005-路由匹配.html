@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -15,9 +15,9 @@
             <h1 id="005-路由匹配">005-路由匹配</h1>
 <h2 id="1、switch组件">1、switch组件</h2>
 <p>首先看个例子</p>
-<pre><code class="language-jsx"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/home&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{Home}</span> /&gt;</span>
+<pre><code class="language-jsx"><span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/home&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{Home}</span> /&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{About}</span> /&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{Test}</span> /&gt;</span></span>
+<span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{Test}</span> /&gt;</span>
 </code></pre>
 <ul>
 <li>当用户访问<code>http://localhost:3000/home</code>的时候，展示的是<code>&lt;Home /&gt;</code>组件</li>
@@ -26,11 +26,11 @@
 <p>路由匹配规则: <strong>会从上往下，一个个匹配</strong></p>
 <p>在实际项目中，一般一个url对应一个路由组件，显然这种匹配规则性能上照成浪费</p>
 <p>因此我们引入<code>&lt;Switch /&gt;</code>组件，当匹配到了一个的时候，就不继续往下走了</p>
-<pre><code class="language-jsx"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Switch</span>&gt;</span>
+<pre><code class="language-jsx"><span class="hljs-tag">&lt;<span class="hljs-name">Switch</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/home&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{Home}</span> /&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{About}</span> /&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">Route</span> <span class="hljs-attr">path</span>=<span class="hljs-string">&quot;/about&quot;</span> <span class="hljs-attr">component</span>=<span class="hljs-string">{Test}</span> /&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">Switch</span>&gt;</span></span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">Switch</span>&gt;</span>
 </code></pre>
 <p>当用户访问<code>http://localhost:3000/about</code>的时候，只展示<code>&lt;About /&gt;</code>组件。</p>
 <h2 id="2、exact严格匹配">2、exact严格匹配</h2>

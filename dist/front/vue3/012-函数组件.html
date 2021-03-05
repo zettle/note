@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -17,7 +17,7 @@
 <p>在vue3中，这个函数组件被移除了，<a href="https://v3.cn.vuejs.org/guide/migration/functional-components.html#%E6%A6%82%E8%A7%88">官网</a>说在vue3中，类组件和函数组件已经性能已经很接近，没必要去用函数组件</p>
 <p>如果一定要在vue3中声明函数组件，那可以用h函数</p>
 <h2 id="1、在vue3中声明函数组件">1、在vue3中声明函数组件</h2>
-<pre><code class="language-vue"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<pre><code class="language-vue"><span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
 <span class="hljs-keyword">import</span> { h } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;vue&quot;</span>;
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">FunCom</span> (<span class="hljs-params">props, context</span>) </span>{
     <span class="hljs-built_in">console</span>.log(context); <span class="hljs-comment">// 和setup的context参数类似{attrs, emit, slots}</span>
@@ -27,7 +27,7 @@
 FunCom.props = {
     <span class="hljs-attr">name</span>: <span class="hljs-built_in">String</span>
 };
-</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span>
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 <ul>
 <li>因为是函数，所以定义组件props只能通过<code>FunCom.props</code>的形式</li>

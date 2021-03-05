@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -41,8 +41,8 @@
 // 吸怪 <span class="hljs-class"><span class="hljs-keyword">data</span>.a.b 不会引起html更新</span>
 </code></pre>
 <p>如果声明的是一个数组，则修改数组下面会引起html更新</p>
-<pre><code class="language-js"><span class="hljs-keyword">const</span> <span class="hljs-keyword">data</span> = shallowReactive([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]);
-<span class="hljs-keyword">data</span>[<span class="hljs-number">1</span>] = <span class="hljs-string">&#x27;a&#x27;</span>; <span class="hljs-comment">// 引起html更新</span>
+<pre><code class="language-js"><span class="hljs-attribute">const</span> data = shallowReactive([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]);
+<span class="hljs-attribute">data</span>[<span class="hljs-number">1</span>] = &#x27;a&#x27;; // 引起html更新
 </code></pre>
 <h2 id="2、shallowref">2、shallowRef()</h2>
 <p><code>shallowRef()</code>监听的是<code>.value</code>的变化</p>

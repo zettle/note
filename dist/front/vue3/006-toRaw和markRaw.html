@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -17,7 +17,7 @@
 <p>这2个Api命名差不多，但含义完全不同，不要混淆</p>
 <h2 id="1、toraw">1、toRaw()</h2>
 <p>先来看一题</p>
-<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = {<span class="hljs-attribute">age</span>:<span class="hljs-number">1</span>};
+<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = {<span class="hljs-attr">age</span>:<span class="hljs-number">1</span>};
 <span class="hljs-keyword">const</span> data = reactive(obj); <span class="hljs-comment">// 将obj传递进去</span>
 <span class="hljs-built_in">console</span>.log(data);
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">change</span> (<span class="hljs-params"></span>) </span>{
@@ -30,9 +30,9 @@
 <p>只有通过包装的reactive变量改变才会引起html的更新</p>
 <ul>
 <li>如果<code>toRaw()</code>传入的是reactive，返回reactive的原始引用</li>
-<li>如果<code>toRaw()</code>传入的是ref，则返回ref本身，如果是<code>.value</code>，则返回原始引用类型<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = {age:<span class="hljs-number">1</span>};
-<span class="hljs-keyword">const</span> <span class="hljs-keyword">data</span> = reactive(obj);
-console.log(toRaw(<span class="hljs-keyword">data</span>) === obj); <span class="hljs-comment">// true</span>
+<li>如果<code>toRaw()</code>传入的是ref，则返回ref本身，如果是<code>.value</code>，则返回原始引用类型<pre><code class="language-js"><span class="hljs-title">const</span> obj = {age:<span class="hljs-number">1</span>};
+<span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = reactive(<span class="hljs-title">obj</span>);</span>
+<span class="hljs-title">console</span>.log(toRaw(<span class="hljs-class"><span class="hljs-keyword">data</span>) === obj); // true</span>
 
 </code></pre>
 </li>
@@ -45,20 +45,20 @@ console.log(1 === toRaw(data.value)); // true</p>
 
 
 
-<span class="hljs-meta">## 2、markRaw()</span>
+<span class="hljs-comment">## 2、markRaw()</span>
 首先来看一个最简单的情况
-```js
-<span class="hljs-title">const</span> obj = { age: <span class="hljs-number">1</span> };
-<span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = reactive(<span class="hljs-title">obj</span>);</span>
-<span class="hljs-title">function</span> change () {
-    <span class="hljs-class"><span class="hljs-keyword">data</span>.age = 100; // js和html都会更新，<span class="hljs-keyword">data</span>.age和obj.age都会改</span>
-}
-</code></pre>
-<p><code>markRaw()</code>用来包装一个原始类型，一旦被包装了，即使通过reactive改变，也不会引起html更新</p>
-<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attribute">age</span>: <span class="hljs-number">1</span> };
-<span class="hljs-keyword">const</span> obj2 = markRaw(obj);
+```<span class="javascript">js
+<span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">age</span>: <span class="hljs-number">1</span> };
 <span class="hljs-keyword">const</span> data = reactive(obj);
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">change</span> (<span class="hljs-params"></span>) </span>{
+    data.age = <span class="hljs-number">100</span>; <span class="hljs-comment">// js和html都会更新，data.age和obj.age都会改</span>
+}</span>
+</code></pre>
+<p><code>markRaw()</code>用来包装一个原始类型，一旦被包装了，即使通过reactive改变，也不会引起html更新</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = { age: <span class="hljs-number">1</span> };
+<span class="hljs-keyword">const</span> obj2 = markRaw(obj);
+<span class="hljs-keyword">const</span> data = reactive(obj);
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">change</span> <span class="hljs-params">()</span> </span>{
     data.age = <span class="hljs-number">100</span>; <span class="hljs-comment">// 即使通过reactive改变，js内存值会变，但是html不会更新</span>
 }
 </code></pre>
@@ -67,20 +67,20 @@ console.log(1 === toRaw(data.value)); // true</p>
 <pre><code class="language-js"><span class="hljs-attr">obj</span> === obj2 // <span class="hljs-literal">true</span>
 </code></pre>
 <p>一旦被<code>markRaw()</code>包装，<code>reactive()</code>返回的不再是Proxy对象了，而是一个原始引用的内存地址</p>
-<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = { age: <span class="hljs-number">1</span> };
-<span class="hljs-keyword">const</span> <span class="hljs-keyword">data</span> = reactive(obj);
-console.log(obj === <span class="hljs-keyword">data</span>); <span class="hljs-comment">// false</span>
+<pre><code class="language-js"><span class="hljs-title">const</span> obj = { age: <span class="hljs-number">1</span> };
+<span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = reactive(<span class="hljs-title">obj</span>);</span>
+<span class="hljs-title">console</span>.log(obj === <span class="hljs-class"><span class="hljs-keyword">data</span>); // false</span>
 
 
-<span class="hljs-keyword">const</span> obj = { age: <span class="hljs-number">1</span> };
-<span class="hljs-keyword">const</span> <span class="hljs-keyword">data</span> = reactive(markRaw(obj)); <span class="hljs-comment">// 不再是一个Proxy{}对象了，是普通JSON对象</span>
-console.log(obj === <span class="hljs-keyword">data</span>); <span class="hljs-comment">// true，说明reactive返回的是原始引用</span>
+<span class="hljs-title">const</span> obj = { age: <span class="hljs-number">1</span> };
+<span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = reactive(<span class="hljs-title">markRaw</span>(<span class="hljs-title">obj</span>)); // 不再是一个<span class="hljs-type">Proxy</span>{}对象了，是普通<span class="hljs-type">JSON</span>对象</span>
+<span class="hljs-title">console</span>.log(obj === <span class="hljs-class"><span class="hljs-keyword">data</span>); // true，说明reactive返回的是原始引用</span>
 </code></pre>
 <p><code>markRaw()</code>也可以和<code>ref()</code>使用，也是和<code>reactive()</code>一样的现象，只是变成了<code>.value</code></p>
-<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = {<span class="hljs-attribute">name</span>:<span class="hljs-string">&#x27;小智&#x27;</span>, <span class="hljs-attribute">age</span>:<span class="hljs-number">1</span>};
+<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = {name:<span class="hljs-string">&#x27;小智&#x27;</span>, age:<span class="hljs-number">1</span>};
 <span class="hljs-keyword">const</span> obj2 = markRaw(obj);
 <span class="hljs-keyword">const</span> person = ref(obj); <span class="hljs-comment">// 还是返回RemImpl{}对象，但是 person.value 不再是一个Proxy{} 对象了</span>
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">updatePerson4</span> (<span class="hljs-params"></span>) </span>{
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">updatePerson4</span> <span class="hljs-params">()</span> </span>{
     person.value.age += <span class="hljs-number">1</span>; <span class="hljs-comment">// 只会改js内存</span>
 }
 </code></pre>

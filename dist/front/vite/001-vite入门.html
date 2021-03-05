@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="001-vite入门">001-vite入门</h1>
+<p>vite是构建工具，开发周期它利用浏览器支持<code>es module</code>的特性，生产打包利用rollup打包</p>
+<h2 id="1、安装">1、安装</h2>
+<p>初始化项目: </p>
+<pre><code class="language-bash"><span class="hljs-comment"># npm 6.x</span>
+npm init @vitejs/app <span class="hljs-keyword">my</span>-vue-app <span class="hljs-comment">--template vue</span>
+
+<span class="hljs-comment"># npm 7+, extra double-dash is needed:</span>
+npm init @vitejs/app <span class="hljs-keyword">my</span>-vue-app <span class="hljs-comment">-- --template vue</span>
+</code></pre>
+<p><code>--template</code>支持的有以下配置:</p>
+<ul>
+<li>vanilla</li>
+<li>vue</li>
+<li>vue-ts</li>
+<li>react</li>
+<li>react-ts</li>
+<li>preact</li>
+<li>preact-ts</li>
+<li>lit-element</li>
+<li>lit-element-ts</li>
+</ul>
+<h2 id="2、vite利用浏览器原生支持esmodule的特点">2、vite利用浏览器原生支持esModule的特点</h2>
+<p>在<code>/public/index.html</code>中可以看到是这么引入js</p>
+<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;module&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;/src/main.ts&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+<p><code>type=&quot;module&quot;</code>是告诉浏览器这是esModule模块，接着浏览器就会用esModule的去解析<code>main.ts</code></p>
+<p><code>main.ts</code>的内容如下:</p>
+<pre><code class="language-js"><span class="hljs-keyword">import</span> { createApp } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue&#x27;</span>;
+<span class="hljs-keyword">import</span> App <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./App.vue&#x27;</span>
+<span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;./style.css&#x27;</span>
+createApp(App).mount(<span class="hljs-string">&#x27;#app&#x27;</span>)
+</code></pre>
+<p>那么，</p>
+<ul>
+<li>对于<code>import { createApp } from &#39;vue&#39;</code>，这种第3方包的，浏览器怎么知道这些<code>vue</code>是要去node_module里面找</li>
+<li>对于<code>import App from &#39;./App.vue&#39;</code>，这是相对路径，浏览器知道在哪儿，但是这是<code>.vue</code>后缀的，浏览器怎么知道如何解析</li>
+<li>对于<code>import &#39;./style.css&#39;</code>，浏览器也能找到文件，但是浏览器怎么解析，等我们用了scss等，浏览器又怎么解析</li>
+</ul>
+<p>像上面这些问题，就是vite所解决的</p>
+<p>我们启动项目，到浏览器看运行过程，关注netWork网络加载的地方</p>
+<p><img src="./img/net-main.png" alt=""></p>
+<p>从上面可以看到<code>main.ts</code>中的<code>&#39;vue&#39;</code>已经变成了<code>&quot;/node_modules/.vite/vue.js?v=4f2f2fb4&quot;</code></p>
+<p>说明vite会对node_module的包稍作修改，作为绝对路径加载，从而加载<code>vue.js</code></p>
+<h2 id="3、资源加载可以用绝对路径">3、资源加载可以用绝对路径</h2>
+<p>资源路径可以用绝对路径的方式加载</p>
+<p>比如加载图片<code>&lt;img src=&quot;/src/assets/logo.png&quot; alt=&quot;&quot;&gt;</code>这样就会</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

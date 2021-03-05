@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -17,11 +17,11 @@
 <p>如果是路由组件，要写编程时路由很简单，我们知道，react-router-dom会给路由组件传递一些props</p>
 <p>要实现路由跳转，其实就是调用<code>this.props.history</code>下面的几个API</p>
 <pre><code class="language-js">history: {
-    go: <span class="hljs-function"><span class="hljs-params">(n)</span> =&gt;</span> {}          <span class="hljs-regexp">//</span> 返回几页，<span class="hljs-number">-1</span>表示放回上一页
-    goBack:<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {}        <span class="hljs-regexp">//</span> 返回上一页，相当于go(<span class="hljs-number">-1</span>)
-    goForward: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {}    <span class="hljs-regexp">//</span> 前进一页
-    push: <span class="hljs-function"><span class="hljs-params">(path, state)</span> =&gt;</span> {}      <span class="hljs-regexp">//</span> push方式跳页面
-    replace: <span class="hljs-function"><span class="hljs-params">(path, state)</span> =&gt;</span> {}   <span class="hljs-regexp">//</span> replace方式跳页面
+    <span class="hljs-attr">go</span>: <span class="hljs-function">(<span class="hljs-params">n</span>) =&gt;</span> {}          <span class="hljs-comment">// 返回几页，-1表示放回上一页</span>
+    goBack:<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {}        <span class="hljs-comment">// 返回上一页，相当于go(-1)</span>
+    goForward: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {}    <span class="hljs-comment">// 前进一页</span>
+    push: <span class="hljs-function">(<span class="hljs-params">path, state</span>) =&gt;</span> {}      <span class="hljs-comment">// push方式跳页面</span>
+    replace: <span class="hljs-function">(<span class="hljs-params">path, state</span>) =&gt;</span> {}   <span class="hljs-comment">// replace方式跳页面</span>
 }
 </code></pre>
 <ul>

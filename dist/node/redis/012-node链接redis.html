@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -56,14 +56,14 @@ client.lrange(<span class="hljs-string">&#x27;myList&#x27;</span>, <span class="
 </code></pre>
 <p>List里面存储的也是字符串，数字、布尔型会自动转为字符串类型</p>
 <p>注意下，获取虽然是异步，但是获取的是代码前面的状态</p>
-<pre><code class="language-js"><span class="hljs-selector-tag">client</span><span class="hljs-selector-class">.rpush</span>(<span class="hljs-string">&#x27;myList&#x27;</span>, <span class="hljs-string">&#x27;aaa&#x27;</span>);
-<span class="hljs-selector-tag">client</span><span class="hljs-selector-class">.rpush</span>(<span class="hljs-string">&#x27;myList&#x27;</span>, <span class="hljs-string">&#x27;bbb&#x27;</span>);
-<span class="hljs-selector-tag">client</span><span class="hljs-selector-class">.lrange</span>(<span class="hljs-string">&#x27;myList&#x27;</span>, <span class="hljs-number">0</span>, -<span class="hljs-number">1</span>, (err, info) =&gt; {
+<pre><code class="language-js"><span class="hljs-keyword">client</span>.rpush(<span class="hljs-string">&#x27;myList&#x27;</span>, <span class="hljs-string">&#x27;aaa&#x27;</span>);
+<span class="hljs-keyword">client</span>.rpush(<span class="hljs-string">&#x27;myList&#x27;</span>, <span class="hljs-string">&#x27;bbb&#x27;</span>);
+<span class="hljs-keyword">client</span>.lrange(<span class="hljs-string">&#x27;myList&#x27;</span>, <span class="hljs-number">0</span>, <span class="hljs-number">-1</span>, (err, info) =&gt; {
     <span class="hljs-comment">// 获取虽然是异步，进入回调的时候肯定执行完`lpush(&#x27;ccc&#x27;)`了，</span>
     <span class="hljs-comment">// 但这里得到的是[aaa,bbb]。而不是[aaa,bbb,ccc]</span>
-    <span class="hljs-selector-tag">console</span><span class="hljs-selector-class">.log</span>(info);
+    console.log(info);
 });
-<span class="hljs-selector-tag">client</span><span class="hljs-selector-class">.lpush</span>(<span class="hljs-string">&#x27;myList&#x27;</span>, <span class="hljs-string">&#x27;ccc&#x27;</span>);
+<span class="hljs-keyword">client</span>.lpush(<span class="hljs-string">&#x27;myList&#x27;</span>, <span class="hljs-string">&#x27;ccc&#x27;</span>);
 </code></pre>
 <h2 id="4、node操作set">4、node操作set</h2>
 <p>不允许重复元素，插入的时候发现有重复元素就不插入了</p>
@@ -79,10 +79,10 @@ client.sadd(<span class="hljs-string">&#x27;mySet&#x27;</span>, <span class="hlj
 client.srem(<span class="hljs-string">&#x27;mySet&#x27;</span>, <span class="hljs-string">&#x27;a&#x27;</span>); <span class="hljs-regexp">//</span> 删除a
 </code></pre>
 <h2 id="5、node操作hash">5、node操作hash</h2>
-<pre><code class="language-js"><span class="hljs-selector-tag">client</span><span class="hljs-selector-class">.hset</span>(<span class="hljs-string">&#x27;myHash&#x27;</span>, <span class="hljs-string">&#x27;name&#x27;</span>, <span class="hljs-string">&#x27;xiaoming&#x27;</span>);
-<span class="hljs-selector-tag">client</span><span class="hljs-selector-class">.hmset</span>(<span class="hljs-string">&#x27;myHash&#x27;</span>, <span class="hljs-string">&#x27;age&#x27;</span>, <span class="hljs-number">22</span>, <span class="hljs-string">&#x27;sex&#x27;</span>, <span class="hljs-string">&#x27;女&#x27;</span>); <span class="hljs-comment">// 一次添加多条</span>
-<span class="hljs-selector-tag">client</span><span class="hljs-selector-class">.hgetall</span>(<span class="hljs-string">&#x27;myHash&#x27;</span>, (err, info) =&gt; {
-    <span class="hljs-selector-tag">console</span><span class="hljs-selector-class">.log</span>(err, info);
+<pre><code class="language-js"><span class="hljs-keyword">client</span>.hset(<span class="hljs-string">&#x27;myHash&#x27;</span>, <span class="hljs-string">&#x27;name&#x27;</span>, <span class="hljs-string">&#x27;xiaoming&#x27;</span>);
+<span class="hljs-keyword">client</span>.hmset(<span class="hljs-string">&#x27;myHash&#x27;</span>, <span class="hljs-string">&#x27;age&#x27;</span>, <span class="hljs-number">22</span>, <span class="hljs-string">&#x27;sex&#x27;</span>, <span class="hljs-string">&#x27;女&#x27;</span>); <span class="hljs-comment">// 一次添加多条</span>
+<span class="hljs-keyword">client</span>.hgetall(<span class="hljs-string">&#x27;myHash&#x27;</span>, (err, info) =&gt; {
+    console.log(err, info);
 });
 </code></pre>
 <p>操作hash注意一点，如果操作的hash已经存在，就看设置的属性是否存在存在则会覆盖，并且新设置的里面没有就会用原来的，类型js中<code>Object.assign(旧hash,新hash)</code></p>

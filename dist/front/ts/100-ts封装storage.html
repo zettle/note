@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="100-ts封装storage">100-ts封装storage</h1>
+<h2 id="1、代码">1、代码</h2>
+<pre><code class="language-ts"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WebStorage</span> </span>{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> namePreFix = <span class="hljs-string">&#x27;edp-&#x27;</span>;
+
+    <span class="hljs-comment">/**
+     * 获取完整的keyName名称
+     * <span class="hljs-doctag">@param <span class="hljs-type">{string}</span> </span>key keyName的值
+     * <span class="hljs-doctag">@return <span class="hljs-type">{string}</span> </span>完整的keyName
+     */</span>
+    <span class="hljs-keyword">private</span> getKeyName (key: <span class="hljs-built_in">string</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-built_in">this</span>.namePreFix}</span><span class="hljs-subst">${key}</span>`</span>.toLowerCase();
+    }
+
+    <span class="hljs-comment">/**
+     * 要控制的是local还是session
+     * <span class="hljs-doctag">@param <span class="hljs-type">{boolean}</span> </span>isLocalStorage 要操作的是不是local
+     */</span>
+    <span class="hljs-keyword">private</span> getLocalOrSession (isLocalStorage: <span class="hljs-built_in">boolean</span>): Storage {
+        <span class="hljs-keyword">return</span> isLocalStorage ? <span class="hljs-built_in">localStorage</span> : sessionStorage;
+    }
+
+    <span class="hljs-comment">/**
+     * 设置storage
+     * <span class="hljs-doctag">@param </span>key {string} 要存储的key
+     * <span class="hljs-doctag">@param </span>value {string | object} 要设置的值
+     * <span class="hljs-doctag">@param </span>isLocalStorage 是否要用localStorage默认否
+     */</span>
+    <span class="hljs-keyword">public</span> set (name: <span class="hljs-built_in">string</span>, <span class="hljs-attr">value</span>: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">object</span>, isLocalStorage = <span class="hljs-literal">false</span>): <span class="hljs-built_in">void</span> {
+        <span class="hljs-keyword">const</span> _storage: Storage = <span class="hljs-built_in">this</span>.getLocalOrSession(isLocalStorage);
+        <span class="hljs-comment">// 再包装一层{value}，为了在get方法中JSON.parse的时候转化为泛型方便</span>
+        _storage.setItem(<span class="hljs-built_in">this</span>.getKeyName(name), <span class="hljs-built_in">JSON</span>.stringify({ value }));
+    }
+
+    <span class="hljs-comment">/**
+     * 获取storage
+     * <span class="hljs-doctag">@param </span>name {string} 要获取的key
+     * <span class="hljs-doctag">@param </span>isLocalStorage {boolean} 是否要用localStorage默认否
+     * <span class="hljs-doctag">@return </span>&lt;T&gt; | null
+     */</span>
+    <span class="hljs-keyword">public</span> get&lt;T&gt; (name: <span class="hljs-built_in">string</span>, isLocalStorage = <span class="hljs-literal">false</span>): T | <span class="hljs-literal">null</span> {
+        <span class="hljs-keyword">const</span> _storage = <span class="hljs-built_in">this</span>.getLocalOrSession(isLocalStorage);
+        <span class="hljs-keyword">const</span> resStr = _storage.getItem(<span class="hljs-built_in">this</span>.getKeyName(name));
+        <span class="hljs-keyword">if</span> (resStr &amp;&amp; resStr !== <span class="hljs-string">&#x27;undefined&#x27;</span> &amp;&amp; resStr !== <span class="hljs-string">&#x27;null&#x27;</span>) {
+            <span class="hljs-keyword">try</span> {
+                <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(resStr).value <span class="hljs-keyword">as</span> T;
+            } <span class="hljs-keyword">catch</span> (error) {
+                <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`JSON.parse转为-<span class="hljs-subst">${name}</span>-异常`</span>, error);
+            }
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+
+    <span class="hljs-comment">/**
+     * 移除某个缓存
+     * <span class="hljs-doctag">@param </span>name {string} 要获取的key
+     * <span class="hljs-doctag">@param </span>isLocalStorage {boolean} 是否要用localStorage默认否
+     */</span>
+    <span class="hljs-keyword">public</span> remove (name: <span class="hljs-built_in">string</span>, isLocalStorage = <span class="hljs-literal">false</span>): <span class="hljs-built_in">void</span> {
+        <span class="hljs-keyword">const</span> _storage: Storage = <span class="hljs-built_in">this</span>.getLocalOrSession(isLocalStorage);
+        _storage.removeItem(<span class="hljs-built_in">this</span>.getKeyName(name));
+    }
+
+    <span class="hljs-comment">/**
+     * 清除整个缓存
+     * <span class="hljs-doctag">@param </span>isLocalStorage {boolean} 是否要用localStorage默认否
+     */</span>
+    <span class="hljs-keyword">public</span> clear (isLocalStorage = <span class="hljs-literal">false</span>): <span class="hljs-built_in">void</span> {
+        <span class="hljs-keyword">const</span> _storage: Storage = <span class="hljs-built_in">this</span>.getLocalOrSession(isLocalStorage);
+        _storage.clear();
+    }
+}
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">new</span> WebStorage();
+</code></pre>
+<h2 id="2、遇到的问题">2、遇到的问题</h2>
+<h3 id="21-storageget应该传入一个泛型，约束得到的数据格式">2.1 <code>storage.get()</code>应该传入一个泛型，约束得到的数据格式</h3>
+<p>在之前的<code>get()</code>是这么写</p>
+<pre><code class="language-ts"><span class="hljs-keyword">public</span> get&lt;T&gt; (name: <span class="hljs-built_in">string</span>, isLocalStorage = <span class="hljs-literal">false</span>): T | <span class="hljs-literal">null</span> | <span class="hljs-built_in">string</span> {
+    <span class="hljs-keyword">const</span> _storage = <span class="hljs-built_in">this</span>.getLocalOrSession(isLocalStorage);
+    <span class="hljs-keyword">const</span> resStr = _storage.getItem(<span class="hljs-built_in">this</span>.getKeyName(name));
+    <span class="hljs-keyword">if</span> (!resStr) <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; <span class="hljs-comment">// 获取不到的直接返回null</span>
+    <span class="hljs-keyword">try</span> {
+        <span class="hljs-keyword">let</span> resJson: <span class="hljs-built_in">number</span> | T | <span class="hljs-built_in">string</span> = <span class="hljs-built_in">JSON</span>.parse(resStr);
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> resJson === <span class="hljs-string">&#x27;number&#x27;</span>) {
+            resJson = <span class="hljs-string">`<span class="hljs-subst">${resJson}</span>`</span>;
+        }
+        <span class="hljs-keyword">return</span> resJson <span class="hljs-keyword">as</span> T;
+    } <span class="hljs-keyword">catch</span> {
+        <span class="hljs-keyword">return</span> resStr; <span class="hljs-comment">// 会遇到问题不能将类型“string”分配给类型“T | null”</span>
+    }
+}
+</code></pre>
+<p>因为<code>JSON.parse</code>得到的是一个<code>string|null</code>类型，不能将其强制转为<code>T</code>类型，所以在有的场景下显得十分麻烦</p>
+<p>比如<code>stroage.get&lt;CreditFormType&gt;(&#39;creditInfo&#39;)</code>就算传入了泛型，得到的是<code>CreditFormType | string | null</code>类型，还需要强制转一下<code>stroage.get&lt;CreditFormType&gt;(&#39;creditInfo&#39;) as CreditFormType</code></p>
+<p><strong>解决方法:</strong></p>
+<p>在<code>storage.set()</code>方法里面再将数据包装一层<code>{value}</code>，这样有个好处，以后想要扩展有效期的时候也好扩展</p>
+<p>然后在<code>storage.get()</code>的时候，就是拿<code>.value as T</code>返回。这么处理后，得到的就是<code>T | null</code>类型了</p>
+<h3 id="22-关于字符串的问题">2.2 关于字符串的问题</h3>
+<p>以前的<code>storage.set()</code>是这么写的</p>
+<pre><code class="language-ts"><span class="hljs-keyword">public</span> set (name: <span class="hljs-built_in">string</span>, <span class="hljs-attr">value</span>: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">object</span>, isLocalStorage = <span class="hljs-literal">false</span>): <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">const</span> _storage: Storage = <span class="hljs-built_in">this</span>.getLocalOrSession(isLocalStorage);
+    <span class="hljs-comment">// 再包装一层{value}，为了在get方法中JSON.parse的时候转化为泛型方便</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value !== <span class="hljs-string">&#x27;string&#x27;</span>) {
+        value = <span class="hljs-built_in">JSON</span>.stringify(value);
+    }
+    _storage.setItem(<span class="hljs-built_in">this</span>.getKeyName(name), value);
+}
+</code></pre>
+<p>本意是觉得如果存的是string类型，就直接存入，但这么处理的话，<code>storage.get()</code>就比较麻烦了</p>
+<p>因为下面场景是会报错的</p>
+<pre><code class="language-js"><span class="hljs-keyword">storage</span>.<span class="hljs-keyword">set</span>(<span class="hljs-string">&#x27;name&#x27;</span>, <span class="hljs-string">&#x27;xiaming&#x27;</span>);
+<span class="hljs-type">JSON</span>.parse(<span class="hljs-keyword">storage</span>.<span class="hljs-keyword">get</span>(<span class="hljs-string">&#x27;name&#x27;</span>)); // <span class="hljs-type">JSON</span>.parse不能转单引号的字符串
+</code></pre>
+<p><strong>解决方法</strong></p>
+<p>也是在<code>storage.set()</code>里面的数据包装一层<code>{value}</code></p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

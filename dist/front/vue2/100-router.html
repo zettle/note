@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="100-router">100-router</h1>
+<h2 id="1、散记">1、散记</h2>
+<h3 id="11-next里面有replace">1.1 next()里面有replace</h3>
+<p>比如在路由守卫判断是否有登录token，没有就跳到登录，并且要用replace的方式</p>
+<pre><code class="language-js">router.beforeEach((<span class="hljs-keyword">to</span>, from, <span class="hljs-keyword">next</span>) =&gt; {
+    const token = storage.get(ACCESS_TOKEN);
+    <span class="hljs-keyword">if</span> (token) {
+        console.log(<span class="hljs-string">&#x27;有token&#x27;</span>);
+        <span class="hljs-keyword">next</span>();
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">if</span> (allowList.includes(<span class="hljs-keyword">to</span><span class="hljs-built_in">.name</span> <span class="hljs-keyword">as</span><span class="hljs-built_in"> string</span>)) {
+            <span class="hljs-keyword">next</span>();
+        } <span class="hljs-keyword">else</span> {
+            //<span class="hljs-built_in"> replace</span>:true 表示<span class="hljs-built_in">用replace</span>的方式
+            <span class="hljs-keyword">next</span>({<span class="hljs-built_in"> path</span>: <span class="hljs-string">&#x27;/login&#x27;</span>, query: { redirect: <span class="hljs-keyword">to</span>.fullPath },<span class="hljs-built_in"> replace</span>:<span class="hljs-built_in"> true</span> });
+        }
+    }
+});
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="003-生命周期">003-生命周期</h1>
+<h2 id="1-生命周期的变化">1. 生命周期的变化</h2>
+<p>如果还是用optionsApi的写法，vue2的生命周期还在，只是有的换个名字</p>
+<p>如果是CompositionApi写法，beforeCreate和created已经被移除了</p>
+<ul>
+<li>| 初始化<ul>
+<li>setup</li>
+<li>onBeforeMount</li>
+<li>onMounted</li>
+</ul>
+</li>
+<li>| 更新<ul>
+<li>onBeforeUpdate</li>
+<li>onUpdated</li>
+</ul>
+</li>
+<li>| 卸载<ul>
+<li>onBeforeUnmount</li>
+<li>onUnmounted</li>
+</ul>
+</li>
+<li>| 错误捕获<ul>
+<li>onErrorCaptured</li>
+</ul>
+</li>
+<li>| 追踪和触发<ul>
+<li>onRenderTracked</li>
+<li>onRenderTriggered </li>
+</ul>
+</li>
+</ul>
+<h2 id="1、watcheffect调用时机和声明周期的对比">1、watchEffect调用时机和声明周期的对比</h2>
+<p>初始化阶段: <code>watchEffect()</code>会被调用1次，并且调用时机是在<code>onBeforeMount()</code>之前</p>
+<p>数据发生改变阶段: 当被监听的数据发生改变，<code>watchEffect()</code>会触发会在<code>onBeforeUpdate()</code>之前</p>
+<p>上面的这种行为是可以改变的，给<code>watchEffect()</code>传递第2个参数，</p>
+<pre><code class="language-js">watchEffect(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {}, { flush: <span class="hljs-string">&#x27;post&#x27;</span> });
+</code></pre>
+<p><code>{flush:&#39;post&#39;}</code>会让<code>watchEffect()</code>的触发时机变成<code>onBeforeMount/onBeforeUpdate</code>之后，<code>onMounted/onUpdated</code>之前。</p>
+<h2 id="2、onerrorcaptured">2、onErrorCaptured</h2>
+<p>这个是用来捕获后代组件发生异常用的，一旦后代子组件发生异常，就会一层层往上触发<code>onErrorCaptured()</code></p>
+<pre><code class="language-js"><span class="hljs-comment">// 子组件特意写个异常</span>
+<span class="hljs-keyword">const</span> name = props.age.name.sdf.sdf.sdf;
+
+<span class="hljs-comment">// 父组件监听异常</span>
+onErrorCaptured(<span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;onErrorCaptured 被调用&#x27;</span>, err);
+}); 
+</code></pre>
+<h2 id="2、onrendertrackedonrendertriggered">2、onRenderTracked/onRenderTriggered</h2>
+<p>开发环境用的，当项目打包生产环境，这2个钩子会被忽略掉</p>
+<p><a href="https://www.mybj123.com/8456.html">资料</a></p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

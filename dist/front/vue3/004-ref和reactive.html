@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="004-ref和reactive">004-ref和reactive</h1>
+<p>这章涉及api: <code>ref()/reactive()/isReactive()/isRef()/unref()</code></p>
+<p>ref声明简单类型的，但是ref也是可以声明复杂类型的</p>
+<p>reactive声明复杂类型的，比如<code>JSON对象/数组</code>，如果硬是用reactive声明简单类型，在ts中会编译报错，js的会在控制台报错。 并且不能是Date等对象</p>
+<h2 id="1、ref也可声明复杂类型">1、ref也可声明复杂类型</h2>
+<p>ref也可以声明复杂类型，比如<code>JSON对象/数组</code>，vue会对其判断，发现是<code>JSON对象/数组</code>就转为reacitve</p>
+<pre><code class="language-js"><span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = ref({ <span class="hljs-title">age</span>:1 });</span>
+<span class="hljs-title">const</span> data2 = reactive({ age: <span class="hljs-number">1</span> });
+
+<span class="hljs-title">console</span>.log(<span class="hljs-class"><span class="hljs-keyword">data</span>); // <span class="hljs-type">RefImpl</span>{}对象</span>
+<span class="hljs-title">console</span>.log(<span class="hljs-class"><span class="hljs-keyword">data</span>.value); // <span class="hljs-type">Proxy</span>{}对象</span>
+<span class="hljs-title">console</span>.log(data2); // <span class="hljs-type">Proxy</span>{}对象
+</code></pre>
+<p>在ref对象上，有个私有属性<code>__v_isRef=true</code></p>
+<pre><code class="language-js"><span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = ref(12);</span>
+<span class="hljs-title">console</span>.log(<span class="hljs-class"><span class="hljs-keyword">data</span>);</span>
+</code></pre>
+<h2 id="2、ref获取遍历数组的dom">2、ref获取遍历数组的DOM</h2>
+<pre><code class="language-js">// html部分
+<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">li</span>
+        <span class="hljs-attr">v-for</span>=<span class="hljs-string">&quot;(item, $i) of stuList&quot;</span>
+        <span class="hljs-attr">:key</span>=<span class="hljs-string">&quot;item.id&quot;</span>
+        <span class="hljs-attr">:ref</span>=<span class="hljs-string">&quot;el =&gt; </span></span></span><span class="xquery">{<span class="hljs-keyword">if</span> (el) liDoms[<span class="hljs-variable">$i</span>]=el }</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">&quot;</span>&gt;</span>
+        </span><span class="xquery">{{<span class="hljs-type">item</span><span class="hljs-built_in">.name</span>}</span><span class="xml">}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span>
+&lt;/ul&gt;
+
+// js部分
+export <span class="hljs-keyword">default</span> {
+    setup () {
+        const stuList = [
+            <span class="hljs-built_in">{name</span>:<span class="hljs-string">&#x27;小明&#x27;</span>,<span class="hljs-built_in"> id</span>: <span class="hljs-number">1</span>},
+            <span class="hljs-built_in">{name</span>:<span class="hljs-string">&#x27;小红&#x27;</span>,<span class="hljs-built_in"> id</span>: <span class="hljs-number">2</span>},
+            <span class="hljs-built_in">{name</span>:<span class="hljs-string">&#x27;小青&#x27;</span>,<span class="hljs-built_in"> id</span>: <span class="hljs-number">3</span>}
+        ];
+        const liDoms = []; // 也定义一个数组
+        onMounted(() =&gt; {
+            console.log(liDoms); // vfor出来的li会存到这个里面
+        });
+
+        <span class="hljs-keyword">return</span> {
+            stuList, liDoms
+        };
+    }
+}
+</code></pre>
+<p><code>:ref=&quot;el =&gt; {if (el) liDoms[$i]=el }&quot;</code>的解释: <code>el</code>为DOM对象或者子组件，<code>if (el) liDoms[$i]=el</code>如果el存在就存到数组里面，而<code>$i</code>刚好等于v-for出来的顺序。</p>
+<h2 id="3、reactive里面含ref">3、reactive里面含ref</h2>
+<p>正常<code>ref()</code> 声明的变量，要访问/设置的时候，需要加<code>.value</code></p>
+<p>但如果这个变量在<code>reacitve()</code>里面，就不需要再加<code>.value</code>了。并且无论修改哪个，都会引起另外一个改变和html的更新</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> age = ref(<span class="hljs-number">1</span>);
+<span class="hljs-keyword">const</span> person = reactive({
+    name: <span class="hljs-string">&#x27;小青&#x27;</span>, 
+    age <span class="hljs-comment">// age是一个ref</span>
+});
+
+<span class="hljs-comment">// 通过ref修改的，会引起reactive里面的同步修改，html也都更新</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">updateAge</span> <span class="hljs-params">()</span> </span>{
+    age.value += <span class="hljs-number">1</span>;
+}
+
+<span class="hljs-comment">// 通过reactive修改的，会引起ref里面的同步修改，html也都更新</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">updatePerson</span> <span class="hljs-params">()</span> </span>{
+    person.age += <span class="hljs-number">1</span>;
+}
+</code></pre>
+<h2 id="4、isreactive和isref">4、isReactive和isRef</h2>
+<p>用来判断一个类型是否是reactive类型/ref类型</p>
+<pre><code class="language-js"><span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = ref(12);</span>
+<span class="hljs-title">isRef</span>(<span class="hljs-class"><span class="hljs-keyword">data</span>); // true</span>
+</code></pre>
+<h2 id="5、unref">5、unref</h2>
+<p>如果是一个ref，则返回<code>.value</code>的值，如果非ref，就返回本身。其效果等同于<code>isRef(xx) ? xxx.value : xx</code></p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> cname = <span class="hljs-keyword">ref</span>(<span class="hljs-string">&#x27;xiaoming&#x27;</span>);
+unref(cname);
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

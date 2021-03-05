@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -31,7 +31,7 @@
 </li>
 <li><p>查看构建的镜像并启动</p>
 <pre><code class="language-shell">docker images
-docker <span class="hljs-keyword">run</span><span class="bash"> -it xhcentos</span>
+docker <span class="hljs-built_in">run</span> -<span class="hljs-keyword">it</span> xhcentos
 </code></pre>
 </li>
 <li><p>通过<code>docker inspect</code>查看容器的详细信息</p>
@@ -48,10 +48,10 @@ docker <span class="hljs-keyword">run</span><span class="bash"> -it xhcentos</sp
 </ol>
 <p>vim haha.txt</p>
 <pre><code>再进入容器，就可以看到共享数据卷的同步过来了
-```<span class="hljs-keyword">shell</span>
-docker attach <span class="hljs-number">47</span>a700511b8b
+```shell
+docker <span class="hljs-built_in">attach</span> <span class="hljs-number">47</span>a700511b8b
 
-<span class="hljs-keyword">cd</span> /home/v1
+cd /<span class="hljs-built_in">home</span>/v1
 </code></pre>
 
         </article>

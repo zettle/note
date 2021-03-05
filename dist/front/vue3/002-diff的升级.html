@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -71,7 +71,7 @@
 <p>默认情况下，<code>@click</code> 会被视为动态绑定，所以每次都会去追踪它的变化。但是因为是同一个函数，其实没必要跟踪，直接缓存起来复用即可。</p>
 <p>还是借助<a href="https://vue-next-template-explorer.netlify.app">vue在线编译平台</a></p>
 <p>比如下面代码:</p>
-<pre><code class="language-html">&lt;<span class="hljs-keyword">button</span> @click=<span class="hljs-string">&quot;say&quot;</span>&gt;点击&lt;/<span class="hljs-keyword">button</span>&gt;
+<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;say&quot;</span>&gt;</span>点击<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
 </code></pre>
 <p>在开启事件缓存之前，编译结果如下:</p>
 <p><img src="./img/vue-click.png" alt=""></p>

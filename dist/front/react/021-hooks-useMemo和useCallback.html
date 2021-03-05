@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -55,10 +55,10 @@
 <li><code>useMemo()</code>接受第2个参数是一个数组，数组里面有元素改变了，就会触发<code>useMemo()</code>的回调。</li>
 </ul>
 <p>比如硬是这么写，那么count/name改变都会触发里面的回调</p>
-<pre><code class="language-jsx">const doubleCount = useMemo(() =&gt; {
+<pre><code class="language-jsx"><span class="hljs-keyword">const</span> doubleCount = useMemo(() =&gt; {
     console.log(<span class="hljs-string">&#x27;执行了doubleCount&#x27;</span>);
-    <span class="hljs-keyword">return</span><span class="hljs-built_in"> count</span>*<span class="hljs-number">2</span>;
-}, <span class="hljs-built_in">[count</span>,<span class="hljs-built_in"> name</span>]); // 明明回调里面没有用<span class="hljs-built_in">到name</span>，还硬要写上
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">count</span>*<span class="hljs-number">2</span>;
+}, [<span class="hljs-keyword">count</span>, name]); <span class="hljs-comment">// 明明回调里面没有用到name，还硬要写上</span>
 </code></pre>
 <h3 id="11-同时改变状态">1.1 同时改变状态</h3>
 <p>当多次调用改变状态的时候，<code>useMemo()</code>只会执行一次</p>

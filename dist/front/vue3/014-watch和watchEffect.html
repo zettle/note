@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="014-watch和watcheffect">014-watch和watchEffect</h1>
+<h2 id="1、watch">1、watch</h2>
+<p>格式: <code>watch( source, cb, [options] )</code></p>
+<p>options支持配置和vue2的watch一样，immediate（立即触发回调函数）、deep（深度监听）</p>
+<h3 id="11-监听ref">1.1 监听ref</h3>
+<p>ref可以直接监听</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> <span class="hljs-keyword">state</span> = ref(<span class="hljs-number">0</span>);
+watch(<span class="hljs-keyword">state</span>, (newValue, oldValue) =&gt; {
+});
+function update () {
+    <span class="hljs-keyword">state</span>.value++;
+}
+</code></pre>
+<h3 id="12-监听reactive">1.2 监听reactive</h3>
+<p>reactive上的某个属性，不能直接监听，需要用回调的方式</p>
+<pre><code class="language-js">const person1 = reactive({name:<span class="hljs-string">&#x27;小明&#x27;</span>, age:<span class="hljs-number">1</span>});
+watch(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> person1.age, <span class="hljs-function"><span class="hljs-params">(nVal, oVal)</span> =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;watch-2&#x27;</span>, nVal, oVal);
+});
+</code></pre>
+<h3 id="13-监听多个值">1.3 监听多个值</h3>
+<p>用数组可以监听多个值，回调的参数也有变化</p>
+<pre><code class="language-js">const person1 = reactive({name:<span class="hljs-string">&#x27;小明&#x27;</span>, age:<span class="hljs-number">1</span>});
+watch([()=&gt;person1.age, <span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span>person1.name], <span class="hljs-function"><span class="hljs-params">([newAge, oldAge], [newName, oldName])</span>=&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;watch-3&#x27;</span>, newAge, oldAge, newName, oldName);
+});
+</code></pre>
+<p>也可以用这种写法</p>
+<pre><code class="language-js">watch(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> [person1.age, person1.name], <span class="hljs-function"><span class="hljs-params">(newArr, oldArr)</span> =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;watch-4&#x27;</span>, newArr, oldArr);
+});
+</code></pre>
+<h3 id="14-停止监听">1.4 停止监听</h3>
+<p><code>watch()</code>返回一个函数，称为stop函数，当想要停止监听的就执行下该函数</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> stop = watch(...);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">cancel</span> <span class="hljs-params">()</span> </span>{
+    stop(); <span class="hljs-comment">// 取消监听，取消后就不会触发</span>
+}
+</code></pre>
+<h3 id="15-oninvalidate">1.5 onInvalidate</h3>
+<p><code>onInvalidate</code>函数回作为第3个参数得到，在每次watch之前会被调用，这个和<code>watchEffect</code>一样</p>
+<pre><code class="language-js">const count = ref (<span class="hljs-number">0</span>);
+watch(count, <span class="hljs-function"><span class="hljs-params">(newVal, oldVal, onInvalidate)</span> =&gt;</span> {
+    onInvalidate(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {})
+});
+</code></pre>
+<h2 id="2、watcheffect">2、watchEffect</h2>
+<p><code>watchEffect()</code>，里面用到的发生改变就会触发，初始化的时候也会触发1次</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> person = reactive({<span class="hljs-attr">name</span>:<span class="hljs-string">&#x27;小红&#x27;</span>, <span class="hljs-attr">age</span>:<span class="hljs-number">1</span>});
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">updatePerson2</span> (<span class="hljs-params"></span>) </span>{
+    person.age += <span class="hljs-number">1</span>;
+}
+watchEffect(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-keyword">const</span> haha = person2.age;
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;haha&#x27;</span>, haha);
+});
+</code></pre>
+<h3 id="21-watcheffect的执行时机flush">2.1 watchEffect的执行时机flush</h3>
+<p>flush默认值: <code>pre</code></p>
+<p><code>watchEffect()</code>发生在<code>onBeforeMount/onBeforeUpdate</code>之前
+如果设置<code>flush:&#39;post&#39;</code></p>
+<pre><code class="language-js">watchEffect(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {}, { flush: <span class="hljs-string">&#x27;post&#x27;</span> })
+</code></pre>
+<p>就可以让<code>watchEffect()</code>发生在<code>onBeforeMount/onBeforeUpdate</code>之后，<code>onMounted/onUpdated</code>之前。</p>
+<pre><code class="language-js">watchEffect(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {}, { flush: <span class="hljs-string">&#x27;sync&#x27;</span> });
+</code></pre>
+<p><code>{flush:&#39;sync&#39;}</code>即同步触发，和值改变同步进行。这种方式效率低，很少用到</p>
+<pre><code class="language-js"><span class="hljs-comment">// 当值改变</span>
+<span class="hljs-keyword">flush</span>: <span class="hljs-string">&#x27;sync&#x27;</span>;
+<span class="hljs-keyword">flush</span>: <span class="hljs-string">&#x27;pre&#x27;</span>
+onBeforeUpdate()
+<span class="hljs-keyword">flush</span>: <span class="hljs-string">&#x27;post&#x27;</span>
+onUpdated()
+</code></pre>
+<h3 id="22-oninvalidate参数">2.2 onInvalidate参数</h3>
+<p><code>watchEffect((onInvalidate) =&gt; {})</code>中的回调函数接收一个onInvalidate参数</p>
+<p>该参数会在触发watch函数之前调用</p>
+<pre><code class="language-js">watchEffect(<span class="hljs-name">async</span> (<span class="hljs-name">onInvalidate</span>) =&gt; {
+    const token = await fetch(&#x27;http<span class="hljs-symbol">://baidu</span>.com&#x27;)<span class="hljs-comment">;</span>
+    
+    onInvalidate(() =&gt; {
+        console.log(&#x27;执行副作用之前&#x27;)<span class="hljs-comment">;</span>
+        token.close()<span class="hljs-comment">; // 取消回调</span>
+    })<span class="hljs-comment">;</span>
+})<span class="hljs-comment">;</span>
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

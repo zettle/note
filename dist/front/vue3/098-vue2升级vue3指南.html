@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -40,6 +40,7 @@
 <li>以前的<code>Vue.prototype.xxx</code>需要改为<code>app.config.globalProperties.xxx</code>。</li>
 <li>以前的<code>Vue.config.errorHandler</code>需要改为<code>app.config.errorHandler</code></li>
 <li>以前的<code>$attrs</code>和<code>$listeners</code>融合为1个<code>$attrs</code></li>
+<li>以前的<code>inheritAttrs:false</code>不会影响class属性，就算你加了<code>inheritAttrs:false</code>，className还是会加给子组件最外层，而vue3中，classsName跟着<code>$attrs</code>走了</li>
 <li>以前的异步组件<code>()=&gt;import(&#39;xx.vue&#39;)</code>不支持了，需要用上异步组件<code>defineAsyncComponent(()=&gt;import(&#39;xxx.vue&#39;))</code></li>
 <li>vue2中，如果是根节点属性的data可以是JSON，而vue3中，规定data必须是一个函数</li>
 <li>关于vue2中<code>is</code>用法看<a href="../vue2/004-is%E5%B1%9E%E6%80%A7.html"></a>。而在vue3中，<code>is</code>属性只用于<code>&lt;component&gt;</code>组件上，如果用在普通html标签或者自定义组件上，<code>is</code>会被当做普通的props属性</li>
@@ -67,6 +68,17 @@
     <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">clickHandle</span> <span class="hljs-params">()</span> </span>{
         <span class="hljs-comment">// getCurrentInstance() 如果放在这里，获取到的是null</span>
         ctx.$http();
+    }  
+}
+</code></pre>
+<p><code>app.config.globalProperties</code>本质是往所有的组件传递一个顶级的props，当组件内定义了一个相同名字的props，这个全局props会被覆盖掉</p>
+<pre><code class="language-js">props: {
+    <span class="hljs-variable">$http</span>: <span class="hljs-keyword">String</span>
+}
+setup () {
+    <span class="hljs-keyword">const</span> {ctx} = getCurrentInstance(); <span class="hljs-comment">// 一定要放在setup里面</span>
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">clickHandle</span> (<span class="hljs-params"></span>) </span>{
+        ctx.<span class="hljs-variable">$http</span>; <span class="hljs-comment">// 这里得到的是父组件传递过来的数据 </span>
     }  
 }
 </code></pre>

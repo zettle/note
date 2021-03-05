@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="097-复合类型">097-复合类型</h1>
+<h2 id="1、联合类型">1、联合类型</h2>
+<p>标记语法: <code>类型一 | 类型二</code>。表示类型一或者类型二</p>
+<p>比如</p>
+<pre><code class="language-ts"><span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">p1</span> {</span> <span class="hljs-attr">name:</span> string; }
+<span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">p2</span> {</span> <span class="hljs-attr">age:</span> string; }
+
+function say(<span class="hljs-attr">hi:</span> p1 | p2) {
+}
+say({<span class="hljs-attr">name:</span><span class="hljs-string">&#x27;xiaoming&#x27;</span>});
+say({<span class="hljs-attr">name:</span><span class="hljs-string">&#x27;xiaoming&#x27;</span>,<span class="hljs-attr">age:</span><span class="hljs-number">23</span>}); <span class="hljs-comment">// 错误</span>
+</code></pre>
+<h2 id="2、交叉类型">2、交叉类型</h2>
+<p>标记语法: <code>类型一 &amp; 类型二</code>。表示类型一合并类型二的。</p>
+<p>比如:</p>
+<pre><code class="language-ts"><span class="hljs-selector-tag">interface</span> <span class="hljs-selector-tag">p1</span> { <span class="hljs-attribute">name</span>: string; }
+<span class="hljs-selector-tag">interface</span> <span class="hljs-selector-tag">p2</span> { <span class="hljs-attribute">age</span>: number; }
+
+<span class="hljs-selector-tag">function</span> <span class="hljs-selector-tag">say</span>(<span class="hljs-selector-tag">hi</span>: <span class="hljs-selector-tag">p1</span> &amp; <span class="hljs-selector-tag">p2</span>) {
+}
+<span class="hljs-selector-tag">say</span>({<span class="hljs-attribute">name</span>:<span class="hljs-string">&#x27;xiaoming&#x27;</span>}); // 错误
+<span class="hljs-selector-tag">say</span>({<span class="hljs-attribute">name</span>:<span class="hljs-string">&#x27;xiaoming&#x27;</span>,age:<span class="hljs-number">23</span>}); // 满足，即满足类型一又满足类型二
+</code></pre>
+<p>可以理解为是<code>Object.assign({}, 类型一, 类型二)</code></p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -19,31 +19,31 @@
 </ol>
 <p>从<a href="http://www.redis.cn/download.html">官网</a>下载对应的版本，或者复制下载链接，到linux系统中执行下载并解压</p>
 <pre><code class="language-shell"><span class="hljs-comment"># 进入自建的download目录</span>
-cd <span class="hljs-regexp">/root/</span>download
+<span class="hljs-attribute">cd</span> /root/download
 
 <span class="hljs-comment"># 下载redis</span>
-wget http:<span class="hljs-regexp">//</span>download.redis.io<span class="hljs-regexp">/releases/</span>redis-<span class="hljs-number">6.0</span>.<span class="hljs-number">6</span>.tar.gz
+<span class="hljs-attribute">wget</span> http://download.redis.io/releases/redis-<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">6</span>.tar.gz
 
 <span class="hljs-comment"># 解压</span>
-tar -zvxf redis-<span class="hljs-number">6.0</span>.<span class="hljs-number">6</span>.tar.gz
+<span class="hljs-attribute">tar</span> -zvxf redis-<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">6</span>.tar.gz
 </code></pre>
 <ol start="2">
 <li>复制到<code>/usr/local</code>目录里面</li>
 </ol>
 <p>一般都会把应用存到local目录里面，将解压的复制到local目录里面</p>
-<pre><code class="language-shell">mv <span class="hljs-regexp">/root/</span>download<span class="hljs-regexp">/redis-6.0.6 /u</span>sr<span class="hljs-regexp">/local/</span>redis-<span class="hljs-number">6.0</span>.<span class="hljs-number">6</span>
+<pre><code class="language-shell"><span class="hljs-attribute">mv</span> /root/download/redis-<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">6</span> /usr/local/redis-<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">6</span>
 </code></pre>
 <ol start="3">
 <li>编译和安装</li>
 </ol>
 <pre><code class="language-shell"><span class="hljs-comment"># 进入目录</span>
-cd <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/redis-6.0.6/</span>
+<span class="hljs-attribute">cd</span> /usr/local/redis-<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">6</span>/
 
 <span class="hljs-comment"># 编译</span>
-make
+<span class="hljs-attribute">make</span>
 
 <span class="hljs-comment"># 安装</span>
-make install PREFIX=<span class="hljs-regexp">/usr/</span>local/redis-<span class="hljs-number">6.0</span>.<span class="hljs-number">6</span>
+<span class="hljs-attribute">make</span> install PREFIX=/usr/local/redis-<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">6</span>
 </code></pre>
 <p>这里加了个 <code>PREFIX=/usr/local/redis-6.0.6</code>，作用是编译的时候用于指定程序存放的路径</p>
 <p>比如我们现在就是指定了redis必须存放在<code>/usr/local/redis-6.0.6</code>目录。</p>

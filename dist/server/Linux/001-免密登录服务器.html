@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -24,14 +24,14 @@
 <h2 id="2、使用ssh免密码登录">2、使用ssh免密码登录</h2>
 <ol>
 <li>登录阿里云查看ssh状态
-执行命令<pre><code class="language-shell"><span class="hljs-meta"># 该命令是centos的，其他系统的自行百度</span>
-service sshd status
+执行命令<pre><code class="language-shell"><span class="hljs-comment"># 该命令是centos的，其他系统的自行百度</span>
+<span class="hljs-attribute">service</span> sshd status
 </code></pre>
 看到下面内容说明阿里云的ssh是运行的。
 <img src="./img/ssh-status.png" alt=""></li>
 </ol>
 <p>查看阿里云服务器ssh服务的端口，执行</p>
-<pre><code class="language-shell">netstat -anlp | <span class="hljs-type">grep</span> sshd
+<pre><code class="language-shell">netstat -anlp <span class="hljs-string">| grep sshd</span>
 </code></pre>
 <p>得到下面的截图，说明现在监听的是22端口
 <img src="./img/ssh-port.png" alt=""></p>
@@ -86,8 +86,8 @@ service sshd status
 <p>不再需要密码了</p>
 <p>有时候记住IP地址不方便，我们可以写个配置文件。</p>
 <p>在本地电脑的ssh目录下，新建config文件（注意文件名就叫config，没有后缀名的）</p>
-<pre><code class="language-ssh"><span class="hljs-keyword">cd</span> ~/.ssh
-<span class="hljs-keyword">vim</span> config
+<pre><code class="language-ssh"><span class="hljs-keyword">cd</span> ~<span class="hljs-string">/.ssh</span>
+vim config
 </code></pre>
 <p>config的内容如下</p>
 <pre><code class="language-conf">Host aliyun     <span class="hljs-comment"># 自己起的别名，方便自己记住   </span>

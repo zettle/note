@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -43,10 +43,10 @@ pm2 reload [all | <span class="hljs-built_in">name</span> | <span class="hljs-bu
 </ul>
 <p>服务停了还会在list中显示，要通过<code>pm2 delete</code>删除</p>
 <h2 id="4-删服务">4 删服务</h2>
-<pre><code class="language-shell">pm2 <span class="hljs-keyword">delete</span> [all |<span class="hljs-built_in"> name</span> |<span class="hljs-built_in"> id</span>]
+<pre><code class="language-shell">pm2 <span class="hljs-keyword">delete</span> [<span class="hljs-keyword">all</span> | <span class="hljs-type">name</span> | id]
 </code></pre>
 <h2 id="5-查看详细信息">5 查看详细信息</h2>
-<pre><code class="language-shell">pm2 show <span class="hljs-built_in">[name</span> |<span class="hljs-built_in"> id</span>]
+<pre><code class="language-shell">pm2 show [<span class="hljs-built_in">name</span> | <span class="hljs-built_in">id</span>]
 </code></pre>
 <p><img src="./img/pm2-show.png" alt=""></p>
 <ul>
@@ -67,7 +67,7 @@ pm2 monit [<span class="hljs-built_in">name</span> | <span class="hljs-built_in"
 </code></pre>
 <p><img src="./img/pm2-log.png" alt=""></p>
 <h2 id="8-清除日志文件内容">8 清除日志文件内容</h2>
-<pre><code class="language-shell">pm2 <span class="hljs-keyword">flush</span>
+<pre><code class="language-shell">pm2 <span class="hljs-built_in">flush</span>
 </code></pre>
 <p><img src="./img/pm2-flush.png" alt=""></p>
 <h2 id="9-查看常用命令">9 查看常用命令</h2>

@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -14,9 +14,9 @@
         <article class="markdown-body">
             <h1 id="004-当前路由高亮">004-当前路由高亮</h1>
 <p>在前面我们用<code>&lt;Link&gt;</code>组件实现了一个导航，但是这个组件是无法做高亮效果，需要用到另外一个组件<code>&lt;NavLink /&gt;</code></p>
-<pre><code class="language-jsx"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/home&quot;</span>&gt;</span>Home<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span></span> 
+<pre><code class="language-jsx"><span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/home&quot;</span>&gt;</span>Home<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span> 
  | 
-<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/about&quot;</span>&gt;</span>About<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span></span>
+<span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;/about&quot;</span>&gt;</span>About<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span>
 </code></pre>
 <p>当路由激活的时候，会自动加上<code>class=&quot;active&quot;</code>这个类名</p>
 <h2 id="1、自定义激活状态类型">1、自定义激活状态类型</h2>

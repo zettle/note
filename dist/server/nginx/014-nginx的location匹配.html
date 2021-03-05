@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -44,12 +44,12 @@
 <p>第4优先级:  <code>locaton [uri]</code></p>
 <p><strong>场景1：</strong>看下面配置
 当访问 <code>http://aaa.com/</code> 有下面配置</p>
-<pre><code class="language-nginx">location = / {
+<pre><code class="language-nginx"><span class="hljs-keyword">location</span> = / {
     root /root/svr/aaa;
     <span class="hljs-keyword">index</span> <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
 }
 
-location / {
+<span class="hljs-keyword">location</span> / {
     root   /root/svr/bbb;
     <span class="hljs-keyword">index</span>  <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm;
 }

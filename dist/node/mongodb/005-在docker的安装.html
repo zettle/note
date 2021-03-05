@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -44,12 +44,12 @@
 <img src="./img/show-dbs.png" alt=""></li>
 </ol>
 <p>需要执行下面命令登录下账号</p>
-<pre><code class="language-shell">use admin
-<span class="hljs-meta"># admin/123456 是启动容器时候设置的密码</span>
+<pre><code class="language-shell">use <span class="hljs-literal">admin</span>
+<span class="hljs-comment"># admin/123456 是启动容器时候设置的密码</span>
 db.auth(<span class="hljs-string">&#x27;admin&#x27;</span>, <span class="hljs-string">&#x27;123456&#x27;</span>)
 
-<span class="hljs-meta"># 登录成功就有权限查询数据了</span>
-show dbs
+<span class="hljs-comment"># 登录成功就有权限查询数据了</span>
+<span class="hljs-literal">show</span> dbs
 </code></pre>
 <p><img src="./img/auth.png" alt=""></p>
 

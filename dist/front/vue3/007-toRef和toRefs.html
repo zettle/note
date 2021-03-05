@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -17,7 +17,7 @@
 <h2 id="1、toref">1、toRef()</h2>
 <p><code>toRef(参数a, 字段B)</code> 返回一个<code>ObjectRefImpl{}</code>类型，该类型能不能引起html更新，取决于参数a是什么类型，如果参数a能引起html更新，那么这个<code>ObjectRefImpl{}</code>也可以</p>
 <p>先来看一个简单的demo</p>
-<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attribute">age</span>: <span class="hljs-number">1</span> };
+<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">age</span>: <span class="hljs-number">1</span> };
 <span class="hljs-keyword">const</span> data = ref(obj.age);
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">change</span>(<span class="hljs-params"></span>) </span>{
     data.value = <span class="hljs-number">100</span>; <span class="hljs-comment">// html会更新，但不影响原来obj的值</span>
@@ -29,7 +29,7 @@
 <p>上面的<code>const data = ref(obj.age)</code>，相当于拿的是<code>obj.age=1</code>是一个数值，所以改变data的值不会影响到原来的</p>
 </blockquote>
 <p><code>toRef(obj, key)</code>可以将obj的某个属性转为ObjectRefImpl类型，修改该类型不会引起html更新</p>
-<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attribute">age</span>: <span class="hljs-number">1</span> };
+<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">age</span>: <span class="hljs-number">1</span> };
 <span class="hljs-keyword">const</span> data = toRef(obj, <span class="hljs-string">&#x27;age&#x27;</span>); <span class="hljs-comment">// ObjectRefImpl{} 类型</span>
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">change</span>(<span class="hljs-params"></span>) </span>{
     data.value = <span class="hljs-number">100</span>; <span class="hljs-comment">// 不会引起html更新，js内存的会变</span>
@@ -50,8 +50,8 @@
 <h2 id="2、torefs">2、toRefs()</h2>
 <p><code>toRef()</code>只能将一个对象的某个属性转为响应式，即仅仅支持<code>toRef(obj, key)</code>2个参数。</p>
 <p>如果想要将obj的所有属性转为响应式，则需要<code>toRefs()</code></p>
-<pre><code class="language-js">const obj = reactive({ age: <span class="hljs-number">1</span>, name:&#x27;xiaoming&#x27; });
-<span class="hljs-keyword">to</span><span class="hljs-constructor">Refs(<span class="hljs-params">obj</span>)</span>; <span class="hljs-comment">// { age: ObjectRefImpl{}, name:ObjectRefImpl{} }</span>
+<pre><code class="language-js">const obj = reactive({ <span class="hljs-attr">age:</span> <span class="hljs-number">1</span>, <span class="hljs-attr">name:</span><span class="hljs-string">&#x27;xiaoming&#x27;</span> });
+toRefs(obj); <span class="hljs-comment">// { age: ObjectRefImpl{}, name:ObjectRefImpl{} }</span>
 </code></pre>
 <p>一般我们将其和reactive和扩展符一起使用，简化html的书写</p>
 <pre><code class="language-js">const obj = reactive({ age: <span class="hljs-number">1</span> });

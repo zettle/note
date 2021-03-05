@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -15,11 +15,12 @@
             <h1 id="021-组件异步组件">021-组件异步组件</h1>
 <p>在vue2中，我们可以做<a href="../vue2/003-%E5%BC%82%E6%AD%A5%E7%BB%84%E4%BB%B6.html">异步加载组件</a></p>
 <p>在vue3中，不能像vue2那种方式引入异步组件了，组件js虽然会加载，但是不会在页面上展示</p>
+<p>类似react的<code>React.lazy</code> + <code>&lt;Suspense&gt;</code></p>
 <h2 id="1、defineasynccomponent做异步组件">1、defineAsyncComponent做异步组件</h2>
 <pre><code class="language-js"><span class="hljs-keyword">import</span> { defineAsyncComponent } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;vue&#x27;</span>;
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> {
-    components: {
-        SonFour: defineAsyncComponent(() =&gt; <span class="hljs-keyword">import</span>(<span class="hljs-comment">/* webpackChunkName: &quot;son-four&quot; */</span><span class="hljs-string">&#x27;../components/SonFour.vue&#x27;</span>))
+    <span class="hljs-attr">components</span>: {
+        <span class="hljs-attr">SonFour</span>: defineAsyncComponent(<span class="hljs-function">() =&gt;</span> <span class="hljs-keyword">import</span>(<span class="hljs-comment">/* webpackChunkName: &quot;son-four&quot; */</span><span class="hljs-string">&#x27;../components/SonFour.vue&#x27;</span>))
     }
 }
 </code></pre>
@@ -36,6 +37,28 @@
         }
     })
 }
+</code></pre>
+<h2 id="2、suspense-异步加载">2、<code>&lt;Suspense /&gt;</code>异步加载</h2>
+<pre><code class="language-vue"><span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>1、异步加载<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Suspense</span>&gt;</span>
+         <span class="hljs-tag">&lt;<span class="hljs-name">template</span> #<span class="hljs-attr">default</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">big-com</span> /&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">template</span> #<span class="hljs-attr">fallback</span>&gt;</span>
+            Loading ...
+        <span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Suspense</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<span class="hljs-keyword">import</span> { defineAsyncComponent } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;vue&quot;</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> {
+    <span class="hljs-attr">components</span>: {
+        <span class="hljs-attr">BigCom</span>: defineAsyncComponent(<span class="hljs-function">() =&gt;</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">&#x27;@/components/BigCom.vue&#x27;</span>))
+    }
+}
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 
         </article>

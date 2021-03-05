@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="100-其他配置">100-其他配置</h1>
+<p>这里只要针对<code>vite.config.ts</code>的配置</p>
+<h2 id="1、引入node的模块">1、引入node的模块</h2>
+<p><code>vite.config.ts</code>是使用ts编写的，有时候我们需要用到node的模块，以前是通过</p>
+<pre><code class="language-js"><span class="hljs-attribute">const path</span> = require(<span class="hljs-string">&#x27;path&#x27;</span>);
+</code></pre>
+<p>引入，现在都是通过这种方式引入</p>
+<pre><code class="language-ts"><span class="hljs-keyword">import</span> <span class="hljs-type">path</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;path&#x27;</span>;
+</code></pre>
+<h2 id="2、配置别名">2、配置别名</h2>
+<p>vite支持绝对路径的方式引入资源<code>import Hello from &#39;/src/components/HelloWorld.vue&#39;</code></p>
+<p>如果还想要配置别名，可以通过下面方式</p>
+<pre><code class="language-ts"><span class="hljs-keyword">import</span> <span class="hljs-type">path</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;path&#x27;</span>;
+export <span class="hljs-keyword">default</span> defineConfig({
+    resolve: {
+        <span class="hljs-keyword">alias</span>:{
+            <span class="hljs-string">&#x27;@&#x27;</span>: <span class="hljs-type">path</span>.resolve(__dirname, <span class="hljs-string">&#x27;./src&#x27;</span>)//设置别名
+        }
+    }
+})
+</code></pre>
+<h2 id="3、server">3、server</h2>
+<p>配置的内容只要有启动端口、自动打开、代理等</p>
+<pre><code class="language-ts"><span class="hljs-selector-tag">export</span> <span class="hljs-selector-tag">default</span> <span class="hljs-selector-tag">defineConfig</span>({
+    <span class="hljs-attribute">server</span>: {
+        <span class="hljs-attribute">port</span>: <span class="hljs-number">8080</span>, <span class="hljs-comment">// 前端启动的端口</span>
+        <span class="hljs-attribute">open</span>: true, <span class="hljs-comment">// 自动打开浏览器</span>
+        <span class="hljs-attribute">proxy</span>: { <span class="hljs-comment">// 接口代理</span>
+            <span class="hljs-string">&#x27;/api&#x27;</span>: <span class="hljs-string">&#x27;http://localhost:3000&#x27;</span>
+        },
+        <span class="hljs-attribute">cors</span>: true
+    }
+});
+</code></pre>
+<h2 id="4、配置publicpath">4、配置publicPath</h2>
+<p>在vite中，通过下面的方式配置publicPath</p>
+<pre><code class="language-js"><span class="hljs-selector-tag">export</span> <span class="hljs-selector-tag">default</span> <span class="hljs-selector-tag">defineConfig</span>({
+    <span class="hljs-attribute">base</span>: <span class="hljs-string">&#x27;./staff&#x27;</span>, // 打包后请求资源会加上这个前缀
+})
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

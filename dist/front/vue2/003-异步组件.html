@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -24,20 +24,20 @@
 </code></pre>
 <h2 id="2、配置">2、配置</h2>
 <p>如果想要更多配置，需要用函数的方式</p>
-<pre><code class="language-vue"><span class="hljs-name">BigComTwo</span>: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+<pre><code class="language-vue">BigComTwo: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
     <span class="hljs-keyword">return</span> {
         ...
     };
 }
 </code></pre>
-<pre><code class="language-vue"><span class="hljs-attr">components:</span> { 
-    <span class="hljs-attr">BigComTwo:</span> <span class="hljs-string">()</span> <span class="hljs-string">=&gt;</span> <span class="hljs-string">(</span>{
-        <span class="hljs-attr">component:</span> <span class="hljs-string">import(/*</span> <span class="hljs-attr">webpackChunkName:</span> <span class="hljs-string">&quot;big-two&quot;</span> <span class="hljs-string">*/&#x27;../components/BigComTwo.vue&#x27;)</span>,
-        <span class="hljs-attr">loading:</span> <span class="hljs-string">LoadingComponent</span>,
-        <span class="hljs-attr">error:</span> <span class="hljs-string">ErrorComponent</span>,
-        <span class="hljs-attr">delay:</span> <span class="hljs-number">2000</span>,
-        <span class="hljs-attr">timeout:</span> <span class="hljs-number">10</span>
-    }<span class="hljs-string">)</span>
+<pre><code class="language-vue"><span class="hljs-selector-tag">components</span>: { 
+    <span class="hljs-attribute">BigComTwo</span>: () =&gt; ({
+        component: <span class="hljs-built_in">import</span>(/* webpackChunkName: <span class="hljs-string">&quot;big-two&quot;</span> */<span class="hljs-string">&#x27;../components/BigComTwo.vue&#x27;</span>),
+        loading: LoadingComponent,
+        error: ErrorComponent,
+        delay: <span class="hljs-number">2000</span>,
+        timeout: <span class="hljs-number">10</span>
+    })
 }
 </code></pre>
 <ul>

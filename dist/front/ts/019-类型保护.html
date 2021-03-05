@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="019-类型保护">019-类型保护</h1>
+<p>在传入参数是联合类型的场景中，我们在方法中只能调用联合类型的共同方法属性</p>
+<pre><code class="language-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toUpper</span> <span class="hljs-params">(arg: <span class="hljs-keyword">string</span> | <span class="hljs-keyword">string</span>[])</span> </span>{
+    arg.toString(); <span class="hljs-comment">// 可以，toString是字符串和数组都有的</span>
+    arg.substring(); <span class="hljs-comment">// 不可以，这是字符串特有的</span>
+}
+</code></pre>
+<p>但往往我们需要对类型进行判断</p>
+<h2 id="1、使用断言（不推荐）">1、使用断言（不推荐）</h2>
+<p>使用断言的不好地方就是，断言是给ts认识得，所以每写一次代码就需要断言一次</p>
+<pre><code class="language-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toUpper</span> (<span class="hljs-params">arg: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">string</span>[]</span>) </span>{
+    <span class="hljs-keyword">if</span> ((arg <span class="hljs-keyword">as</span> <span class="hljs-built_in">string</span>).substring) {
+        (arg <span class="hljs-keyword">as</span> <span class="hljs-built_in">string</span>).substring(<span class="hljs-number">1</span>);
+    } <span class="hljs-keyword">else</span> {
+        (arg <span class="hljs-keyword">as</span> <span class="hljs-built_in">string</span>[]).push();
+    }
+}
+</code></pre>
+<p>可以看到，每次用到arg就需要断言一次，因为断言只对当前语句有用</p>
+<h2 id="2、typeof类型保护">2、typeof类型保护</h2>
+<p>typeof可以理解ts为其增强了</p>
+<pre><code class="language-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toUpper</span> (<span class="hljs-params">arg: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">string</span>[]</span>) </span>{
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> arg === <span class="hljs-string">&#x27;string&#x27;</span>) { <span class="hljs-comment">// ts知道后面的都是字符串类型</span>
+        arg.substring(<span class="hljs-number">1</span>);
+    } <span class="hljs-keyword">else</span> {
+        arg.push();
+    }
+}
+</code></pre>
+<h2 id="3、instanceof类型保护">3、instanceof类型保护</h2>
+<p>ts中的instanceof也是类型保护的</p>
+<pre><code class="language-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toUpper</span> (<span class="hljs-params">arg: <span class="hljs-built_in">string</span> | <span class="hljs-built_in">string</span>[]</span>) </span>{
+    <span class="hljs-keyword">if</span> (arg <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Array</span>) {
+        arg.push();
+    } <span class="hljs-keyword">else</span> {
+        arg.substring(<span class="hljs-number">1</span>)
+    }
+}
+</code></pre>
+<h2 id="4、自定义类型保护函数">4、自定义类型保护函数</h2>
+<p>有时候我们需要自己定义类型保护函数</p>
+<pre><code class="language-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fn</span> <span class="hljs-params">(arg: Element[] | NodeList | Element)</span> </span>{
+
+}
+<span class="hljs-function"><span class="hljs-keyword">fn</span><span class="hljs-params">(document.querySelector<span class="hljs-params">(<span class="hljs-string">&#x27;#amt&#x27;</span>)</span>)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">fn</span><span class="hljs-params">([ document.querySelector<span class="hljs-params">(<span class="hljs-string">&#x27;#amt&#x27;</span>)</span> ])</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">fn</span><span class="hljs-params">(document.querySelectorAll<span class="hljs-params">(<span class="hljs-string">&#x27;.box&#x27;</span>)</span>)</span></span>;
+</code></pre>
+<p>现在要对<code>fn()</code>函数封装，如果是数组的，就调用数组的<code>forEach()</code>方法。如果非数组的就调用<code>.classList.add()</code>方法</p>
+<p>也就是说arg是否有forEach方法</p>
+<pre><code class="language-ts"><span class="hljs-comment">// 里面的写法和一般js一样，关键在返回类型要写成`arg is Element[] | NodeList`</span>
+function isCanEach(arg: <span class="hljs-built_in">Element</span>[] | NodeList | <span class="hljs-built_in">Element</span>): arg <span class="hljs-keyword">is</span> <span class="hljs-built_in">Element</span>[] | NodeList {
+    <span class="hljs-keyword">return</span> (arg <span class="hljs-keyword">as</span> <span class="hljs-built_in">Element</span>[]).forEach !== undefined;
+}
+
+function fn (arg: <span class="hljs-built_in">Element</span>[] | NodeList | <span class="hljs-built_in">Element</span>) {
+    <span class="hljs-keyword">if</span> (isCanEach(arg)) {
+        arg.forEach(() =&gt; {});
+    } <span class="hljs-keyword">else</span> {
+        arg.classList.add();
+    }
+}
+
+fn(<span class="hljs-built_in">document</span>.<span class="hljs-built_in">querySelector</span>(<span class="hljs-string">&#x27;#amt&#x27;</span>));
+fn([<span class="hljs-built_in">document</span>.<span class="hljs-built_in">querySelector</span>(<span class="hljs-string">&#x27;#amt&#x27;</span>)]); <span class="hljs-comment">// 数组包装一层</span>
+fn(<span class="hljs-built_in">document</span>.<span class="hljs-built_in">querySelectorAll</span>(<span class="hljs-string">&#x27;.box&#x27;</span>));
+</code></pre>
+<p><code>arg is Element[] | NodeList</code>是一种类型谓词，格式为<code>xx is type</code>，返回这种类型的函数就可以被ts识别为类型保护</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="010-computed计算属性">010-computed计算属性</h1>
+<p>这个和vue2没有太大的差距</p>
+<pre><code class="language-js">const person = reactive({
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;xiaomin&#x27;</span>,
+    <span class="hljs-attr">age</span>: <span class="hljs-number">1</span>,
+    <span class="hljs-attr">doubleAge</span>: computed(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-keyword">return</span> person.age * <span class="hljs-number">2</span>;
+    })
+});
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">changeAge</span>(<span class="hljs-params"></span>) </span>{
+    person.age += <span class="hljs-number">1</span>;
+}
+</code></pre>
+<p>也支持<code>get/set</code>，<code>computed()</code>返回的是一个ComputedRefImpl类型</p>
+<pre><code class="language-js">const doubleAge = computed({
+    <span class="hljs-keyword">get</span> () { <span class="hljs-keyword">return</span> age*<span class="hljs-number">2</span> },
+    <span class="hljs-keyword">set</span> (<span class="hljs-keyword">new</span><span class="hljs-type">Val</span>) { age=<span class="hljs-keyword">new</span><span class="hljs-type">Val</span> }
+};
+doubleAge.value <span class="hljs-comment">// 要通过value去设置和获取值</span>
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

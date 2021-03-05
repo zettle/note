@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -17,34 +17,34 @@
 <h2 id="1、场景">1、场景</h2>
 <p>在vue2中，我们定义一个弹窗组件Alter.vue</p>
 <pre><code class="language-html">&lt;div <span class="hljs-class"><span class="hljs-keyword">class</span></span>=<span class="hljs-string">&quot;alert-box&quot;</span> v-<span class="hljs-keyword">if</span>=<span class="hljs-string">&quot;isShow&quot;</span>&gt;
-    &lt;span <span class="hljs-class"><span class="hljs-keyword">class</span></span>=<span class="hljs-string">&quot;close&quot;</span> <span class="hljs-meta">@click</span>=<span class="hljs-string">&quot;$emit(&#x27;update:isShow&#x27;, !isShow)&quot;</span>&gt;<span class="hljs-type">X</span>&lt;/span&gt;
-    <span class="hljs-keyword">this</span> is alter component
+    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;close&quot;</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;$emit(&#x27;update:isShow&#x27;, !isShow)&quot;</span>&gt;</span>X<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+    <span class="hljs-built_in">this</span> is alter component
 &lt;/div&gt;
 </code></pre>
 <p>然后在父组件引用，子组件的html结构是在父组件里面，但是我们往往想要放在body上</p>
-<pre><code class="language-html"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">teleport</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;body&quot;</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;alert-box&quot;</span> <span class="hljs-attr">v-if</span>=<span class="hljs-string">&quot;isShow&quot;</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;close&quot;</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;$emit(&#x27;update:isShow&#x27;, !isShow)&quot;</span>&gt;</span>X<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
-        this is alter component
-    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">teleport</span>&gt;</span></span>
+<pre><code class="language-html">&lt;teleport <span class="hljs-keyword">to</span>=<span class="hljs-string">&quot;body&quot;</span>&gt;
+    &lt;<span class="hljs-keyword">div</span> <span class="hljs-built_in">class</span>=<span class="hljs-string">&quot;alert-box&quot;</span> v-<span class="hljs-keyword">if</span>=<span class="hljs-string">&quot;isShow&quot;</span>&gt;
+        &lt;span <span class="hljs-built_in">class</span>=<span class="hljs-string">&quot;close&quot;</span> @click=<span class="hljs-string">&quot;$emit(&#x27;update:isShow&#x27;, !isShow)&quot;</span>&gt;X&lt;/span&gt;
+        this <span class="hljs-keyword">is</span> alter component
+    &lt;/<span class="hljs-keyword">div</span>&gt;
+&lt;/teleport&gt;
 </code></pre>
 <p>vue会通过<code>document.querySelect()</code>查到上面的to指定的DOM</p>
 <p><img src="./img/telep.png" alt=""></p>
 <h2 id="2、属性">2、属性</h2>
 <p><code>&lt;teleport /&gt;</code>上有个属性disabled，设置为true表示禁止传送门功能，那就和普通组件一样的展示方式</p>
-<pre><code class="language-html">&lt;teleport to=<span class="hljs-string">&quot;body&quot;</span> <span class="hljs-function">:disabled</span>=<span class="hljs-string">&quot;true&quot;</span>&gt;
-    <span class="hljs-string">...</span>
-&lt;<span class="hljs-string">/teleport</span>&gt;
+<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">teleport</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;body&quot;</span> <span class="hljs-attr">:disabled</span>=<span class="hljs-string">&quot;true&quot;</span>&gt;</span>
+    ...
+<span class="hljs-tag">&lt;/<span class="hljs-name">teleport</span>&gt;</span>
 </code></pre>
 <h2 id="3、同时多个teleport">3、同时多个teleport</h2>
 <p>当同时有多个<code>&lt;teleport /&gt;</code>的时候，会依次全部添加进入</p>
-<pre><code class="language-html"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">teleport</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;#box&quot;</span>&gt;</span>AAA<span class="hljs-tag">&lt;/<span class="hljs-name">teleport</span>&gt;</span></span>
-<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">teleport</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;#box&quot;</span>&gt;</span>BBB<span class="hljs-tag">&lt;/<span class="hljs-name">teleport</span>&gt;</span></span>
+<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">teleport</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;#box&quot;</span>&gt;</span>AAA<span class="hljs-tag">&lt;/<span class="hljs-name">teleport</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">teleport</span> <span class="hljs-attr">to</span>=<span class="hljs-string">&quot;#box&quot;</span>&gt;</span>BBB<span class="hljs-tag">&lt;/<span class="hljs-name">teleport</span>&gt;</span>
 </code></pre>
 <p>结果</p>
-<pre><code class="language-html">&lt;<span class="hljs-keyword">div</span> id=<span class="hljs-string">&quot;box&quot;</span>&gt;
-  <span class="hljs-keyword">AAA</span>
+<pre><code class="language-html">&lt;<span class="hljs-keyword">div</span> <span class="hljs-built_in">id</span>=<span class="hljs-string">&quot;box&quot;</span>&gt;
+  AAA
   BBB
 &lt;/<span class="hljs-keyword">div</span>&gt;
 </code></pre>

@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/dist/assets/monokai-sublime.css" />
-<link rel="stylesheet" href="/dist/assets/github-markdown.min.css" />
-<link rel="stylesheet" href="/dist/assets/style.css" />
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
 <title>Document</title>
 </head>
 <body>
@@ -47,7 +47,7 @@
 </tr>
 </tbody></table>
 <h2 id="1、查看nginx进程">1、查看nginx进程</h2>
-<pre><code class="language-shell"><span class="hljs-keyword">ps</span> aux | <span class="hljs-keyword">grep</span> nginx # 看出nginx的进程
+<pre><code class="language-shell">ps aux | <span class="hljs-keyword">grep</span> nginx <span class="hljs-comment"># 看出nginx的进程</span>
 </code></pre>
 <p>执行完后，可以看到下面的结果：</p>
 <p><img src="./img/ps-aux.png" alt=""></p>
@@ -89,8 +89,8 @@
 <ol>
 <li>首先在 <code>http://bbb.com</code> 上写个js脚本，让其一直处于刷新状态，这样子就模拟一直有客户端请求nginx，nginx的访问日志一直在累加</li>
 </ol>
-<pre><code class="language-html"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>这是bbb页面<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript"><span class="hljs-built_in">window</span>.location.reload()</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span>
+<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>这是bbb页面<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript"><span class="hljs-built_in">window</span>.location.reload()</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 <ol start="2">
 <li>访问 <code>http://bbb.com</code> 一直处于刷新状态，查看nginx的<code>log/access.log</code>日志，可以看到日志一直再增加<pre><code class="language-shell"><span class="hljs-attribute">ll</span>
