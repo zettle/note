@@ -12,26 +12,9 @@
 
     <div class="main">
         <article class="markdown-body">
-            <h1 id="002-处理css">002-处理css</h1>
-<p>vite自带postcss，所以直接在根目录新建<code>postcss.config.js</code>即可配置</p>
-<h2 id="1、px2rem">1、px2rem</h2>
-<p>安装: <code>npm i -D postcss-pxtorem</code></p>
-<p>配置:</p>
-<pre><code class="language-js">module.exports = {
-    <span class="hljs-string">&#x27;plugins&#x27;</span>: {
-        <span class="hljs-string">&#x27;postcss-pxtorem&#x27;</span>: {
-            rootValue: <span class="hljs-number">75</span>,
-            propList: [<span class="hljs-string">&#x27;*&#x27;</span>],
-            minPixelValue: <span class="hljs-number">2</span>, <span class="hljs-regexp">//</span> 小于<span class="hljs-number">2</span>px的不会转为rem，等于<span class="hljs-number">2</span>的还是会转
-            selectorBlackList: [<span class="hljs-regexp">/^.px-\w*/</span>], <span class="hljs-regexp">//</span> 不要转vant的，他们是<span class="hljs-number">375</span>位基准的
-            exclude: <span class="hljs-regexp">/node_modules/i</span> <span class="hljs-regexp">//</span> 忽略node_modules里面的
-        }
-    }
-}
-</code></pre>
-<p>编写js动态修改字体，在<code>/src/utils/rem.ts</code>，代码如下: </p>
-<pre><code class="language-js">
-</code></pre>
+            <h1 id="001-特殊的全局变量">001-特殊的全局变量</h1>
+<p>这些模块实际上是模块中的变量，只是每个模块都有，看着像全局变量，这些有<code>__dirname/__filename/exports/module/require</code></p>
+<p>这些模块在命令行交互中是不可使用的</p>
 
         </article>
 

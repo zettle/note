@@ -12,26 +12,24 @@
 
     <div class="main">
         <article class="markdown-body">
-            <h1 id="002-处理css">002-处理css</h1>
-<p>vite自带postcss，所以直接在根目录新建<code>postcss.config.js</code>即可配置</p>
-<h2 id="1、px2rem">1、px2rem</h2>
-<p>安装: <code>npm i -D postcss-pxtorem</code></p>
-<p>配置:</p>
-<pre><code class="language-js">module.exports = {
-    <span class="hljs-string">&#x27;plugins&#x27;</span>: {
-        <span class="hljs-string">&#x27;postcss-pxtorem&#x27;</span>: {
-            rootValue: <span class="hljs-number">75</span>,
-            propList: [<span class="hljs-string">&#x27;*&#x27;</span>],
-            minPixelValue: <span class="hljs-number">2</span>, <span class="hljs-regexp">//</span> 小于<span class="hljs-number">2</span>px的不会转为rem，等于<span class="hljs-number">2</span>的还是会转
-            selectorBlackList: [<span class="hljs-regexp">/^.px-\w*/</span>], <span class="hljs-regexp">//</span> 不要转vant的，他们是<span class="hljs-number">375</span>位基准的
-            exclude: <span class="hljs-regexp">/node_modules/i</span> <span class="hljs-regexp">//</span> 忽略node_modules里面的
-        }
-    }
-}
-</code></pre>
-<p>编写js动态修改字体，在<code>/src/utils/rem.ts</code>，代码如下: </p>
-<pre><code class="language-js">
-</code></pre>
+            <h1 id="002-export和require">002-export和require</h1>
+<h2 id="2、require">2、require</h2>
+<ul>
+<li>在第1次引入的时候，js就会执行1次</li>
+<li>模块多次被导入，会缓存，最终只加载运行1次<blockquote>
+<p>为什么运行1次？node内部原理是加载运行一次后，会将其那个js标记为<code>module.loaded=true</code>。后面发现这个为true就不会再运行</p>
+</blockquote>
+</li>
+<li>如果有循环引入，那么加载顺序是什么样的？</li>
+</ul>
+<p><img src="./img/cir.png" alt=""></p>
+<p>在node中，循环依赖是没有问题的，像上面的加载顺序是<code>main - aaa  - ccc - ddd - eee - bbb</code></p>
+<p>node加载模块其实是一种图数据结构，图结构遍历的时候有2种算法: 深度优先搜索、广度优先搜索。Node采用的深度优先搜索</p>
+<h2 id="3、commonjs规范">3、commonJs规范</h2>
+<ul>
+<li>node是通过<code>exports+require</code>加载js，并且是同步进行的，因为node本身是做服务器的，这个在服务器上没什么问题，因为都是本地代码，加载速度极快</li>
+<li>同步意味着只有对应模块加载完毕，才会往下执行</li>
+</ul>
 
         </article>
 
