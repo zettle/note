@@ -25,7 +25,7 @@ gzip_comp_level 6;
 
 # 进行压缩的文件类型，缺啥补啥就行了，JavaScript有两种写法，最好都写上吧，总有人抱怨js文件没有压缩，其实多写一种格式就行了
 # 一般图片/mp3这种二进制文件也不压缩，压缩比例不是很高还浪费资源
-gzip_types text/plain application/x-javascript text/css application/xml text/javascript application/javascript;
+gzip_types text/plain application/x-javascript text/css text/xml application/xml text/javascript application/javascript;
 
 # 是否携带gzip压缩标识，建议开启
 # 跟Squid等缓存服务有关，on的话会在Header里增加"Vary: Accept-Encoding"
