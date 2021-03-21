@@ -29,8 +29,7 @@ access_log  logs/access.log  main;
 | $time_local   | 访问时间和时区       | 18/Jul/2014:17:00:01 +0800 | 
 | $request      | 请求的URI和HTTP协议  |  “GET /article-10000.html HTTP/1.1” | 
 | $http_host    | 请求地址，即浏览器中你输入的地址（IP或域名） |  www.ha97.com  198.98.120.87 | 
-| $status       | HTTP请求状态  | 200 | 
-| $body_bytes_sent  | 发送给客户端文件内容大小 |  1547 | 
+| $http_x_forwarded_for | 客户端用户名称       | — | 
 | $http_referer     | url跳转来源 |  https://www.google.com/ | 
 | $http_user_agent  | 用户终端浏览器等信息 | Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; SV1; GTB7.0; .NET4.0C; | 
 | $ssl_protocol     | SSL协议版本  | TLSv1 | 
@@ -39,7 +38,8 @@ access_log  logs/access.log  main;
 | $upstream_response_time |  请求过程中，upstream响应时间  |  0.002  | 
 | $upstream_status  | upstream状态  | 200 | 
 | $upstream_addr    | 后台upstream的地址，即真正提供服务的主机地址  | 10.36.10.80:80 | 
-
+| $status       | HTTP请求状态  | 200 | 
+| $body_bytes_sent  | 发送给客户端文件内容大小 |  1547 | 
 
 ## 2、自定义日志记录
 将 `nginx.conf` 修改为下面
