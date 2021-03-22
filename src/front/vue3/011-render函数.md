@@ -76,6 +76,35 @@ export default {
 * `setup()`返回的内容可以在`render()`中直接使用
 * 通过`this.$slots`获取父组件传递过来的插槽
 
+### 2.1 2次封装组件
+场景: 基于vant的`<van-field>`2次封装一个`<v-filed>`组件，要求所有props和slot都透传
+```
+<script lang="ts">
+import { defineComponent, h, PropType } from 'vue';
+import { Field } from 'vant';
+type PropsInputAlignType = 'left' | 'center' | 'right';
+
+export default defineComponent({
+    inheritAttrs: false,
+    props: {
+        inputAlign: { type: String as PropType<PropsInputAlignType>, default: 'right' },
+        errorMessageAlign: { type: String as PropType<PropsInputAlignType>, default: 'right' },
+        scrollToError: { type: Boolean, default: true }
+    },
+    render () {
+        const { inputAlign, errorMessageAlign, scrollToError, $attrs, $slots } = this;
+        return h(Field, {
+            inputAlign: inputAlign,
+            errorMessageAlign: errorMessageAlign,
+            scrollToError: scrollToError,
+            ...$attrs // props的透传
+        }, {
+            ...$slots // slot的透传
+        });
+    }
+});
+</script>
+```
 
 
 
