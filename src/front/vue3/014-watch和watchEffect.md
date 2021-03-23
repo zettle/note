@@ -4,7 +4,7 @@
 ## 1、watch
 格式: `watch( source, cb, [options] )`
 
-options支持配置和vue2的watch一样，immediate（立即触发回调函数）、deep（深度监听）
+options支持配置和vue2的watch一样，immediate（立即触发回调函数）、deep（深度监听）、flush（执行时机）
 
 ### 1.1 监听ref
 

@@ -23,6 +23,8 @@ setup() {
 async setup() {}
 ```
 
+> 这个不是绝对的，如果是和`<Sespense />`使用，则可以加async，详见[022-Suspense](./022-Suspense.html)
+
 
 ## 3、setup的参数
 `setup(props, content)` 
