@@ -10,6 +10,40 @@
 
 > render函数里面是有this的
 
+## 1、h函数的用法
+* h函数和setup使用，setup里面return的不再是一个对象，而是一个h函数，那么vue就不会读取`<template />`里面的内容，而是使用这个h函数返回的内容
+```vue
+<template>
+  <div>222</div>
+</template>
+<script>
+import {h} from 'vue'
+export default {
+  setup () {
+    return () => h('div', {}, 'this is div')
+  }
+}
+</script>
+```
+页面最终展示的是`this is div`
+
+* h函数和render选型搭配，
+```vue
+<template>
+  <div>222</div>
+</template>
+<script>
+import {h} from 'vue'
+export default {
+  render () {
+    return h('p', {}, 'this is p');
+  }
+}
+</script>
+```
+页面最终展示的是`222`
+
+> 综合上述： render权重最低，接着是template，接着是setup
 
 
 ## 1、定义html标签
@@ -58,9 +92,16 @@ export default {
     },
     render () {
         return h('div', {
+            // 普通事件的写法
             onClick: () => {
                 this.updateNum();
                 this.$emit('update:modelValue', this.$props.modelValue+2);
+            },
+            // 事件需要用到修饰符的写法
+            onChange: {
+                handler: this.updateNum,
+                once: true,
+                capture: true
             }
         }, [
             `子组件count: ${this.$props.modelValue}`,
@@ -75,6 +116,9 @@ export default {
 * 通过`this.$emit`广播事件给父组件
 * `setup()`返回的内容可以在`render()`中直接使用
 * 通过`this.$slots`获取父组件传递过来的插槽
+* 事件修饰符，对于修饰符`once/capture`这种，可以将事件改为一个json的写法，其他事件修饰符比如`.enter`就只能在js里面判断
+
+
 
 ### 2.1 2次封装组件
 场景: 基于vant的`<van-field>`2次封装一个`<v-filed>`组件，要求所有props和slot都透传
@@ -122,11 +166,14 @@ export default {
             // v-model的传递方式，要拆开传
             modelValue: this.count,
             'onUpdate:modelValue': $event => this.count=$event
+        }, {
+            default: () => h('p', 'this is p'),
+            header: () => h('h1', 'this is header')
         })
     }
 }
 ```
 * 引入子组件后即可使用，无需在`components: {}`再声明一次
 * `v-model`需要拆属性和监听传递给子组件
-* ????slot要怎么传递
+* 将第3个参数改为json，就可以传递slot给子组件
 

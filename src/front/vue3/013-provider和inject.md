@@ -36,3 +36,4 @@ const update = () => {
     changeStu(100); // 调用父组件提供过来的方式
 }
 ```
+> 通过`provider/inject`传递的数据是否有响应式？主要看provider的时候这个值是否是响应式数据，是的话，那么这个值就是响应式
