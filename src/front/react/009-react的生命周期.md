@@ -78,7 +78,7 @@ class App extends React.Component {
 
 > componentWillReceiveProps在父组件第1次挂载触发`render()`的时候，不会触发，当挂载后父组件触发`render()`才会触发
 
-```
+```jsx
 // 子组件
 class Son extends React.Component {
   // 父组件并没有传递props过来，但是当父组件改变state触发render后

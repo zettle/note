@@ -22,54 +22,49 @@
 <p>使用mysql可视化工具访问的时候，一直访问失败，可以按照下面进行排查</p>
 <ol>
 <li>阿里云服务器是否开启3306端口访问出入</li>
-<li>mysql数据库默认不支持远程连接，需要进入mysql命令行后执行下面代码<pre><code><span class="hljs-keyword">grant</span> <span class="hljs-keyword">all</span> <span class="hljs-keyword">privileges</span> <span class="hljs-keyword">on</span> *.* <span class="hljs-keyword">to</span> <span class="hljs-string">&#x27;root&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span> identified <span class="hljs-keyword">by</span> <span class="hljs-string">&#x27;root&#x27;</span>;
+<li>mysql数据库默认不支持远程连接，需要进入mysql命令行后执行下面代码<pre><code class="language-bash"><span class="hljs-keyword">grant</span> <span class="hljs-keyword">all</span> <span class="hljs-keyword">privileges</span> <span class="hljs-keyword">on</span> *.* <span class="hljs-keyword">to</span> <span class="hljs-string">&#x27;root&#x27;</span>@<span class="hljs-string">&#x27;%&#x27;</span> identified <span class="hljs-keyword">by</span> <span class="hljs-string">&#x27;root&#x27;</span>;
 flush <span class="hljs-keyword">privileges</span>;
 </code></pre>
 <img src="./img/003/mysql-centos-con.png" alt=""></li>
-<li>因为mariaDB按照后默认root不用密码，但是远程连接必须用密码。我们进入mysql命令行<pre><code><span class="hljs-keyword">use</span> <span class="hljs-title">mysql</span>;
+<li>因为mariaDB按照后默认root不用密码，但是远程连接必须用密码。我们进入mysql命令行<pre><code class="language-bash">use mysql;
+<span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">user</span> <span class="hljs-keyword">SET</span> <span class="hljs-keyword">password</span>=<span class="hljs-keyword">password</span>(<span class="hljs-string">&#x27;123456&#x27;</span>) <span class="hljs-keyword">WHERE</span> <span class="hljs-keyword">user</span>=<span class="hljs-string">&#x27;root&#x27;</span>; // 设置密码
+flush privileges; // 刷新mysql
+</code></pre>
+这样子用<code>root/123456</code>去登陆既可以了</li>
+</ol>
+<h2 id="2、mariadb存中文乱码">2、mariaDB存中文乱码</h2>
+<p><a href="https://blog.csdn.net/bon_mot/article/details/78677313">解决方法</a></p>
+<ol>
+<li>修改<code>client.cnf</code>配置<pre><code class="language-bash"><span class="hljs-selector-tag">vim</span> /<span class="hljs-selector-tag">etc</span>/<span class="hljs-selector-tag">my</span><span class="hljs-selector-class">.cnf</span><span class="hljs-selector-class">.d</span>/<span class="hljs-selector-tag">client</span><span class="hljs-selector-class">.cnf</span>
+</code></pre>
+找到<code>[client]</code>的地方，新加配置<code>default-character-set=utf8</code>，如下:<pre><code class="language-conf">[<span class="hljs-meta">client</span>]
+<span class="hljs-literal">default</span>-character-<span class="hljs-keyword">set</span>=utf8
 </code></pre>
 </li>
 </ol>
-<p>UPDATE user SET password=password(&#39;123456&#39;) WHERE user=&#39;root&#39;; // 设置密码</p>
-<p>flush privileges; // 刷新mysql</p>
-<pre><code>这样子用`root/<span class="hljs-number">123456</span>`去登陆既可以了
-
-
-
-<span class="hljs-comment">## 2、mariaDB存中文乱码</span>
-[解决方法](https:<span class="hljs-regexp">//</span>blog.csdn.net<span class="hljs-regexp">/bon_mot/</span>article<span class="hljs-regexp">/details/</span><span class="hljs-number">78677313</span>)
-
-<span class="hljs-number">1</span>. 修改`client.cnf`配置
-```shell
-vim <span class="hljs-regexp">/etc/my</span>.cnf.d/client.cnf
-</code></pre>
-<p>找到<code>[client]</code>的地方，新加配置<code>default-character-set=utf8</code>，如下:</p>
-<pre><code class="language-conf">[<span class="hljs-meta">client</span>]
-<span class="hljs-literal">default</span>-character-<span class="hljs-keyword">set</span>=utf8
-</code></pre>
 <ol start="2">
-<li>修改<code>server.cnf</code>配置<pre><code class="language-shell"><span class="hljs-selector-tag">vim</span> /<span class="hljs-selector-tag">etc</span>/<span class="hljs-selector-tag">my</span><span class="hljs-selector-class">.cnf</span><span class="hljs-selector-class">.d</span>/<span class="hljs-selector-tag">server</span><span class="hljs-selector-class">.cnf</span>
+<li><p>修改<code>server.cnf</code>配置</p>
+<pre><code class="language-bash"><span class="hljs-selector-tag">vim</span> /<span class="hljs-selector-tag">etc</span>/<span class="hljs-selector-tag">my</span><span class="hljs-selector-class">.cnf</span><span class="hljs-selector-class">.d</span>/<span class="hljs-selector-tag">server</span><span class="hljs-selector-class">.cnf</span>
 </code></pre>
-找到<code>[mysqld]</code>的地方，新加配置如下:<pre><code class="language-conf"><span class="hljs-section">[mysqld]</span>
+<p>找到<code>[mysqld]</code>的地方，新加配置如下:</p>
+<pre><code class="language-conf"><span class="hljs-section">[mysqld]</span>
+<span class="hljs-attr">init_connect</span> = <span class="hljs-string">&#x27;SET collation_connection = utf8_general_ci&#x27;</span>
+<span class="hljs-attr">init_connect</span> = <span class="hljs-string">&#x27;SET NAMES utf8&#x27;</span>
+<span class="hljs-attr">character_set_server</span> = utf8
+<span class="hljs-attr">collation_server</span> = utf8_general_ci
+<span class="hljs-section">[mysqld_safe]</span>
 <span class="hljs-attr">init_connect</span> = <span class="hljs-string">&#x27;SET collation_connection = utf8_general_ci&#x27;</span>
 <span class="hljs-attr">init_connect</span> = <span class="hljs-string">&#x27;SET NAMES utf8&#x27;</span>
 <span class="hljs-attr">character_set_server</span> = utf8
 <span class="hljs-attr">collation_server</span> = utf8_general_ci
 </code></pre>
 </li>
-</ol>
-<p>[mysqld_safe]
-init_connect = &#39;SET collation_connection = utf8_general_ci&#39;
-init_connect = &#39;SET NAMES utf8&#39;
-character_set_server = utf8
-collation_server = utf8_general_ci</p>
-<pre><code>
-<span class="hljs-number">3</span>. 重启服务
-```shell
-systemctl restart mariadb.service
+<li><p>重启服务</p>
+<pre><code class="language-bash"><span class="hljs-selector-tag">systemctl</span> <span class="hljs-selector-tag">restart</span> <span class="hljs-selector-tag">mariadb</span><span class="hljs-selector-class">.service</span>
 </code></pre>
-<ol start="4">
-<li>在进入mysql，执行<code>SHOW VARIABLES LIKE &#39;character%&#39;;</code>查看下字符集都是utf8了</li>
+</li>
+<li><p>在进入mysql，执行<code>SHOW VARIABLES LIKE &#39;character%&#39;;</code>查看下字符集都是utf8了</p>
+</li>
 </ol>
 
         </article>

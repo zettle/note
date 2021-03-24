@@ -64,14 +64,9 @@ access_log  logs/access.log  main<span class="hljs-comment">;</span>
 <td><a href="http://www.ha97.com">www.ha97.com</a>  198.98.120.87</td>
 </tr>
 <tr>
-<td>$status</td>
-<td>HTTP请求状态</td>
-<td>200</td>
-</tr>
-<tr>
-<td>$body_bytes_sent</td>
-<td>发送给客户端文件内容大小</td>
-<td>1547</td>
+<td>$http_x_forwarded_for</td>
+<td>客户端用户名称</td>
+<td>—</td>
 </tr>
 <tr>
 <td>$http_referer</td>
@@ -112,6 +107,16 @@ access_log  logs/access.log  main<span class="hljs-comment">;</span>
 <td>$upstream_addr</td>
 <td>后台upstream的地址，即真正提供服务的主机地址</td>
 <td>10.36.10.80:80</td>
+</tr>
+<tr>
+<td>$status</td>
+<td>HTTP请求状态</td>
+<td>200</td>
+</tr>
+<tr>
+<td>$body_bytes_sent</td>
+<td>发送给客户端文件内容大小</td>
+<td>1547</td>
 </tr>
 </tbody></table>
 <h2 id="2、自定义日志记录">2、自定义日志记录</h2>

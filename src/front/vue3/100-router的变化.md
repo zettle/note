@@ -1,4 +1,4 @@
-# 099-router的变化
+# 100-router的变化
 
 
 ## 1、路由模式的配置
@@ -29,4 +29,10 @@ watch(()=>route.query, (newVal) => { ... })
 
 
 ## 3、`*`号通配符被移除
-
+### 3.1 404页面
+```js
+{
+    path: '/:pathMatch(.*)', // 配置404
+    component: () => import('../pages/error/notFound.vue')
+}
+```

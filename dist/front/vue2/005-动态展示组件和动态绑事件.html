@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="005-动态展示组件和动态绑事件">005-动态展示组件和动态绑事件</h1>
+<pre><code class="language-js"><span class="hljs-tag">&lt;<span class="hljs-name">template</span> <span class="hljs-attr">v-for</span>=<span class="hljs-string">&quot;item in iconList&quot;</span> <span class="hljs-attr">:key</span>=<span class="hljs-string">&quot;item.icon.name&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">component</span> <span class="hljs-attr">:is</span>=<span class="hljs-string">&quot;item.icon&quot;</span> <span class="hljs-attr">v-on</span>=<span class="hljs-string">&quot;item.eventObject || {}&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">component</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;ts&quot;</span>&gt;</span><span class="javascript">
+<span class="hljs-keyword">import</span> { SettingOutlined, SearchOutlined,  GithubOutlined } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ant-design/icons-vue&#x27;</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> {
+    <span class="hljs-attr">components</span>: {
+        SearchOutlined, GithubOutlined, SettingOutlined
+    },
+    <span class="hljs-keyword">const</span> iconList = [
+        {
+            <span class="hljs-attr">icon</span>: <span class="hljs-string">&#x27;SearchOutlined&#x27;</span>,
+            <span class="hljs-attr">tips</span>: <span class="hljs-string">&#x27;搜索&#x27;</span>
+        },
+        {
+            <span class="hljs-attr">icon</span>: <span class="hljs-string">&#x27;GithubOutlined&#x27;</span>,
+            <span class="hljs-attr">tips</span>: <span class="hljs-string">&#x27;github&#x27;</span>,
+            <span class="hljs-attr">eventObject</span>: {
+                <span class="hljs-attr">click</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-built_in">window</span>.open(<span class="hljs-string">&#x27;https://github.com/buqiyuan/vue3-antd&#x27;</span>)
+            }
+        },
+        {
+            <span class="hljs-attr">icon</span>: <span class="hljs-string">&#x27;SettingOutlined&#x27;</span>,
+            <span class="hljs-attr">tips</span>: <span class="hljs-string">&#x27;网站设置&#x27;</span>
+        },
+    ]
+}
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+<ul>
+<li>使用 <code>&lt;component is=&quot;xxx&quot; /&gt;</code> 动态绑定组件</li>
+<li>使用 <code>v-on=&quot;item.eventObject || {}&quot;</code> 动态绑定事件，eventObject是一个JSON写法</li>
+</ul>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

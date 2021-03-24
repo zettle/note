@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="001-实现全屏切换">001-实现全屏切换</h1>
+<p>js实现全屏模式的切换和监听</p>
+<pre><code class="language-js"><span class="hljs-comment">// 启动退出全屏模式的方法</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toggleFullScreen</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">document</span>.fullscreenElement) { <span class="hljs-comment">// document.fullscreenElement全屏的时候返回页面html</span>
+        <span class="hljs-built_in">document</span>.documentElement.requestFullscreen();
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">document</span>.exitFullscreen) {
+            <span class="hljs-built_in">document</span>.exitFullscreen();
+        }
+    }
+}
+<span class="hljs-comment">// 监听全屏切换事件</span>
+<span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">&#x27;fullscreenchange&#x27;</span>, <span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;监听fullscreenchange&#x27;</span>);
+});
+
+<span class="hljs-comment">// 点击按钮执行上面的方法</span>
+$(<span class="hljs-string">&#x27;#btn&#x27;</span>).click(<span class="hljs-function">() =&gt;</span> {
+    toggleFullScreen();
+});
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

@@ -12,15 +12,23 @@
 
     <div class="main">
         <article class="markdown-body">
-            <h1 id="100-各种export写法">100-各种export写法</h1>
-<h2 id="1、import然后export出去">1、import然后export出去</h2>
-<p>常规的写法，先import，然后再import</p>
-<pre><code><span class="hljs-keyword">import</span> SvgIcon <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./svg-icon.vue&#x27;</span>;
-
-<span class="hljs-keyword">export</span> { SvgIcon };
+            <h1 id="024-父组件调子组件的方法">024-父组件调子组件的方法</h1>
+<p>父组件通过ref调用子组件的方法，比如页面组件调用短信发送组件的<code>startSecondDown/endSecondDown</code></p>
+<ul>
+<li>1、父组件通过ref调用子组件的方法，子组件需要return出去这个方法<pre><code class="language-js"><span class="hljs-keyword">return</span> {
+  startSecondDown, // eslint-<span class="hljs-keyword">disable</span>-<span class="hljs-type">line</span>
+  endSecondDown // eslint-<span class="hljs-keyword">disable</span>-<span class="hljs-type">line</span>
+};
 </code></pre>
-<p>可以简写为下面</p>
-<pre><code><span class="hljs-keyword">export</span> { <span class="hljs-keyword">default</span> <span class="hljs-keyword">as</span> SvgIcon } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./svg-icon.vue&#x27;</span>;
+</li>
+</ul>
+<p>也可以通过expose暴露出去（推荐使用这种）</p>
+<pre><code class="language-js">setup (props, { <span class="hljs-keyword">expose</span> }) {
+    <span class="hljs-keyword">expose</span>({
+        startSecondDown,
+        endSecondDown
+    });
+};
 </code></pre>
 
         </article>

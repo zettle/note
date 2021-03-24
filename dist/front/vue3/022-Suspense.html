@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="022-suspense">022-Suspense</h1>
+<p>在<a href="./021-%E7%BB%84%E4%BB%B6%E5%BC%82%E6%AD%A5%E7%BB%84%E4%BB%B6.html">021-组件异步组件</a>中使用了<code>&lt;Suspense /&gt; + defineAsyncComponent</code>一起使用</p>
+<p><code>&lt;Suspense /&gt;</code>还可以下面的使用场景</p>
+<p>在vue2中，有这么个场景，一进页面展示骨架屏，等接口返回后才展示内容，这种场景在vue2中是这么处理</p>
+<pre><code class="language-vue"><span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">v-if</span>=<span class="hljs-string">&quot;!loading&quot;</span>&gt;</span>
+            ...
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">v-if</span>=<span class="hljs-string">&quot;loading&quot;</span>&gt;</span>
+            加载中...
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+</code></pre>
+<p>而在vue3中，提供了<code>&lt;Suspense /&gt;</code>组件给我们使用</p>
+<pre><code class="language-vue"><span class="xml">// async.vue子组件
+<span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">h4</span>&gt;</span>这个是一个异步加载数据<span class="hljs-tag">&lt;/<span class="hljs-name">h4</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>msg：</span><span class="hljs-template-variable">{{<span class="hljs-name">result</span>}}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<span class="hljs-keyword">import</span> { defineComponent } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;vue&quot;</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ajax</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> {
+        <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+            resolve({<span class="hljs-attr">code</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">msg</span>: <span class="hljs-string">&#x27;ok&#x27;</span>})
+        }, <span class="hljs-number">2000</span>);
+    });
+}
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> defineComponent({
+    <span class="hljs-function"><span class="hljs-title">setup</span>(<span class="hljs-params"></span>)</span>{
+        <span class="hljs-comment">// setup里面需要返回一个promise</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve</span>) =&gt;</span> {
+            ajax().then(<span class="hljs-function"><span class="hljs-params">resp</span> =&gt;</span> {
+                <span class="hljs-keyword">return</span> resolve({
+                    <span class="hljs-attr">result</span>: <span class="hljs-number">100</span>
+                })
+            });
+        })
+    }
+});</span></span>
+</code></pre>
+<p>然后父组件就可以这么写</p>
+<pre><code class="language-vue"><span class="xml">// 父组件
+<span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Suspense</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">template</span> #<span class="hljs-attr">default</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">async</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">async</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">template</span> #<span class="hljs-attr">fallback</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                Loading2...
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">Suspense</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;ts&quot;</span>&gt;</span><span class="javascript">
+<span class="hljs-keyword">import</span> Async <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;../components/Async.vue&quot;</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> defineComponent(</span></span><span class="hljs-template-variable">{
+    Async
+}</span><span class="xml">)
+<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span>
+</code></pre>
+<p>在ajax请求回来之前，会展示loading，等ajax请求结束后，展示真正的内容</p>
+<p>利用<code>async/await</code>，还可以简写为下面</p>
+<pre><code class="language-js"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> defineComponent({
+    <span class="hljs-keyword">async</span> setup () { <span class="hljs-comment">// async装饰setup函数</span>
+        <span class="hljs-keyword">const</span> res = <span class="hljs-keyword">await</span> ajax();
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;res&#x27;</span>, res);
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-attr">result</span>: res.msg
+        }
+    }
+});
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

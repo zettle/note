@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="002-实现网络状态监听">002-实现网络状态监听</h1>
+<p>监听网络是否在线离线</p>
+<pre><code class="language-js"><span class="hljs-regexp">//</span> 一进页面就获取
+var inOnline = navigator.onLine;
+<span class="hljs-regexp">//</span> 监听在线状态
+<span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">&#x27;online&#x27;</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    inOnline = <span class="hljs-literal">true</span>
+});
+<span class="hljs-regexp">//</span> 监听离线状态
+<span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">&#x27;offline&#x27;</span>, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    inOnline = <span class="hljs-literal">false</span>
+});
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

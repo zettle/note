@@ -12,7 +12,7 @@
 
     <div class="main">
         <article class="markdown-body">
-            <h1 id="099-router的变化">099-router的变化</h1>
+            <h1 id="100-router的变化">100-router的变化</h1>
 <h2 id="1、路由模式的配置">1、路由模式的配置</h2>
 <p>vue2中是这么配置</p>
 <pre><code class="language-js"><span class="hljs-keyword">const</span> router = createRouter({
@@ -35,6 +35,12 @@
 <pre><code class="language-js">watch(<span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span>route.query, <span class="hljs-function"><span class="hljs-params">(newVal)</span> =&gt;</span> { ... })
 </code></pre>
 <h2 id="3、号通配符被移除">3、<code>*</code>号通配符被移除</h2>
+<h3 id="31-404页面">3.1 404页面</h3>
+<pre><code class="language-js">{
+    <span class="hljs-attribute">path</span>: <span class="hljs-string">&#x27;/:pathMatch(.*)&#x27;</span>, // 配置<span class="hljs-number">404</span>
+    component: () =&gt; <span class="hljs-built_in">import</span>(<span class="hljs-string">&#x27;../pages/error/notFound.vue&#x27;</span>)
+}
+</code></pre>
 
         </article>
 

@@ -30,29 +30,24 @@
 <p>只有通过包装的reactive变量改变才会引起html的更新</p>
 <ul>
 <li>如果<code>toRaw()</code>传入的是reactive，返回reactive的原始引用</li>
-<li>如果<code>toRaw()</code>传入的是ref，则返回ref本身，如果是<code>.value</code>，则返回原始引用类型<pre><code class="language-js"><span class="hljs-title">const</span> obj = {age:<span class="hljs-number">1</span>};
-<span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = reactive(<span class="hljs-title">obj</span>);</span>
-<span class="hljs-title">console</span>.log(toRaw(<span class="hljs-class"><span class="hljs-keyword">data</span>) === obj); // true</span>
-
+<li>如果<code>toRaw()</code>传入的是ref，则返回ref本身，如果是<code>.value</code>，则返回原始引用类型<pre><code class="language-js">const obj = {age:<span class="hljs-number">1</span>};
+const data = reactive(obj);
+console.log(<span class="hljs-keyword">to</span><span class="hljs-constructor">Raw(<span class="hljs-params">data</span>)</span><span class="hljs-operator"> === </span>obj); <span class="hljs-comment">// true</span>
+<span class="hljs-comment">// ----------------------</span>
+const obj = <span class="hljs-number">1</span>;
+const data = <span class="hljs-built_in">ref</span>(obj);
+console.log(data<span class="hljs-operator"> === </span><span class="hljs-keyword">to</span><span class="hljs-constructor">Raw(<span class="hljs-params">data</span>)</span>); <span class="hljs-comment">// true</span>
+console.log(<span class="hljs-number">1</span><span class="hljs-operator"> === </span><span class="hljs-keyword">to</span><span class="hljs-constructor">Raw(<span class="hljs-params">data</span>.<span class="hljs-params">value</span>)</span>); <span class="hljs-comment">// true</span>
 </code></pre>
 </li>
 </ul>
-<p>const obj = 1;
-const data = ref(obj);
-console.log(data === toRaw(data)); // true
-console.log(1 === toRaw(data.value)); // true</p>
-<pre><code>
-
-
-
-<span class="hljs-comment">## 2、markRaw()</span>
-首先来看一个最简单的情况
-```<span class="javascript">js
-<span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">age</span>: <span class="hljs-number">1</span> };
+<h2 id="2、markraw">2、markRaw()</h2>
+<p>首先来看一个最简单的情况</p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> obj = { age: <span class="hljs-number">1</span> };
 <span class="hljs-keyword">const</span> data = reactive(obj);
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">change</span> (<span class="hljs-params"></span>) </span>{
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">change</span> <span class="hljs-params">()</span> </span>{
     data.age = <span class="hljs-number">100</span>; <span class="hljs-comment">// js和html都会更新，data.age和obj.age都会改</span>
-}</span>
+}
 </code></pre>
 <p><code>markRaw()</code>用来包装一个原始类型，一旦被包装了，即使通过reactive改变，也不会引起html更新</p>
 <pre><code class="language-js"><span class="hljs-keyword">const</span> obj = { age: <span class="hljs-number">1</span> };
@@ -70,8 +65,7 @@ console.log(1 === toRaw(data.value)); // true</p>
 <pre><code class="language-js"><span class="hljs-title">const</span> obj = { age: <span class="hljs-number">1</span> };
 <span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = reactive(<span class="hljs-title">obj</span>);</span>
 <span class="hljs-title">console</span>.log(obj === <span class="hljs-class"><span class="hljs-keyword">data</span>); // false</span>
-
-
+// <span class="hljs-comment">--------------------------------------</span>
 <span class="hljs-title">const</span> obj = { age: <span class="hljs-number">1</span> };
 <span class="hljs-title">const</span> <span class="hljs-class"><span class="hljs-keyword">data</span> = reactive(<span class="hljs-title">markRaw</span>(<span class="hljs-title">obj</span>)); // 不再是一个<span class="hljs-type">Proxy</span>{}对象了，是普通<span class="hljs-type">JSON</span>对象</span>
 <span class="hljs-title">console</span>.log(obj === <span class="hljs-class"><span class="hljs-keyword">data</span>); // true，说明reactive返回的是原始引用</span>

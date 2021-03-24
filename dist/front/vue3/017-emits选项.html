@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="017-emits选项">017-emits选项</h1>
+<p>vue3提供了emits选项，能让我们对emit的事件和数据进行一定的校验</p>
+<p><strong>这个emits的校验仅仅能让控制台出现warm而已，但不会影响事件的广播</strong></p>
+<pre><code class="language-vue"><span class="hljs-comment">// 子组件</span>
+export <span class="hljs-keyword">default</span> defineComponent({
+    emits: [<span class="hljs-string">&#x27;change&#x27;</span>, <span class="hljs-string">&#x27;clear&#x27;</span>],
+    setup (_, {<span class="hljs-keyword">emit</span>}) {
+        <span class="hljs-keyword">emit</span>(<span class="hljs-string">&#x27;change&#x27;</span>); <span class="hljs-comment">// 通过</span>
+        <span class="hljs-keyword">emit</span>(<span class="hljs-string">&#x27;哈哈&#x27;</span>); <span class="hljs-comment">// 通过，会有warm</span>
+    }
+})
+</code></pre>
+<p>除了数组的写法，也支持JSON的写法</p>
+<pre><code class="language-vue">emits: {
+    change: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+}
+</code></pre>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

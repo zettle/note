@@ -156,7 +156,7 @@ class App extends React.Component {
   }
 };
 ```
-或者箭头函数
+或者箭头函数（更加推荐这种）
 ```jsx
 class App extends React.Component {
   state = {

@@ -13,7 +13,7 @@
 > 用了`getDerivedStateFromProps`，那么就必须要有`state`。即使是空也要写`state = {};`
 
 先来看用法:
-```
+```jsx
 class App extends React.Component {
   state = {};
   static getDerivedStateFromProps(props, state) {
@@ -52,10 +52,10 @@ class App extends React.Component {
     return false;
   }
   change = () => {
-    this.setState({count: this.state.count+1}); 
+    this.setState({count: this.state.count+1});
 
     // shouldComponentUpdate()=false 视图不会更新，但是js内存中变量还是会改
-    console.log(this.state.count); 
+    console.log(this.state.count);
   };
   render () {
     return (

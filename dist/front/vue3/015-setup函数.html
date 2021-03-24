@@ -26,6 +26,9 @@
 <p><code>setup()</code>只能是同步不能死异步，比如加个<code>async</code>之后，界面会出不来</p>
 <pre><code class="language-js"><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-title">setup</span>(<span class="hljs-params"></span>)</span> {}
 </code></pre>
+<blockquote>
+<p>这个不是绝对的，如果是和<code>&lt;Sespense /&gt;</code>使用，则可以加async，详见<a href="./022-Suspense.html">022-Suspense</a></p>
+</blockquote>
 <h2 id="3、setup的参数">3、setup的参数</h2>
 <p><code>setup(props, content)</code> </p>
 <ul>
@@ -47,6 +50,7 @@
 }
 </code></pre>
 <p>上面这些行为都是不允许的，因为得到的<code>name/age</code>是普通数据了，失去了响应式</p>
+<p>如果一定想要用解构，可以结合<code>toRefs()</code>一起使用</p>
 
         </article>
 

@@ -41,7 +41,7 @@
 <h2 id="4、注册window服务">4、注册window服务</h2>
 <p>如果想要启动一个支持的服务，可以加上参<code>--serverName</code>，如果想要打上日志可以加参数<code>--logpath</code></p>
 <p>比如执行下面代码（需要用管理员运行cmd才有权限）:</p>
-<pre><code>mongod <span class="hljs-attribute">--dbpath</span>=C:\MongoDB\myData <span class="hljs-attribute">--port</span>=27017 <span class="hljs-attribute">--logpath</span>=C:\MongoDB\myLog\mlog.log <span class="hljs-attribute">--serviceName</span>=Mongodb --install
+<pre><code class="language-bash">mongod <span class="hljs-attribute">--dbpath</span>=C:\MongoDB\myData <span class="hljs-attribute">--port</span>=27017 <span class="hljs-attribute">--logpath</span>=C:\MongoDB\myLog\mlog.log <span class="hljs-attribute">--serviceName</span>=Mongodb --install
 </code></pre>
 <p>这条命令会往window服务上注册名为<code>Mongodb</code>的服务，启动提示如下:</p>
 <p><img src="./img/002/mongod-service.png" alt=""></p>
@@ -51,7 +51,7 @@
 <p><img src="./img/002/mongod-task.png" alt=""></p>
 <h2 id="5、删除window服务">5、删除window服务</h2>
 <p>首先要把服务停掉，然后用管理员执行下面命令</p>
-<pre><code class="language-shell">sc <span class="hljs-keyword">delete</span> Mongodb
+<pre><code class="language-bash">sc <span class="hljs-keyword">delete</span> Mongodb
 </code></pre>
 
         </article>

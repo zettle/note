@@ -21,24 +21,24 @@
 <ul>
 <li><p><code>Header</code>部分: 主要规定了token使用的加密方式以及token的运行,比如</p>
 <pre><code class="language-js">{
-<span class="hljs-attribute">alg</span>: <span class="hljs-string">&#x27;HS256&#x27;</span>,
-typ: <span class="hljs-string">&#x27;JWT&#x27;</span>
+  <span class="hljs-attribute">alg</span>: <span class="hljs-string">&#x27;HS256&#x27;</span>,
+  typ: <span class="hljs-string">&#x27;JWT&#x27;</span>
 }
 </code></pre>
 </li>
 <li><p><code>Payload</code>部分: 主要是用户的一些信息，比如用户名、过期时间等，比如:</p>
 <pre><code class="language-js">{
-<span class="hljs-attribute">sub</span>: <span class="hljs-string">&#x27;2019-09-12&#x27;</span>,
-name: <span class="hljs-string">&#x27;小明&#x27;</span>,
-admin: true
+  <span class="hljs-attribute">sub</span>: <span class="hljs-string">&#x27;2019-09-12&#x27;</span>,
+  name: <span class="hljs-string">&#x27;小明&#x27;</span>,
+  admin: true
 }
 </code></pre>
 </li>
 <li><p><code>Signature</code>部分: 由下面计算而得</p>
 <pre><code class="language-js">HMACSHA256(
-<span class="hljs-function"><span class="hljs-title">base64UrlEncode</span><span class="hljs-params">(header)</span></span> + <span class="hljs-string">&#x27;.&#x27;</span> + 
-<span class="hljs-function"><span class="hljs-title">base64UrlEncode</span><span class="hljs-params">(payload)</span></span>, 
-secret
+  <span class="hljs-name">base64UrlEncode</span>(<span class="hljs-name">header</span>) + &#x27;.&#x27; +
+  base64UrlEncode(<span class="hljs-name">payload</span>),
+  secret
 )
 </code></pre>
 </li>
@@ -46,7 +46,7 @@ secret
 <h2 id="3、koa集成jwt">3、koa集成JWT</h2>
 <p>安装对应的npm包: <code>npm i koa-jwt jsonwebtoken</code></p>
 <ul>
-<li><code>koa-jwt</code>: 主要负责的是对请求的拦截，比如约定哪些请求不需要JWT校验，检验tokoen是否正确，校验失败的处理 </li>
+<li><code>koa-jwt</code>: 主要负责的是对请求的拦截，比如约定哪些请求不需要JWT校验，检验tokoen是否正确，校验失败的处理</li>
 <li><code>jsonwebtoken</code>: 主要负责JWT的token生成</li>
 </ul>
 <h3 id="31-集成koa-jwt，约定哪些请求要鉴权">3.1 集成koa-jwt，约定哪些请求要鉴权</h3>
@@ -84,7 +84,7 @@ app.use(jwt({ <span class="hljs-attr">secret</span>: <span class="hljs-string">&
 <p>比如登录接口，在用户名+密码验证通过后，我们就生成一个token</p>
 <pre><code class="language-js">router.post(<span class="hljs-string">&#x27;/login&#x27;</span>, <span class="hljs-keyword">async</span> (ctx, next) =&gt; {
   <span class="hljs-keyword">const</span> token =jsonwebtoken.sign({ username:<span class="hljs-string">&#x27;xiaoming&#x27;</span> }, <span class="hljs-string">&#x27;suijisuiji&#x27;</span>, {expiresIn: <span class="hljs-string">&#x27;1d&#x27;</span>});
-  
+
   ctx.body = {
     code: <span class="hljs-number">0</span>,
     data: {

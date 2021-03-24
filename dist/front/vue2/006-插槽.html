@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/note/assets/monokai-sublime.css" />
+<link rel="stylesheet" href="/note/assets/github-markdown.min.css" />
+<link rel="stylesheet" href="/note/assets/style.css" />
+<title>Document</title>
+</head>
+<body>
+
+    <div class="main">
+        <article class="markdown-body">
+            <h1 id="006-插槽">006-插槽</h1>
+<h2 id="1、具名插槽的使用">1、具名插槽的使用</h2>
+<p>在子组件定义好<code>&lt;slot /&gt;</code>的位置</p>
+<pre><code class="language-js"><span class="hljs-comment">// 子组件</span>
+&lt;div <span class="hljs-keyword">class</span>=&quot;<span class="hljs-symbol">header</span>&quot;&gt;
+    &lt;<span class="hljs-symbol">slot</span> <span class="hljs-symbol">name</span>=&quot;<span class="hljs-symbol">header</span>&quot;&gt;&lt;/<span class="hljs-symbol">slot</span>&gt;
+&lt;/<span class="hljs-symbol">div</span>&gt;
+</code></pre>
+<p>在父组件有几种使用具名插槽的方式</p>
+<ul>
+<li><p>如果是HTML标签，则使用<code>slot=&quot;XXX&quot;</code>指令</p>
+<pre><code class="language-js"><span class="hljs-comment">// 父组件</span>
+&lt;HelloWorld&gt;
+  &lt;<span class="hljs-keyword">div</span> slot=<span class="hljs-string">&quot;header&quot;</span>&gt;<span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> header1&lt;/<span class="hljs-keyword">div</span>&gt;
+&lt;/HelloWorld&gt;
+</code></pre>
+</li>
+<li><p>如果是<code>&lt;template /&gt;</code>标签，则可以使用 <code>slot=&quot;XXX&quot;</code> 或 <code>#XXX</code> 或 <code>v-slot:XXX</code> 指令</p>
+<pre><code class="language-vue"><span class="hljs-comment">// slot=&quot;XXX&quot;和上面普通html标签一样</span>
+&lt;HelloWorld&gt;
+  &lt;<span class="hljs-keyword">template</span> slot=<span class="hljs-string">&quot;header&quot;</span>&gt;<span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> header2&lt;/<span class="hljs-keyword">template</span>&gt;
+&lt;/HelloWorld&gt;
+<span class="hljs-comment">// 可以使用 v-slot:XXXX</span>
+&lt;HelloWorld&gt;
+  &lt;<span class="hljs-keyword">template</span> v-slot:header&gt;<span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> header&lt;/<span class="hljs-keyword">template</span>&gt;
+&lt;/HelloWorld&gt;
+<span class="hljs-comment">// 可以简写为 #XXX</span>
+&lt;HelloWorld&gt;
+  &lt;<span class="hljs-keyword">template</span> #header&gt;<span class="hljs-keyword">this</span> <span class="hljs-keyword">is</span> header&lt;/<span class="hljs-keyword">template</span>&gt;
+&lt;/HelloWorld&gt;
+</code></pre>
+</li>
+</ul>
+<h2 id="2、作用域插槽">2、作用域插槽</h2>
+<p>在子组件定义插槽，并将数据作为props传递过去</p>
+<pre><code class="language-vue">&lt;slot name=<span class="hljs-string">&quot;header&quot;</span> <span class="hljs-symbol">:user=<span class="hljs-string">&quot;userInfo&quot;</span>&gt;&lt;/slot&gt;</span>
+
+&lt;script lang=<span class="hljs-string">&quot;ts&quot;</span>&gt;
+data () {
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-symbol">userInfo:</span> {
+      <span class="hljs-symbol">name:</span> <span class="hljs-string">&#x27;xiaoming&#x27;</span>,
+      <span class="hljs-symbol">age:</span> <span class="hljs-number">23</span>
+    }
+  };
+}
+&lt;<span class="hljs-regexp">/script&gt;</span>
+</code></pre>
+<p>在父组件中，就只能用<code>&lt;template /&gt;</code>标签了，支持 <code>#XXX=&quot;YYY&quot;</code> 或 <code>v-slot:XXX=&quot;YYY&quot;</code> 指令</p>
+<pre><code class="language-js"><span class="xml">// v-slot:XXX=&quot;YYY&quot;
+<span class="hljs-tag">&lt;<span class="hljs-name">template</span> <span class="hljs-attr">v-slot:header</span>=<span class="hljs-string">&quot;scoped&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">h3</span>&gt;</span>this is header<span class="hljs-tag">&lt;/<span class="hljs-name">h3</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><span class="hljs-template-variable">{{<span class="hljs-name">scoped</span>}}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+
+// #XXX=&quot;YYY&quot;
+<span class="hljs-tag">&lt;<span class="hljs-name">HelloWorld</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">template</span> #<span class="hljs-attr">header</span>=<span class="hljs-string">&quot;scoped&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h3</span>&gt;</span>this is header<span class="hljs-tag">&lt;/<span class="hljs-name">h3</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span></span><span class="hljs-template-variable">{{<span class="hljs-name">scoped</span>}}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">template</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">HelloWorld</span>&gt;</span></span>
+</code></pre>
+<p>通过作用域插槽传递数据的，也具有响应式，像上面子组件</p>
+<pre><code class="language-js">&lt;slot name=<span class="hljs-string">&quot;header&quot;</span> <span class="hljs-symbol">:user=<span class="hljs-string">&quot;userInfo&quot;</span>&gt;&lt;/slot&gt;</span>
+
+&lt;script lang=<span class="hljs-string">&quot;ts&quot;</span>&gt;
+data () {
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-symbol">userInfo:</span> {
+      <span class="hljs-symbol">name:</span> <span class="hljs-string">&#x27;xiaoming&#x27;</span>,
+      <span class="hljs-symbol">age:</span> <span class="hljs-number">23</span>
+    }
+  };
+}
+&lt;<span class="hljs-regexp">/script&gt;</span>
+</code></pre>
+<p>如果在父组件改变作用域插槽，子组件的数据也会跟着响应</p>
+
+        </article>
+
+        <ul id="md-nav"></ul>
+    </div>
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(() => {
+    // 做左侧的树状菜单
+    const oIdDom = $('article [id]');
+    const mdNav = $('#md-nav');
+    let liStr = '';
+    $.each(oIdDom, (i, idDom) => { 
+        const level = idDom.nodeName.slice(-1);
+        if (level !== '1') {
+            const id$ = $(idDom);
+            const classNames = `level-${level}`;
+            liStr += `<li class="${classNames}"><a href="#${idDom.id}">${id$.text()}</a></li>`;
+        }
+    });
+    mdNav.html(liStr);
+
+    // 将<a>加个target
+    const aDoms = $('a');
+    $.each(aDoms, (_,aDom) => {
+        if ($(aDom).attr('href').indexOf('#') !== 0) {
+            $(aDom).attr('target', '_blank');
+        }
+    });
+});
+</script>
+</body>
+</html>

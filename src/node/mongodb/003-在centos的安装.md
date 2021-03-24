@@ -6,12 +6,12 @@
 ![](./img/003/linux.png)
 
 复制下载链接，在Centos上执行下载命令
-```shell
+```bash
 wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.2.5.tgz
 ```
 
 ## 2、安装
-```shell
+```bash
 # 解压
 tar -zxvf mongodb-linux-x86_64-rhel70-4.2.5.tgz
 
@@ -35,7 +35,7 @@ vim mongodb.conf
 ```
 
 `mongodb.conf`配置内容：
-```
+```text
 dbpath=/usr/local/mongodb/data
 logpath=/usr/local/mongodb/logs/mongodb.log
 port=28001
@@ -52,7 +52,7 @@ auth=false
 
 ## 3、启动服务端服务
 进入bin，执行mongod，并且让其去读取之前我们写好的配置
-```shell
+```bash
 cd ../bin/
 
 ./mongod --config=../conf/mongodb.conf
@@ -67,7 +67,7 @@ cd ../bin/
 
 ## 4、启动客户端验证
 验证：执行bin下的mongo命令，因为我们之前配置文件里面指定了`port=28001`，所以执行mongo命令也需要指定那个端口，能进入控制台说明安装完成
-```shell
+```bash
 ./mongo --port=28001
 ```
 
@@ -79,7 +79,7 @@ cd ../bin/
 
 如果觉得麻烦，可以把改bin目录配置到环境变量里面，这样在任何目录都可以自行
 
-```shell
+```bash
 vim /etc/profile
 ```
 
@@ -90,13 +90,13 @@ export PATH=$MONGO_HOME:$PATH
 ```
 
 然后重启
-```shell
+```bash
 source /etc/profile
 ```
 
 
 这样就可以随时执行nginx命令了
-```shell
+```bash
 mongod --help # mongod
 mongo --help # mongo
 ```
@@ -117,4 +117,3 @@ mongo --help # mongo
 ![](./img/003/compass-1.png)
 
 推荐wind下载zip，用exe的没有让我们选择安装路径，都不知道装到哪儿了。用zip的解压即可运行
-

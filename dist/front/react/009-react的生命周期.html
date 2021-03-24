@@ -87,7 +87,7 @@
 <blockquote>
 <p>componentWillReceiveProps在父组件第1次挂载触发<code>render()</code>的时候，不会触发，当挂载后父组件触发<code>render()</code>才会触发</p>
 </blockquote>
-<pre><code><span class="hljs-comment">// 子组件</span>
+<pre><code class="language-jsx"><span class="hljs-comment">// 子组件</span>
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Son</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
   <span class="hljs-comment">// 父组件并没有传递props过来，但是当父组件改变state触发render后</span>
   <span class="hljs-comment">// 子组件的componentWillReceiveProps也会触发</span>

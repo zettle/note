@@ -78,7 +78,7 @@ export default defineComponent({
 
 
 利用`async/await`，还可以简写为下面
-```
+```js
 export default defineComponent({
     async setup () { // async装饰setup函数
         const res = await ajax();

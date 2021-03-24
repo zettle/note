@@ -26,8 +26,7 @@ function change () {
 const obj = {age:1};
 const data = reactive(obj);
 console.log(toRaw(data) === obj); // true
-
-
+// ----------------------
 const obj = 1;
 const data = ref(obj);
 console.log(data === toRaw(data)); // true
@@ -68,8 +67,7 @@ obj === obj2 // true
 const obj = { age: 1 };
 const data = reactive(obj);
 console.log(obj === data); // false
-
-
+// --------------------------------------
 const obj = { age: 1 };
 const data = reactive(markRaw(obj)); // 不再是一个Proxy{}对象了，是普通JSON对象
 console.log(obj === data); // true，说明reactive返回的是原始引用

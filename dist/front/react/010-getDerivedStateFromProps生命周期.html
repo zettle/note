@@ -26,7 +26,7 @@
 <p>用了<code>getDerivedStateFromProps</code>，那么就必须要有<code>state</code>。即使是空也要写<code>state = {};</code></p>
 </blockquote>
 <p>先来看用法:</p>
-<pre><code>class App extends React.Component {
+<pre><code class="language-jsx">class App extends React.Component {
   <span class="hljs-keyword">state</span> = {};
   static getDerivedStateFromProps(props, <span class="hljs-keyword">state</span>) {
     return {
@@ -57,10 +57,10 @@
     return false;
   }
   change = () =&gt; {
-    this.<span class="hljs-built_in">set</span>State({count: this.<span class="hljs-keyword">state</span>.count+<span class="hljs-number">1</span>}); 
+    this.<span class="hljs-built_in">set</span>State({count: this.<span class="hljs-keyword">state</span>.count+<span class="hljs-number">1</span>});
 
     // shouldComponentUpdate()=false 视图不会更新，但是js内存中变量还是会改
-    console.<span class="hljs-keyword">log</span>(this.<span class="hljs-keyword">state</span>.count); 
+    console.<span class="hljs-keyword">log</span>(this.<span class="hljs-keyword">state</span>.count);
   };
   render () {
     return (

@@ -14,7 +14,19 @@
         <article class="markdown-body">
             <h1 id="010-vue2升级vue3指南">010-vue2升级vue3指南</h1>
 <p>vue3支持vue的optionApi写法，我们可以将项目的vue2升级为vue3，但是下面的内容，是即使使用vue2写法也不支持的</p>
-<h2 id="1、删除的">1、删除的</h2>
+<h2 id="1、vue2项目升级vue">1、vue2项目升级vue</h2>
+<pre><code class="language-shell"><span class="hljs-built_in">npm</span> i -D vue-loader-v16 @vue/compiler-sfc
+
+<span class="hljs-built_in">npm</span> i -S vue@next
+</code></pre>
+<p>也有些需要安装下面包的</p>
+<pre><code class="language-shell"><span class="hljs-built_in">npm</span> i @vue/reactivity
+<span class="hljs-built_in">npm</span> i @vue/runtime-core
+<span class="hljs-built_in">npm</span> i @vue/compiler-core
+<span class="hljs-built_in">npm</span> i @vue/compiler-sfc
+<span class="hljs-built_in">npm</span> i @vue/compiler-ssr
+</code></pre>
+<h2 id="2、删除的">2、删除的</h2>
 <ul>
 <li>删除filters过滤器</li>
 <li>删除 .native 修饰符</li>
@@ -30,7 +42,7 @@
 </code></pre>
 </li>
 </ul>
-<h2 id="2、变动的">2、变动的</h2>
+<h2 id="3、变动的">3、变动的</h2>
 <ul>
 <li>生命周期: beforeDestroy改为beforeUnmount，destroyed改为unmounted</li>
 <li>v-model和<code>.sync</code>统一实现: <code>props.xxx</code> 和 <code>emit(&#39;update:xxx&#39;)</code></li>
@@ -41,13 +53,14 @@
 <li>以前的<code>Vue.config.errorHandler</code>需要改为<code>app.config.errorHandler</code></li>
 <li>以前的<code>$attrs</code>和<code>$listeners</code>融合为1个<code>$attrs</code></li>
 <li>以前的<code>inheritAttrs:false</code>不会影响class属性，就算你加了<code>inheritAttrs:false</code>，className还是会加给子组件最外层，而vue3中，classsName跟着<code>$attrs</code>走了</li>
+<li>以前的v-for优先级比v-if高，而vue3中，v-if的比较高</li>
 <li>以前的异步组件<code>()=&gt;import(&#39;xx.vue&#39;)</code>不支持了，需要用上异步组件<code>defineAsyncComponent(()=&gt;import(&#39;xxx.vue&#39;))</code></li>
 <li>vue2中，如果是根节点属性的data可以是JSON，而vue3中，规定data必须是一个函数</li>
 <li>关于vue2中<code>is</code>用法看<a href="../vue2/004-is%E5%B1%9E%E6%80%A7.html"></a>。而在vue3中，<code>is</code>属性只用于<code>&lt;component&gt;</code>组件上，如果用在普通html标签或者自定义组件上，<code>is</code>会被当做普通的props属性</li>
 <li>事件不再支持<code>@keyup.13</code>，语义化很不好，需要用其别名<code>@keyup.enter</code></li>
 <li><code>&lt;transition&gt;</code>的className改了，由原来的<code>xx-enter/xx-leave</code>改为<code>xx-enter-from/xx-leave-from</code>，更加语义化</li>
 </ul>
-<h3 id="21-访问appconfigglobalproperties属性">2.1 访问app.config.globalProperties属性</h3>
+<h3 id="31-访问appconfigglobalproperties属性">3.1 访问app.config.globalProperties属性</h3>
 <p>以前的<code>Vue.prototype.xxx</code>需要改为<code>app.config.globalProperties.xxx</code></p>
 <pre><code class="language-js"><span class="hljs-keyword">const</span> <span class="hljs-keyword">app</span> = createApp(<span class="hljs-keyword">App</span>);
 <span class="hljs-comment">// 以前的Vue.prototype需要替换为下面的</span>

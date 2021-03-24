@@ -12,7 +12,7 @@
 
     <div class="main">
         <article class="markdown-body">
-            <h1 id="098-类型操作符">098-类型操作符</h1>
+            <h1 id="018-类型操作符">018-类型操作符</h1>
 <h2 id="1、typeof">1、typeof</h2>
 <p>获取值的类型</p>
 <p>根据等号前面的不同，typeof会返回不同的结果</p>
@@ -34,7 +34,7 @@
 <span class="hljs-keyword">type</span> c = <span class="hljs-keyword">typeof</span> Person;  <span class="hljs-comment">// error “Person”仅表示类型，但在此处却作为值使用</span>
 </code></pre>
 <h2 id="2、keyof">2、keyof</h2>
-<p>会根据后面的类型，抽取起key值，组合成一个联合类型</p>
+<p>会根据后面的类型，抽取这个类型的所有key值，组合成一个联合类型</p>
 <pre><code class="language-ts"><span class="hljs-keyword">interface</span> Person { name: string; age: number; }
 <span class="hljs-keyword">type</span> <span class="hljs-type">a </span>= keyof Person; // 等效于 <span class="hljs-keyword">type</span> <span class="hljs-type">a </span>= <span class="hljs-symbol">&#x27;name</span>&#x27; | <span class="hljs-symbol">&#x27;age</span>&#x27;
 </code></pre>
@@ -108,7 +108,7 @@ const a = <span class="hljs-string">&#x27;name&#x27;</span> <span class="hljs-ke
 <span class="hljs-function"><span class="hljs-keyword">fn</span><span class="hljs-params">({ name:<span class="hljs-string">&#x27;xx&#x27;</span> })</span></span>; <span class="hljs-comment">// error报错，少了age</span>
 </code></pre>
 <p>其实这是对泛型的一种约束，约束该泛型不需要带有<code>name/age</code></p>
-<pre><code><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fn</span>&lt;<span class="hljs-title">T</span>&gt; (<span class="hljs-params">args: T</span>) </span>{}
+<pre><code class="language-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fn</span>&lt;<span class="hljs-title">T</span>&gt; (<span class="hljs-params">args: T</span>) </span>{}
 </code></pre>
 <p>上面这种事最简单的泛型，但可传入的太广了，我们想要约束传入的必须带有某些属性，就是上面的写法</p>
 

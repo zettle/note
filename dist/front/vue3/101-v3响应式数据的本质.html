@@ -12,7 +12,7 @@
 
     <div class="main">
         <article class="markdown-body">
-            <h1 id="200-v3响应式数据的本质">200-v3响应式数据的本质</h1>
+            <h1 id="101-v3响应式数据的本质">101-v3响应式数据的本质</h1>
 <h2 id="1、资料来源">1、资料来源</h2>
 <ol>
 <li><a href="https://www.bilibili.com/video/BV14k4y117LL?p=27">v3响应数据本质【上】</a></li>
@@ -77,8 +77,8 @@ state.push(<span class="hljs-string">&#x27;d&#x27;</span>); <span class="hljs-co
 <pre><code class="language-js"><span class="hljs-keyword">const</span> obj = {
     name: &#x27;xiaoming&#x27;,
     a: {
-        b: { 
-            c: <span class="hljs-number">1</span> 
+        b: {
+            c: <span class="hljs-number">1</span>
         }
     }
 };
@@ -199,7 +199,7 @@ state5.value.a.b.c = <span class="hljs-number">12</span>;
         <span class="hljs-built_in">set</span> (obj, <span class="hljs-built_in">key</span>, newVal) {
             console.<span class="hljs-built_in">log</span>(<span class="hljs-string">&#x27;set&#x27;</span>, <span class="hljs-built_in">key</span>);
             <span class="hljs-comment">// 去掉这2句并给下warn警告</span>
-            <span class="hljs-comment">// obj[key] = newVal; </span>
+            <span class="hljs-comment">// obj[key] = newVal;</span>
             <span class="hljs-comment">// console.log(&#x27;更新html&#x27;);</span>
             console.warn(`${<span class="hljs-built_in">key</span>}属性为只读`);
             <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
