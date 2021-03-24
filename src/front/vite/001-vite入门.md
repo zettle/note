@@ -2,9 +2,15 @@
 
 vite是构建工具，开发周期它利用浏览器支持`es module`的特性，生产打包利用rollup打包
 
-## 1、安装
+## 1、初始化
+初始化项目
+```
+npm init @vitejs/app
+```
+会出现选择界面
 
-初始化项目: 
+
+也可以直接执行: 
 ```bash
 # npm 6.x
 npm init @vitejs/app my-vue-app --template vue

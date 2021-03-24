@@ -76,6 +76,7 @@ export default {
 * `setup()`返回的内容可以在`render()`中直接使用
 * 通过`this.$slots`获取父组件传递过来的插槽
 
+
 ### 2.1 2次封装组件
 场景: 基于vant的`<van-field>`2次封装一个`<v-filed>`组件，要求所有props和slot都透传
 ```
@@ -128,5 +129,5 @@ export default {
 ```
 * 引入子组件后即可使用，无需在`components: {}`再声明一次
 * `v-model`需要拆属性和监听传递给子组件
-* ????slot要怎么传递
+* 
 

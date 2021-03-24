@@ -21,7 +21,7 @@ const addHandle = () => {
 
 也可以用下面的ref语法糖
 ```js
-<script lang="ts" setup>
+<script setup>
 ref: count = 0;
 
 const addHandle = ()=> {
