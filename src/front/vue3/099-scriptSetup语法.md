@@ -58,6 +58,18 @@ const props = defineProps({
 });
 </script> 
 ```
+如果视图想要用用到props，比如`{{props.msg}}`，则需要给setup加上props
+```vue
+<template>
+    <p>{{props.msg}}</p>
+</template>
+<script lang="ts" setup="props">
+// 下面的也不能省略
+const props = defineProps({
+    msg: String
+});
+</script>
+```
 
 
 ## 4、获取context
