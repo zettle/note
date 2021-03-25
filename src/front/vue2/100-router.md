@@ -22,3 +22,24 @@ router.beforeEach((to, from, next) => {
     }
 });
 ```
+
+
+### 1.2 路径简写
+
+```js
+{
+    path: '/course',
+    component: Layout,
+    children: [{
+        path: '', // 不必写成`path:'/couse'`
+        name: 'courseList',
+        component: () => import('@/views/course/list.vue'),
+        meta: { title: '课程列表', icon: 'el-icon-notebook-2' }
+    },{
+        path: ':id', // 不必写成`path:'/couse/:id'`
+        name: 'courseDetail',
+        component: () => import('@/views/course/detail.vue'),
+        meta: { title: '课程列表', icon: 'el-icon-notebook-2' }
+    }]
+}
+```

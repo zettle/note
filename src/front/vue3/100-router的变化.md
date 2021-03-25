@@ -36,3 +36,9 @@ watch(()=>route.query, (newVal) => { ... })
     component: () => import('../pages/error/notFound.vue')
 }
 ```
+
+
+## 4、没有beforeRouterEnter
+如果是用compositionApi的写法，则没有onBeforeRouterEnter。
+
+可以这么理解，执行了setup，说明已经路由进入了，这个时候早就过了onBeforeRouterEnter
