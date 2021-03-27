@@ -21,7 +21,7 @@ npm i -D
 * `eslint-plugin-standard`: eslint的js规范，用了这个就可以在`.eslintrc.js`里面引入插件`extends: ['eslint:recommended']`
 * `@vue/eslint-config-standard`+`eslint-plugin-vue`: vue的规范，能用`extends: ['plugin:vue/vue3-recommended']`
 * `@vue/eslint-config-typescript` + `@typescript-eslint/parser`: ts的规范，能用`extends: ['@vue/typescript/recommended']`
-* `eslint-plugin-import` + `eslint-plugin-node` + `eslint-plugin-promise` + `` + ``，能用`extends: ['@vue/standard']`
+* `eslint-plugin-import` + `eslint-plugin-node` + `eslint-plugin-promise` + `` + ``，能用`extends: ['@vue/standard']`，这个控制空格、单双引号等等之类
 
 
 在根目录新建`.eslintrc.js`，内容如下:
