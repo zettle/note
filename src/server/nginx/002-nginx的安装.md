@@ -77,10 +77,13 @@ cd nginx-1.18.0
     --prefix=/usr/local/nginx-1.18.0 \
     --with-http_stub_status_module \
     --with-http_ssl_module
+    --with-http_gzip_static_module
 ```
+
 * `--prefix`: 指定安装目录
 * `--with-http_stub_status_module`: 可以查看nginx的运行状态，详见[009-nginx状态](./009-nginx状态.md)
 * `--with-http_ssl_module`: 支持https
+* `--with-http_gzip_static_module`: 开启gzip后，优先读取前端webpack插件生成的gz文件，没有才会压缩gz文件
 
 
 2. 执行编译安装

@@ -41,9 +41,9 @@ cd nginx-1.19.6
 # 编译
 make
 ```
-执行完`make`后，会在`nginx-1.19.6/objs`里面生成一个二进制文件`nginx`，把这个`nginx`替换原来运行的nginx二进制
+执行完`make`后，会在`/root/download/nginx-1.19.6/objs`里面生成一个二进制文件`nginx`，把这个`nginx`替换原来运行的nginx二进制
 ```shell
-cd nginx-1.19.6/objs
+cd ./objs
 
 # -f 强制复制
 cp ./nginx /usr/local/nginx/sbin/nginx -f 

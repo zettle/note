@@ -27,6 +27,9 @@ gzip_comp_level 6;
 # 一般图片/mp3这种二进制文件也不压缩，压缩比例不是很高还浪费资源
 gzip_types text/plain application/x-javascript text/css text/xml application/xml text/javascript application/javascript;
 
+#nginx对于静态文件的处理模块，开启后会寻找以.gz结尾的文件，直接返回，不会占用cpu进行压缩，如果找不到则不进行压缩
+gzip_static on
+
 # 是否携带gzip压缩标识，建议开启
 # 跟Squid等缓存服务有关，on的话会在Header里增加"Vary: Accept-Encoding"
 gzip_vary on;
@@ -35,9 +38,24 @@ gzip_vary on;
 # IE6对Gzip不怎么友好，不给它Gzip了
 gzip_disable "MSIE [1-6]\.";
 
+# 设置gzip压缩针对的HTTP协议版本
+gzip_http_version 1.1;
+
 # 有前置机子的时候配置的
 # 设置请求者代理服务器，该如何缓存内容
 # gzip_proxied ;
+```
+
+多说无益，直接写死下面配置即可
+```nginx
+# 开启gzip压缩
+gzip on;
+gzip_buffers 32 4K;
+gzip_comp_level 6;
+gzip_min_length 100;
+gzip_types text/plain application/x-javascript text/css text/xml application/xml text/javascript application/javascript;
+gzip_vary on;
+gzip_static on; 
 ```
 
 
