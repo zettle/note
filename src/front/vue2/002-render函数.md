@@ -1,4 +1,4 @@
-# 001-render函数
+# 002-render函数
 
 一般我们定义组件的html是通过`<template>`
 ```vue
@@ -175,3 +175,22 @@ render (h) {
 }
 ```
 
+
+```
+render (h) {
+    const scopedSlots = {};
+    for (const key in this.$slots) {
+        scopedSlots[key] = () => this.$slots[key];
+    }
+    return h('van-field', {
+        attrs: { ...this.$attrs }, // v-bind="$attrs"的透传
+        props: {
+            inputAlign: this.inputAlign
+        },
+        on: {
+            ...this.$listeners // v-on="$listeners"的透传
+        },
+        scopedSlots: scopedSlots // slot的透传
+    });
+}
+```
