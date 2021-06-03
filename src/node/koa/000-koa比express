@@ -1,0 +1,126 @@
+# koa比express好在哪儿
+
+说koa支持`async/await`并不正确，`async/await`是es6的语法糖，如果我们使用node高级版本，一样在express中可以使用。
+
+
+koa比express真正好在，当中间件出现异步处理的时候的机制。
+
+比如有koa代码如下：
+```js
+const Koa = require('koa');
+const app = new Koa();
+
+function syncFn () {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            console.log(2);
+            resolve();
+        }, 1000);
+    });
+}
+
+async function mid(ctx, next) {
+    // 阻止下favicon.ico方便看出执行顺序
+    if (ctx.req.url === '/favicon.ico') {
+        return false;
+    }
+    console.log(ctx.url);
+    ctx.body = 'mark';
+    await next();
+    console.log(4);
+    ctx.body += ' end';
+}
+
+app.use(mid);
+
+app.use(async function (ctx, next) {
+    console.log(1);
+    await syncFn();
+    console.log(3);
+    ctx.body += ' saved';
+    await next();
+});
+
+app.listen(3000);
+```
+
+上面的执行顺序是:
+```cmd
+1
+2
+3
+4
+```
+这个很符合我们的预期。
+
+
+而在express，相同的代码如下：
+```js
+const express = require('express');
+const app = express();
+
+function syncFn () {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            console.log(2);
+            resolve();
+        }, 1000);
+    });
+}
+
+async function mid(req, res, next) {
+    if (req.url === '/favicon.ico') {
+        return false;
+    }
+    req.body = 'mark';
+    await next();
+    console.log(4);
+    res.send(req.body + ' end');
+}
+
+app.use(mid);
+
+app.use(async function (req, res, next) {
+    console.log(1);
+    await syncFn();
+    console.log(3)
+    req.body += ' saved';
+    await next();
+});
+
+app.listen(4000);
+```
+输出的结果却是：
+```cmd
+1
+4
+2
+3
+```
+express并不会等setTimeout执行完成await结束才执行进入下个洋葱圈。而是遇到异步的就直接进入不理是否调用next。这个并不符合我们的预期。
+
+
+更简单的说法，koa的next返回的是一个promise，内容看下一个中间件return什么。
+```js
+// koa的
+app.use(async (ctx, next) => {
+    const a = next();
+    console.log(a); // Promise { '12' } '12'是下一个中间件的return值
+});
+
+app.use(async (ctx, next) => {
+    return '12';
+});
+```
+
+而在express中，next仅仅只是一个函数，返回undefined。
+```js
+app.use((req, res, next) => {
+    const a = next();
+    console.log(a); // undefined
+});
+
+app.use((req, res, next) => {
+    return '23';
+});
+```
