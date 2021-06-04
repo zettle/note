@@ -1,4 +1,4 @@
-# 013-egg连接redis
+# 015-egg连接redis
 
 官方提供了redis插件[egg-redis](https://github.com/eggjs/egg-redis)
 

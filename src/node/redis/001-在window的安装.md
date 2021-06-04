@@ -1,6 +1,5 @@
 # 001-在window的安装
 
-
 ## 1、安装
 
 这里介绍的是window上redis的安装

@@ -1,7 +1,7 @@
 # 006-redis之hash类型
 
 ## 1、存储
-语法: `hset <key> <field> <value>` 
+语法: `hset <key> <field> <value>` 或 `hmset <key> <field> <value> <field> <value>...`
 
 往key添加一个hash，该hash`属性=field; 值=value`的hash
 
@@ -15,6 +15,7 @@ hset一次只能设置一个值，如果想要设置多个，可以使用hmset
 ```shell
 hmset myHash name xiaoming age 23 sex 男 
 ```
+
 
 
 ## 2、获取

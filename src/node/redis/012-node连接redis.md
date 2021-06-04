@@ -1,4 +1,4 @@
-# 011-node链接redis
+# 011-node连接redis
 
 借助第三方库: `npm i -S redis`
 
