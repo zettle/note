@@ -28,7 +28,6 @@ config.resolve
 
 这样在vscode也可以通过双击路径到达指定的文件
 
-
 如果是js项目，则在`jsconfig.json`修改
 ```js
 {

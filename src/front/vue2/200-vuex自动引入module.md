@@ -34,7 +34,6 @@ files.keys().forEach(fileName => { // fileName=`./publicCertify.ts`
     modules[key] = files(fileName).default;
 });
 
-
 const store = createStore<RootState>({
     modules
 });
