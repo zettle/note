@@ -1,0 +1,26 @@
+# http://editorconfig.org
+# 表示是最顶层的 EditorConfig 配置文件
+root = true
+
+# 匹配所有文件
+[*]
+# 设置文件字符集为 utf-8
+charset = utf-8
+# 控制换行类型(lf | cr | crlf)
+end_of_line = lf
+# true-始终在文件末尾插入一个新行
+insert_final_newline = true
+# 缩进风格（tab | space）
+indent_style = space
+indent_size = 4
+# 去除行首的任意空白字符
+trim_trailing_whitespace = true
+
+# 仅md文件适用以下规则
+[*.md]
+indent_size = 2 # md文件就用2个空格
+max_line_length = off
+trim_trailing_whitespace = false
+
+[*.svg]
+insert_final_newline = false

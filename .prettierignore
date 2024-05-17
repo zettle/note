@@ -1,0 +1,5 @@
+# npm的产物
+node_modules
+pnpm-lock.yaml
+auto-imports.d.ts
+components.d.ts
