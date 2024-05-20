@@ -13,7 +13,7 @@ interface允许重复定义，使用的时候会自动将几个合并起来
 ```ts
 interface Person { cname: string; }
 interface Person { age: number}
-// 使用时要满足2个
+// 使用时要满足上面2个interface
 const p: Person = { 
     cname: 'xiaoming',
     age:23 
