@@ -48,3 +48,22 @@ type Pkeys = AllKeys<A>;
 再用鼠标看，就能看出具体有哪几种值了
 
 ![key-mouse-2.png](./img/key-mouse-2.png)
+
+keyof 无法获取类上的静态属性和静态方法
+
+```ts
+class Order {
+  orderId: number = 1;
+  ordreName: string = "Mobile";
+  static count: number = 0;
+  printOrder() {}
+  static getCount() {}
+}
+
+type OrderKeys = keyof Order; // "orderId" | "ordreName" | "printOrder"
+```
+
+
+
+
+
