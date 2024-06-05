@@ -63,6 +63,41 @@ class Order {
 type OrderKeys = keyof Order; // "orderId" | "ordreName" | "printOrder"
 ```
 
+## 类型递归
+
+`in keyof` 用来做类型递归，类似 `for..in..`
+
+```ts
+interface Person {
+  name: string;
+  age: number;
+  mobile: number;
+}
+
+type PersonValType = {
+  [P in keyof Person]: Person[P];
+};
+```
+
+我们知道 `keyof Person` 得到的是key的联合类型，等效于 `keyof Persion = name | age | mobile`
+
+因此上面等于
+
+```ts
+type PersonValType = {
+  [P in 'name' | 'age' | 'mobile']: Person[P];
+};
+// 
+// 即等于下面
+type PersonValType = {
+    'name': Person['name'],
+    'age' Person['age'],
+    'mobile': Person['mobile']
+}
+```
+
+`P in 'name' | 'age' | 'mobile'` 在ts中，会逐个遍历递归得到 `name/age/mobile`，并赋值给P
+
 
 
 
