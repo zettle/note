@@ -47,19 +47,17 @@ interface SidebarGenerateConfig {
     ignoreDirNames?: string[];
 }
 export function getSidebarData(sidebarGenerateConfig: SidebarGenerateConfig = {}) {
-    const { dirName = 'articles', ignoreFileName = 'index.md', ignoreDirNames = ['demo', 'asserts'] } = sidebarGenerateConfig;
+    const { dirName = 'articles', ignoreFileName = 'index.md', ignoreDirNames = ['demo', 'asserts', 'img'] } = sidebarGenerateConfig;
     // 获取目录的绝对路径
-    const dirFullPath = resolve(__dirname, `../${dirName}`);
-    const allDirAndFileNameArr = readdirSync(dirFullPath);
+    const dirFullPath = resolve(__dirname, `../${dirName}`); // E:\xxxxx\note\articles
+    const allDirAndFileNameArr = readdirSync(dirFullPath); // 读 E:\xxxxx\note\articles 下面的文件夹
     const obj = {};
     allDirAndFileNameArr.map((dirName) => {
-        let subDirFullName = join(dirFullPath, dirName);
-        const property = getDocsDirNameAfterStr(subDirFullName).replace(/\\/g, '/') + '/';
+        let subDirFullName = join(dirFullPath, dirName); // E:\xxxxx\note\articles\[文件夹]
+        const property = getDocsDirNameAfterStr(subDirFullName).replace(/\\/g, '/') + '/'; // 截取出`/articles/[文件夹]`
         const arr = getSideBarItemTreeData(subDirFullName, 1, 2, ignoreFileName, ignoreDirNames);
         obj[property] = arr;
     });
-    // console.log('sidebarData')
-    // console.log(obj)
     return obj;
 }
 
@@ -100,12 +98,10 @@ function getSideBarItemTreeData(
                 result.push(dirData);
             }
         } else if (isMarkdownFile(fileOrDirName) && ignoreFileName !== fileOrDirName) {
-            // console.log(fileOrDirName)
             // 当前为文件
             const matchResult = fileOrDirName.match(/(.+)\.md/);
             let text = matchResult ? matchResult[1] : fileOrDirName;
-            text = text.match(/^[0-9]{2}-.+/) ? text.substring(3) : text;
-            // console.log(text)
+            text = text.match(/^[0-9]{3}-.+/) ? text.substring(4) : text; // 如果是以`3位数-开头`的，截取掉
             const fileData: SideBarItem = {
                 text,
                 link: getDocsDirNameAfterStr(fileOrDirFullPath).replace('.md', '').replace(/\\/g, '/'),
@@ -135,8 +131,6 @@ export function getNavData(navGenerateConfig: NavGenerateConfig) {
     const { enableDirActiveMatch, dirName = 'articles', maxLevel = 1 } = navGenerateConfig;
     const dirFullPath = resolve(__dirname, `../${dirName}`);
     const result = getNavDataArr(dirFullPath, 1, maxLevel, enableDirActiveMatch);
-    // console.log('navData')
-    // console.log(result)
     return result;
 }
 
@@ -158,8 +152,6 @@ function getNavDataArr(dirFullPath: string, level: number, maxLevel: number, ena
         const fileOrDirFullPath = join(dirFullPath, fileOrDirName);
         const stats = statSync(fileOrDirFullPath);
         const link = getDocsDirNameAfterStr(fileOrDirFullPath).replace('.md', '').replace(/\\/g, '/');
-        // console.log(fileOrDirFullPath)
-        // console.log(link)
         const text = fileOrDirName.match(/^[0-9]{2}-.+/) ? fileOrDirName.substring(3) : fileOrDirName;
         if (stats.isDirectory()) {
             // 当前为文件夹
