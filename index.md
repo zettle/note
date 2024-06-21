@@ -14,10 +14,10 @@ hero:
     alt: 图片404
   actions:
     - theme: brand
-      text: Markdown Examples
+      text: 开始
       link: /markdown-examples
     - theme: alt
-      text: API Examples
+      text: API DEMO
       link: /api-examples
 
 features:
