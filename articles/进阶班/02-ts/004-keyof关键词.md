@@ -98,6 +98,31 @@ type PersonValType = {
 
 `P in 'name' | 'age' | 'mobile'` 在ts中，会逐个遍历递归得到 `name/age/mobile`，并赋值给P
 
+## 数组类型递归
+
+`in keyof` 也可以用在数组上，既可以遍历数组下标，也可以遍历数组元素
+
+```ts
+const arr = ["a", "b", "c"] as const;
+type Arr = typeof arr;
+
+type NewArr = {
+  [K in keyof Arr]: string;
+};
+```
+
+鼠标引入 `NewArr` 可以看出，`NewArr` 的下标就是 `数组arr` 的下标 `0/1/2`
+
+如果我们想要拿到数组元素的，可以使用 `数组[number]`
+
+```ts
+const arr = ["a", "b", "c"] as const;
+type Arr = typeof arr;
+
+type NewArr = {
+  [K in keyof Arr[number]]: string;
+};
+```
 
 
 
