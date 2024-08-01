@@ -15,7 +15,7 @@ hero:
   actions:
     - theme: brand
       text: 开始
-      link: /markdown-examples
+      link: /articles/vue生态/
     - theme: alt
       text: API DEMO
       link: /api-examples
@@ -23,7 +23,7 @@ hero:
 features:
   - icon: 🥥
     title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    details: emo图标可以去[https://www.emojiall.com/zh-hans]下载
   - icon: 🍒
     title: Feature B
     details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
