@@ -49,13 +49,11 @@ export default defineBuildConfig({
 })
 ```
 
-> 参考文章：https://juejin.cn/post/7310412236648202249
-
 > unbuild配置项：https://github.com/unjs/unbuild/blob/main/src/types.ts#L140
 
 ### entries
 
-源码的入口，一般就是指我们的 `/src/index.ts`
+源码的入口，默认是 `/src/index`
 
 可以是一个字符串或字符串数组，比如下面配置
 
@@ -95,7 +93,7 @@ export default defineBuildConfig({
 
 ### outDir
 
-打包后的文件夹名，一般就是我们的`dist`
+打包后的文件夹名，默认值`dist`
 
 ### name
 
@@ -267,6 +265,10 @@ export default defineBuildConfig({
 ## preset
 
 可以加载其他人共享的预设
+
+### hooks
+
+钩子函数
 
 
 
