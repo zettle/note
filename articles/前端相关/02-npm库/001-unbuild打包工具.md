@@ -2,6 +2,10 @@
 
 在开发函数工具库等场景中，我们一般使用 rollup 工具打包，这里推荐另外一个更加方便的工具 [unbuild](https://github.com/unjs/unbuild)。其也是基于rollup打包，使用上更加方便智能
 
+一些用unbuild构建的库
+
+* [create-vite](https://github.com/vitejs/vite/blob/main/packages/create-vite/build.config.ts)
+
 
 
 ## 1、基本使用
@@ -236,15 +240,17 @@ console.log("sfd", { "name": "\u6211\u662F\u5C0F\u660E" });
 
 用来配置和rollup构建的选项，大致如下
 
-- emitCJS
+- emitCJS：设置true，构建产物中也会有cjs规范的文件
 - cjsBridge
 - inlineDependencies
-- output // 使用最多的一项
+- output
 - replace
 - alias
 - resolve
 - json
 - esbuild
+  - target：目标版本，比如`ES2020`
+  - minify：设置true，构建的是压缩版本
 - commonjs
 - dts
 
@@ -254,6 +260,12 @@ console.log("sfd", { "name": "\u6211\u662F\u5C0F\u660E" });
 export default defineBuildConfig({
   declaration: true,
   rollup: {
+    emitCJS: true,
+    inlineDependencies: true,
+    esbuild: {
+      target: "ES2020",
+      minify: true,
+    },
     output: {
       name: 'MyLibName', // 暴露在window下的变量名
       format: 'umd'
