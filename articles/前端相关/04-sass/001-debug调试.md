@@ -18,5 +18,14 @@ $w: 100px;
 src\views\HomeView.vue:4 Debug: 10000px
 ```
 
+打印多个的时候，可以用括号括起来
+
+```scss
+$aa: 1;
+$bb: 2;
+$cc: 3;
+@debug ($aa, $bb, $cc);
+```
+
 
 

@@ -48,7 +48,7 @@ onMounted(() => {
 </script>
 ```
 
-需要注意的是，有且只有一个节点的时候，vue3才会放子组件放在`instance?.subTree.component`下面，当有多节点包括注释的时候，vue3就是将子组件信息放在了
+需要注意的是，有且只有一个节点的时候，vue3才会放子组件放在`instance?.subTree.component`下面，当有多节点包括注释的时候，vue3就是将子组件信息放在了`subTree.children`
 
 ```vue
 <template>
