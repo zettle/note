@@ -152,7 +152,11 @@ ts会提示
 
 #### **不配置lib：**
 
-如果不配置lib，会发现上面的代码也是能正常运行的，这是因为ts对 lib 有着默认的配置
+如果不配置lib，会发现上面的代码也是能正常运行的，这是因为ts对 lib 会根据 `target` 设置不同的默认配置
+
+- `ES5`：`["DOM", "ES5", "ScriptHost"]`
+- `ES6`/`ES2015`：`["DOM", "ES6", "DOM.Iterable", "ScriptHost"]`
+- `ES2016`及更高版本：`["DOM", "ES2016", "DOM.Iterable", "ScriptHost"]`
 
 ### 2、target
 
@@ -220,6 +224,10 @@ export default class Person {}
 
 如果不设置 `module` 选项，而 `target=es6`，那么 `module` 默认值为 `es6`，否则是 `commonjs`
 
+如果配置 `{ module:"Preserve" }` 则告诉ts不要处理代码的导入导出（不要转移esm或commonjs）语法，交给其他编译器处理
+
+
+
 ### 4.rootDir / rootDirs / outDir
 
 `rootDir` 配置的是源码的目录，默认值：`./`。如果源代码都放在src目录，就可以配置 `{ rootDir:"./src" }`
@@ -261,7 +269,9 @@ ts-learn
 
 `{ moduleResolution: "node" }`：就是我们熟知的查找方式，查找node_modules的时候，现在当前目录查找，没有就往上目录找，一直找到全局
 
-`{ moduleResolution: "Classic" }`：和node相反，先从全局目录查找，找不到再往下面查找
+`{ moduleResolution: "Classic" }`：和node相反，先从全局目录查找，找不到再往下面查找，这种是 TypeScript 1.6之前的默认解析策略
+
+`{ "moduleResolution": "bundler" }`：是TypeScript 4.7新增的一种方式，TypeScript会尝试模仿打包工具（如Webpack、Rollup、esbuild等）的模块解析方式。
 
 ### 6.resolveJsonModule
 
@@ -305,6 +315,10 @@ cname = 23;
 
 ### 9.isolatedModules
 
+将每个文件作为单独的模块
+
+### 10.verbatimModuleSyntax
+
 在开发中，我们会将类型export出去，在其他地方import，例如下面代码
 
 ```ts
@@ -320,7 +334,7 @@ import { Aaa } from './a.ts';
 
 我们知道 ts 经过处理后变成 js，上面的类型就会没有，但如果对于一些babel，这个时候就无法解析
 
-因此我们更推荐将`{ isolatedModules: true }`，开启之后，在类型的export，就需要加上type关键词
+因此我们更推荐将`{ verbatimModuleSyntax: true }`，开启之后，在类型的export，就需要加上type关键词
 
 ```ts
 interface Aaa {

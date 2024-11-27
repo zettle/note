@@ -79,7 +79,7 @@ export default defineBuildConfig({
     entries: [
         {
             builder: 'mkdist', // mkdist builder传输文件到文件，保持原始源结构,就算没有被引入的模块也会复制到dist目录中
-            input: './src/',
+              input: './src/',
             outDir: './dist/'
         },
     ],
@@ -91,7 +91,13 @@ export default defineBuildConfig({
 
 ![](./img/unbuild-entries.jpg)
 
+如果`entries`的值是一个路径，就会自动使用mkdist构建，比如
 
+```js
+export default defineBuildConfig({
+    entries: ['./src/'], // 指到了目录级别而不是某个文件
+});
+```
 
 
 

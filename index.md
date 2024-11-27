@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "随堂笔记"
-  text: "记录日记"
+  text: "Front-end学习笔记，和一些知识体系"
   tagline: IT人吭哧吭哧的记录日记
   image:
     # 亮色模式的首页图片
@@ -14,10 +14,10 @@ hero:
     alt: 图片404
   actions:
     - theme: brand
-      text: 开始
-      link: /articles/vue生态/
+      text: 前端
+      link: /articles/前端相关/
     - theme: alt
-      text: API DEMO
+      text: node
       link: /api-examples
 
 features:
@@ -25,10 +25,10 @@ features:
     title: Feature A
     details: emo图标可以去[https://www.emojiall.com/zh-hans]下载
   - icon: 🍒
-    title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    title: 前端
+    details: vue、typescript 等等等等
   - icon: 🍈
-    title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    title: node
+    details: 还没想好...
 ---
 
