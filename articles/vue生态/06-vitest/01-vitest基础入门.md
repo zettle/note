@@ -27,8 +27,6 @@ test('adds 1 + 2 to equal 3', () => {
 
 执行 `vitest run --coverage`可以生成覆盖率报告。
 
-
-
 ## vue组件单测
 
 vitest天然支持vue组件，在测试vue组件之前我们需要配置`vite.config.ts`
@@ -71,6 +69,41 @@ test('测试Hello', () => {
  FAIL  src/components/hello.spec.ts [ src/components/hello.spec.ts ]
 Error: Failed to load url vue (resolved id: vue) in E:/workspace/vitest-learn/src/components/hello.vue. Does the file exist?
 ```
+
+## tsx组件单测
+
+vitest也是天然支持tsx组件。
+
+有`World.tsx`组件如下：
+
+```tsx
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  setup () {
+    const msg = 'xiaoming';
+    return () => (<div>
+      <p>{msg}</p>
+      <p>333</p>
+    </div>)
+  }
+})
+```
+
+可以直接写单测
+
+```ts
+import { mount } from "@vue/test-utils";
+import World from './world.tsx';
+
+describe('测试world组件', () => {
+  test('正常渲染world', () => {
+    const wrapper = mount(World);
+  });
+});
+```
+
+
 
 ## 配置文件抽离（推荐）
 

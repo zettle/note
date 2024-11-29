@@ -8,7 +8,7 @@ defineConfig({
       environment: 'jsdom',
       globals: true,
       coverage: {
-        provider: 'istanbul'
+        provider: 'v8' // 默认v8，也可以改为istanbul
       }
     },
 })

@@ -52,3 +52,13 @@ beforeAll beforeAll
 afterAll afterAll
 ```
 
+如果有异步操作，可以用`async/await`
+
+```ts
+beforeEach(async () => {
+  // 等待beforeEach里面异步结束才执行 '测试1' 的test
+  await sleep();
+});
+test('测试1', () => {});
+```
+
