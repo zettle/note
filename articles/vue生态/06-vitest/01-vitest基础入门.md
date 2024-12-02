@@ -103,9 +103,9 @@ describe('测试world组件', () => {
 });
 ```
 
+## vitest的配置
 
-
-## 配置文件抽离（推荐）
+### 1、配置文件抽离（推荐）
 
 可以抽离成 `vite.config.ts` 和 `vitest.config.ts`	
 
@@ -124,7 +124,7 @@ export default mergeConfig(
 )
 ```
 
-## 配置文件不抽离
+### 2、配置文件不抽离
 
 直接在`vite.config.ts` 加关于vitest的配置
 
@@ -142,3 +142,13 @@ export default defineConfig({
 ```
 
 加上 `<reference types="vitest/config" />` 之后就能得到test的提示
+
+## vitest的命令
+
+```shell
+# 可以启动一个在浏览器访问的页面查看单测情况
+vitest --ui
+
+# 生成代码覆盖率
+vitest run --coverage
+```
