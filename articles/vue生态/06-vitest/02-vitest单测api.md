@@ -15,6 +15,12 @@ describe("notification.vue", () => {
 
 ## test/it
 
+第2个参数支持设置超时时间
+
+```ts
+test('name', async () => { ... }, 1000); // 设置1s超时时间，默认是5s
+```
+
 ### 1. `test.skip()` 跳过改单测
 
 想要跳过，可以使用`test.skip / it.skip` 来设置。
@@ -55,7 +61,26 @@ it.concurrent('33', async () => {});
 
 ### 6. `test.each()` 遍历使用不同情况进行单测
 
-按照测试参数的顺序，在测试名称插入符合[printf格式](https://nodejs.org/api/util.html#util_util_format_format_args)的参数
+```ts
+// 给each一个二维数组
+test.each([
+  [1, 1, 2],
+  [1, 2, 3],
+  [2, 1, 3],
+])('遍历', (a, b, expected) => {
+  expect(a + b).toBe(expected)
+});
+
+// 给each一个对象数组
+test.each([
+  {name:'xx', age: 2},
+  {name:'yy', age: 3}
+])('遍历', ({name, age}) => {
+  console.log(name, age)
+});
+```
+
+在 `test.each()` 中的单测名称，可以按照测试参数的顺序，在测试名称插入符合[printf格式](https://nodejs.org/api/util.html#util_util_format_format_args)的参数
 
 - `%s`：字符串
 - `%d`：数值
@@ -68,17 +93,21 @@ it.concurrent('33', async () => {});
 
 ```ts
 test.each([
-  [1, 1, 2],
-  [1, 2, 3],
-  [2, 1, 3],
-])('add(%i, %i) -> %i', (a, b, expected) => {
-  expect(a + b).toBe(expected)
-});
-
-test.each([
-  {name:'xx', age: 2},
-  {name:'yy', age: 3}
-])('遍历', ({name, age}) => {
-  console.log(name, age)
-});
+  ['plain', 'is-plain'],
+  ['round', 'is-round'],
+  ['circle', 'is-circle'],
+  ['disabled', 'is-disabled'],
+  ['loading', 'is-loading'],
+])('props的 %s 被正确渲染为 %s', (a, b, expected) => {});
 ```
+
+上面单测名中的 `%s` 将被替换为遍历出来的变量，所以在控制台中可以看出下面文案：
+
+```ts
+✓ props的 plain 被正确渲染为 is-plain
+✓ props的 round 被正确渲染为 is-round
+✓ props的 circle 被正确渲染为 is-circle
+✓ props的 disabled 被正确渲染为 is-disabled
+✓ props的 loading 被正确渲染为 is-loading
+```
+

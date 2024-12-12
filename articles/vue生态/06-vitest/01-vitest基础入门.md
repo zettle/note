@@ -1,5 +1,17 @@
 # 基础入门
 
+文档索引
+
+> 哪些项目使用了vitest：https://cn.vitest.dev/guide/#%E4%BD%BF%E7%94%A8-vitest-%E7%9A%84%E9%A1%B9%E7%9B%AE
+>
+> 各种api：https://cn.vitest.dev/api/#test
+>
+> vitest集成进各个框架的Demo：https://cn.vitest.dev/guide/#%E7%A4%BA%E4%BE%8B 或 https://github.com/vitest-tests/browser-examples/tree/main/examples
+>
+> 
+
+## 简单使用
+
 vitest完全兼容jest，会jest入门vitest非常快
 
 安装: `pnpm i -D vitest`
@@ -72,7 +84,7 @@ Error: Failed to load url vue (resolved id: vue) in E:/workspace/vitest-learn/sr
 
 ## tsx组件单测
 
-vitest也是天然支持tsx组件。
+如果要测试的组件是tsx，也是天然支持tsx组件。
 
 有`World.tsx`组件如下：
 
@@ -100,6 +112,22 @@ describe('测试world组件', () => {
   test('正常渲染world', () => {
     const wrapper = mount(World);
   });
+});
+```
+
+## 用tsx写单元测试
+
+在写单测的时候，我们可以直接使用tsx写，无需配置，文件名改为 `xx.{test,spec}.tsx` 即可
+
+这个时候传递给 `mount()` 的第1个参数就可以写成jsx的回调函数
+
+```ts
+it('基础Button', () => {
+    const handleClick = vi.fn()
+    const wrapper = mount(() => (<Button type="primary" onClick={handleClick}></Button>))
+    wrapper.find('button').trigger('click');
+    expect(handleClick).toHaveBeenCalled();
+    expect(1).toBe(1)
 });
 ```
 
