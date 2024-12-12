@@ -62,6 +62,44 @@ const obj = {
 vi.spyOn(obj, 'say');
 ```
 
+一个经常用的场景，在公共库的开发中，我们常常会在非生产环境就给与用户一些warm提示，代码如下：
+
+```ts
+// error.ts
+export function debugWarn(msg: string): void {
+  if (process.env.NODE_ENV !== 'development') {
+    console.warn(msg)
+  }
+}
+
+function say () {
+	debugWarn('Button组件 不需要type参数了')  
+}
+```
+
+ 通过 `vi.spyOn` 我们可以拦截伪造一个，然后测试组件调用的时候有没有log日志
+
+```ts
+import { say } from './error';
+
+it('测试单体', () => {
+  const logWarn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  say();
+  expect(logWarn).toHaveBeenCalled()
+  expect(logWarn.mock.calls).toMatchInlineSnapshot(`
+		[
+			[
+				"Button组件 不需要type参数了",
+			],
+		]
+	`)
+})
+```
+
+上面代码中，通过 `mockImplementation` 方法将 `console.warn` 的实现替换为一个空函数，以避免实际输出警告信息。
+
+最后，通过 `expect(logWarn.mock.calls)` 断言，可以检查 `console.warn` 是否被调用，以及调用时传递的参数是否符合预期
+
 ### vi.isMockFunction
 
 判断一个函数是否是被 `vi.fn/vi.spyOn` 代理了

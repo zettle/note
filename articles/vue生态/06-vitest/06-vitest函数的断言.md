@@ -56,3 +56,67 @@ expect(saySpy).toHaveReturnedWith({ name: 'a', age: 1 });
 ```
 
 > **注意：** `toHaveNthReturnedWith()`是从1开始的，所以想要测试第2次调用的话，就传2，`toHaveNthReturnedWith(2)` 即可
+
+### 清除调用信息
+
+能清楚调mock的调用信息
+
+比如我们现在有个 `Hello.vue` 组件，代码如下：
+
+```vue
+<script lang="ts" setup>
+import { ref } from 'vue'
+
+const emit = defineEmits<{
+  add: [payload: number]
+}>()
+
+const count = ref(0)
+
+function handleClick() {
+  count.value++
+  emit('add', count.value)
+}
+</script>
+
+<template>
+  <button type="button" @click="handleClick">
+    点击 {{ count }}
+  </button>
+</template>
+```
+
+单测代码如下：
+
+```ts
+describe('整体', () => {
+  const fnSpy = vi.fn()
+  let warpper
+  it('测试1', () => {
+    warpper = mount(() => (
+      <Hello onAdd={fnSpy}></Hello>
+    ))
+
+    warpper.find('button').trigger('click')
+    warpper.find('button').trigger('click')
+    warpper.find('button').trigger('click')
+    expect(fnSpy).toHaveBeenLastCalledWith(3)
+  })
+
+  it ('测试2', () => {
+    expect(fnSpy).toHaveBeenLastCalledWith(3)
+  })
+})
+```
+
+可以看出，在 `测试2` 中，mock函数的调用次数依旧是 3。
+
+如果我们想要清除掉之前的调用mock，可以这么写
+
+```ts
+it ('测试2', () => {
+  fnSpy.mockClear();
+  expect(fnSpy).not.toHaveBeenCalled() // 清除之后，mock函数就回到了未被调用的时候
+})
+```
+

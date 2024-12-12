@@ -20,8 +20,6 @@ warpper.element.type
 warpper.element.tagName
 ```
 
-
-
 * `find()/findAll()/get()`：在组件中找到某个DOM
 
 ```ts
@@ -182,6 +180,8 @@ const props = withDefaults(
 单测可以写：
 
 ```ts
+import { nextTick } from 'vue'
+
 const wrapper = mount(HelloWorld, {
   props: {
 		show: false,
@@ -189,8 +189,9 @@ const wrapper = mount(HelloWorld, {
 	},
 });
 await wrapper.setProps({ show: true }); // 改变props属性
+await nextTick();
 wrapper.html(); // <div>23</div>
 ```
 
-
+在
 
