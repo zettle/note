@@ -96,7 +96,7 @@ expect(() => foo('person')).toThrowError('错误信息系'); // 通过，发生�
 expect(() => foo('person')).toThrowError(/错误信息系/); // 入参也可以是一个正则
 ```
 
-
+> 注意这里的 expect() 需要再用一层函数包裹一层，形成 `expect(() => xx)` 的方式，否则异常就会直接中断单测
 
 ### Promise的断言
 

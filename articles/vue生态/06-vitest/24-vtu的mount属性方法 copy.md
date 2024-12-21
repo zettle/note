@@ -137,7 +137,7 @@ function handleBlur(ev: FocusEvent) {
 wrapper.find('input').trigger('blur', { cname: 'xiaoming' }); // vtu会将第2个参数的进行合并
 ```
 
-* `attributes()`：获取DOM上的某个属性，不传参数就返回对象，也可以传参 `attributes(<name>)` 获取某个属性
+* `attributes()`：获取DOM上的某个属性，不传参数就返回对象，也可以传参 ``attributes(<name>)` 获取某个属性
 
 比如想要测试 `Button.vue` 上的disabled属性
 
