@@ -10,5 +10,3 @@ vscode.window对象
 const answer = await vscode.window.showInformationMessage('Hello World from VSTodo!', '确定', '取消');
 console.log(answer); // 确定/取消
 ```
-
-![image-20250107232258895](img/image-20250107232258895.png)
