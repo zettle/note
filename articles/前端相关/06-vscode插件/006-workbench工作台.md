@@ -2,7 +2,7 @@
 
 vscode将界面分为下面几个区域
 
-<img src="img/image-20250108221246700.png" alt="image-20250108221246700" style="zoom:50%;" />
+![视图](img/image-20250108221246700.png)
 
 * Views Container：使用 `contributes.viewsContainers` 贡献点
 * Tree View：使用 `contributes.views` 贡献点，更多可见[文档](https://code.visualstudio.com/api/extension-guides/tree-view)
