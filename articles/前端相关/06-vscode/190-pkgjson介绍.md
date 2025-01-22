@@ -2,6 +2,12 @@
 
 ## 相对完整的package.json
 
+整个 `package.json` 配置介绍可见[官网](https://code.visualstudio.com/api/references/extension-manifest)
+
+```json
+
+```
+
 
 
 ## 字段介绍
@@ -22,21 +28,9 @@
 
 ## keywords 和 categories
 
-`keywords`是一个数组，所用文案主要用来在插件市场搜索用
+`keywords`是一个数组，最多5个关键词，所用文案主要用来在插件市场搜索用
 
-`categories`是一个数组，只要用在插件市场分类的时候用到，可选值：
-
-* Programming Languages
-* Snippets
-* Linters
-* Themes
-* Debuggers
-* Formatters
-* Keymaps
-* SCM Providers
-* Extension Packs
-* Language Packs
-* Other
+`categories`是一个数组，只要用在插件市场分类的时候用到，[可选值](https://code.visualstudio.com/api/references/extension-manifest)：`[Programming Languages, Snippets, Linters, Themes, Debuggers, Formatters, Keymaps, SCM Providers, Other, Extension Packs, Language Packs, Data Science, Machine Learning, Visualization, Notebooks, Education, Testing]`
 
 ```json
 {
@@ -83,7 +77,7 @@ png格式，要求至少 `128x128` 像素，将展示下面位置
 
 ### 2.contributes配置
 
-`contributes` 支持下面配置
+`contributes` 支持下面配置，[官方文档](https://code.visualstudio.com/api/references/contribution-points)
 
 * `contributes.configuration`：该插件能有哪些配置项，可以通过vscode的settings进行配置
 * `contributes.commands`：命令信息
@@ -97,8 +91,21 @@ png格式，要求至少 `128x128` 像素，将展示下面位置
 * `contributes.viewsContainers`：新的activitybar图标，也就是左侧侧边栏大的图标
 * `contributes.views`：自定义侧边栏内view的实现
 * `contributes.iconThemes`：图标主题
+* `contributes.languages`：新语言支持
+* `contributes.debuggers`：调试
+* `contributes.breakpoints`：断点
+* `contributes.grammars`：
+* `contributes.themes`：主题
+* `contributes.jsonValidation`：自定义JSON校验
+* `contributes.problemMatchers`
+* `contributes.problemPatterns`
+* `contributes.taskDefinitions`
+* `contributes.colors`
 
 ```json
+
+
+
 
 ```
 
