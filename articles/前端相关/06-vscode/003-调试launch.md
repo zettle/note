@@ -125,3 +125,29 @@ server.listen(3000, () => {
 这个时候，再访问 `http://localhost:3000`  端口的时候，就会进入debug了
 
 ![image-20250116235501764](img/image-20250116235501764.png)
+
+## 调试vscode扩展插件
+
+配置 `launch.json` 如下：
+
+```json
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Run Extension",
+			"type": "extensionHost",
+			"request": "launch",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--disable-extensions"
+			],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			]
+		}
+	]
+}
+```
+
+然后按F5之后，就会启动一个新vscode调试窗口，如果我们改了代码，在新窗口按 `ctrl + R` 就可以刷新
