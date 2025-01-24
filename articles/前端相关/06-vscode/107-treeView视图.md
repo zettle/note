@@ -58,14 +58,17 @@ export function activate(context: vscode.ExtensionContext) {
 					{
 						label: 'label-001',
 						collapsibleState: TreeItemCollapsibleState.None,
+            tooltip: "hover: 单纯的字符串 ",
 					},
 					{
 						label: 'label-002-Collapsed',
-						collapsibleState: TreeItemCollapsibleState.Collapsed ,
+						collapsibleState: TreeItemCollapsibleState.Collapsed,
+            tooltip: "hover: 单纯的字符串 ",
 					},
 					{
 						label: 'label-003-Expanded',
-						collapsibleState: TreeItemCollapsibleState.Expanded ,
+						collapsibleState: TreeItemCollapsibleState.Expanded,
+            tooltip: "hover: 单纯的字符串 ",
 					}
 				]);
 			}
@@ -79,7 +82,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 ```
 
-1. 当用户打开树视图时， `getChildren` 方法将被调用而无需传递 `element` 。因此当 `element` 为空的时候返回的应该是根目录。
+1. 当用户打开树视图时， `getChildren` 方法将被调用而不传 `element` 参数 ，因此当 `element` 为空的时候返回的应该是根目录。
 
    如果返回的不是 `{label}` 属性，可以在 `getTreeItem()` 方法加工处理下，比如：
 
@@ -90,7 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
    export function activate(context: vscode.ExtensionContext) {
    	vscode.window.registerTreeDataProvider('nodeDependencies', {
    		getTreeItem(element: Person) {
-   			return {...element, label: element.cname};
+   			return {...element, label: element.cname}; // vscode回取label这个字段作为文案展示
    		},
    		getChildren(element?: Person) {
    			if (!element) {
@@ -110,9 +113,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 ## 注册视图
 
-注册视图用的API有 `vscode.window.createTreeView` 和 `vscode.window.registerTreeDataProvider`。
+注册视图用的API有 `vscode.window.createTreeView` 和上面 `vscode.window.registerTreeDataProvider`。
 
 `vscode.window.createTreeView`注册之后会返回一个 `TreeView` 对象，可以使用该对象进行更细节上的交互，而`vscode.window.registerTreeDataProvider` 只适合只需要提供数据的简单场景
+
+> 那是不是我们就干脆用`vscode.window.createTreeView` 好了
 
 ```ts
 vscode.window.registerTreeDataProvider('nodeDependencies', {
@@ -125,7 +130,8 @@ const treeView = vscode.window.createTreeView('nodeDependencies', {
   treeDataProvider: {
     getTreeItem() {},
     getChildren() {},
-  }
+  },
+  showCollapseAll: true, // 全部view视图都折叠收起来
 });
 treeView.onDidChangeSelection(event => {
   console.log('Selection changed:', event.selection);

@@ -33,7 +33,7 @@
 * `{ "when": "editorFocus && resourceLangId == javascript" }`：当代码编辑区域聚焦 & 是js文件的时候才展示
 * `{ "when": "isLinux" }` ：`isLinux`、`isMac`、`isWindows` 判断当前操作系统
 * `{ "when": "view == someViewId" }`：当前视图ID等于`someViewId`时；
-* `{ "when": "" }`：
+* `{ "when": "resourceExtname != .js" }`：后缀不为`.js`
 * `{ "when": "" }`：
 * `{ "when": "" }`：
 
