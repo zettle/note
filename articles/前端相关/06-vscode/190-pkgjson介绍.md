@@ -59,21 +59,34 @@ png格式，要求至少 `128x128` 像素，将展示下面位置
 
 支持一下配置：
 
-\* `onLanguage:$`：
+* `onLanguage:$`：
+* `onCommand:$`：
+* `onDebug`：
+* `workspaceContains:$`：
+* `onFileSystem:$`：
+* `onView:$`：
+* `onUri`：
+* `onStartupFinished`：当vscode启动之后，自动激活我们的插件
 
-\* `onCommand:$`：
+默认情况下，vscode是当我们在命令控制台输入之后才激活我们的插件，而有时候我们想要让vscode在启动的时候就激活，就可以配置成这个
 
-\* `onDebug`：
+```ts
+export function activate(context: vscode.ExtensionContext) {
+	console.log('Congratulations, your extension "jrdk" is now active!'); // 默认情况下是敲了命令之后才有这个
+}
+```
+而配置了下面之后，就会在vscode启动的时候执行上面log
+```json
+{
+  "activationEvents": [
+    "onStartupFinished"
+  ]
+}
+```
 
-\* `workspaceContains:$`：
 
-\* `onFileSystem:$`：
 
-\* `onView:$`：
-
-\* `onUri`：
-
-\* `*`：所有都会在vscode启动的时候激活，但vscode不推荐配置成这个，需要什么才配置
+* `*`：*号表示，所有功能都会在vscode启动的时候激活，但vscode不推荐配置成这个，需要什么才配置
 
 ### 2.contributes配置
 
