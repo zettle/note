@@ -56,7 +56,7 @@ expect({ age:23 }).toHaveProperty('age', 2); // 不通过，断言对象上要�
 
 ```
 
-``toHaveProperty()` 只会判断一层，支持通过`.`的方式或 `[]` 去拿对象或者数组
+`toHaveProperty()` 只会判断一层，支持通过`.`的方式或 `[]` 去拿对象或者数组
 
 ```ts
 const obj = {
@@ -111,7 +111,7 @@ function sleep (): Promise<string> {
   });
 }
 test('单测1', () => {
-   expect(sleep()).resolves.toEqual({ id: 1 }); // expect().resolves 会去等待promise完成再进行断言
+  expect(sleep()).resolves.toEqual({ id: 1 }); // expect().resolves 会去等待promise完成再进行断言
   await expect(sleep()).rejects.toThrow('no id'); // reject的断言
 });
 ```
@@ -120,33 +120,37 @@ test('单测1', () => {
 
 ```ts
 test('单测1', () => {
-    // 这里没有加await,代码会去执行第4行的console代码，再等待3s后才进入断言结果
-    expect(sleep({id: 1})).resolves.toEqual({ id: 1 });
-    console.log('后续的测试');
+  // 这里没有加await,代码会去执行第4行的console代码，再等待3s后才进入断言结果
+  expect(sleep({id: 1})).resolves.toEqual({ id: 1 });
+  console.log('后续的测试');
 });
+```
 
-// 打印结果
+打印结果：
+
+```text
 '后续的测试'
 等3s
-<断言结果>
+<断言结果出来>
 ```
 
 而加上await之后，后续的就会等待这个断言出了结果再继续
 
 ```ts
 test('单测1', async () => {
-    // 这里加await，等待第3行的断言执行完，才会执行第4行的console.log代码
-    await expect(sleep({id: 1})).resolves.toEqual({ id: 1 });
-    console.log('后续的测试');
+  // 这里加await，等待第3行的断言执行完，才会执行第4行的console.log代码
+  await expect(sleep({id: 1})).resolves.toEqual({ id: 1 });
+  console.log('后续的测试');
 });
-
-// 打印结果
-等3s
-<断言结果>
-'后续的测试'
 ```
 
+打印结果：
 
+```text
+等3s
+<断言结果出来>
+'后续的测试'
+```
 
 ### 其他断言
 
@@ -181,7 +185,7 @@ expect(1 + 2).not.toBe(4); // 1+2不等于4
 expect({ age:23 }).not.toHaveProperty('age'); // {age:23} 不具有age这个key
 ```
 
-* `toBeDefined()`：断言值是否不为`undefined`
+* `toBeDefined()`：断言值是否为`undefined`
 
 * `toBeTruthy()/toBeFalsy()`：断言值是否可以转为`true/false`，注意这里不是断言值是否为`true/false`，只是判断是否转为`true/false`。
 
@@ -223,7 +227,7 @@ expect({ name:'xx',length: 3 }).toHaveLength(3)
 
 #### `toEqual` 和 `toStrictEqual()` 的区别
 
-2者的区别主要在对undefined的处理上，`toEqual()`会跳过对undefined的比较，而 `toStrictEqual`
+2者的区别主要在对`undefined`的处理上，`toEqual()`会跳过对`undefined`的比较，而 `toStrictEqual` 则将`undefined`也进行对比
 
 ```ts
 expect(

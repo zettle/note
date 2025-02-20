@@ -66,13 +66,10 @@ expect(saySpy).toHaveReturnedWith({ name: 'a', age: 1 });
 ```vue
 <script lang="ts" setup>
 import { ref } from 'vue'
-
 const emit = defineEmits<{
   add: [payload: number]
 }>()
-
 const count = ref(0)
-
 function handleClick() {
   count.value++
   emit('add', count.value)

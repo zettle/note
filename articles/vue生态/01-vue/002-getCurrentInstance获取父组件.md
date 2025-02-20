@@ -37,8 +37,8 @@ import { getCurrentInstance, onMounted, type ComponentInternalInstance } from 'v
 
 const instance = getCurrentInstance();
 onMounted(() => {
-  console.log('instance.parent', instance?.parent, instance?.parent?.type.name); // instance?.parent得到父组件
-              // instance?.parent?.type.name 得到父组件设置的name值
+  console.log('instance.parent', instance?.parent); // instance?.parent得到父组件
+  console.log('父组件的name值', instance?.parent?.type.name);
 });
 </script>
 ```
