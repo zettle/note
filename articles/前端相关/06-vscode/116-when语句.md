@@ -1,6 +1,8 @@
 # when语句
 
-通过 `when` 我们可以控制菜单、执行等出现的条件。[官方文档](https://code.visualstudio.com/docs/getstarted/keybindings#_when-clause-contexts)
+通过 `when` 我们可以控制菜单、执行等出现的条件。[官方文档](https://code.visualstudio.com/api/references/when-clause-contexts)
+
+
 
 ## 支持when的配置
 

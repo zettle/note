@@ -1,5 +1,16 @@
 # 调试launch
 
+## 自带的变量
+
+- `${userHome}` - 用户主文件夹的路径
+- `${workspaceFolder}` - 在 VS Code 中打开的文件夹的路径
+- `${file}` - 当前打开的文件
+- `${fileWorkspaceFolder}` - 当前打开文件的工作区文件夹
+- `${cwd}` - VS Code 启动时任务运行器的当前工作目录
+- `${lineNumber}` - 活动文件中当前选定的行号
+- `${selectedText}` - 活动文件中当前选定的文本
+- `${execPath}` - 正在运行的 VS Code 可执行文件的路径
+
 ## 调试普通node程序
 
 这里介绍vscode的 `launch.json` 的作用
@@ -151,3 +162,58 @@ server.listen(3000, () => {
 ```
 
 然后按F5之后，就会启动一个新vscode调试窗口，如果我们改了代码，在新窗口按 `ctrl + R` 就可以刷新
+
+
+
+## 调试vue程序
+
+#### vite项目
+
+如果是vite项目，比如我们执行 `npm dev` 启动了 `http://localhost:5173/` 去访问项目
+
+那么可以可以按照下面创建 `launch.json` ，浏览器选择自己喜欢的即可：![image-20250319100901834](img/003-调试launch/image-20250319100901834.png)
+
+选择之后，vscode会自动创建好 `launch.json`，内容如下：
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "针对 localhost 启动 Edge",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
+}
+```
+
+我们的开发目录一般都在 `/src` 里面，因此这里需要改下 `webRoot`。
+
+端口也需要改为我们启动的端口改为如下：
+
+```json
+{
+  "url": "http://localhost:5173",
+  "webRoot": "${workspaceFolder}/src"
+}
+```
+
+到这里配置的就完成了，接着我们启动调试模式
+
+我们照常执行 `npm run dev` 启动端口
+
+![image-20250319130309683](img/003-调试launch/image-20250319130309683.png)
+
+然后按 `F5` 启动调试，vscode会新开一个edge浏览器，我们在新的浏览器访问 `http://localhost:5173`
+
+![image-20250319130404441](img/003-调试launch/image-20250319130404441.png)
+
+
+
+并在vscode打上断点，这样就可以在vscode调试vue代码了
+
+![image-20250319130517691](img/003-调试launch/image-20250319130517691.png)
+
