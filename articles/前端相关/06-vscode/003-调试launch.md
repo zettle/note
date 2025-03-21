@@ -217,3 +217,38 @@ server.listen(3000, () => {
 
 ![image-20250319130517691](img/003-调试launch/image-20250319130517691.png)
 
+#### webpack
+
+如果是webpack的，需要修改 `vue.config.js` 配置如下是：
+
+```js
+const { defineConfig } = require('@vue/cli-service');
+module.exports = defineConfig({
+  configureWebpack: {
+    devtool: 'source-map',
+  },
+});
+```
+
+然后 `lanuch.json` 需要改为下面配置：
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "针对 localhost 启动 Edge",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "pathMapping": {
+                "/_karma_webpack_": "${workspaceFolder}/src"
+            }
+        }
+    ]
+}
+```
+
+webpack的，经过尝试效果不佳，总是会出现在不敢断点的地方断点
