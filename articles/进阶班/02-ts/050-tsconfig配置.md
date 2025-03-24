@@ -1,10 +1,10 @@
 # tsconfig配置
 
-## tsconfig.json的各项配置
+## 生成tsconfig文件
 
 安装：`pnpm i -D typescript`
 
-执行`pnx tsc --init` 会在项目创建tsconfig.json文件，内容配置如下
+执行`npx tsc --init` 会在项目创建tsconfig.json文件，内容配置如下
 
 ```json
 {
@@ -113,421 +113,109 @@
 }
 ```
 
+`tsconfig.json`文件主要供`tsc`编译器使用，它的命令行参数`--project`或`-p`可以指定`tsconfig.json`的位置（目录或文件皆可）。
+
+```sh
+tsc -p ./dir
+```
+
+如果不指定配置文件的位置，`tsc`就会在当前目录下搜索`tsconfig.json`文件，如果不存在，就到上一级目录搜索，直到找到为止。
+
 其中配置最多的是`compilerOptions` ，配置ts的一些列规则
 
-## compilerOptions配置
 
-### 1、lib
 
-配置项目中使用到哪些 js 库，比如下面代码
+## 使用别人的预设配置
 
-```ts
-const myset = new Set();
-document.querySelector('.sd');
+除了执行 `npx tsc --init` 生成配置文件，我们可以用别人预设好的一些配置。
+
+npm 的`@tsconfig`名称空间下面有很多模块，都是写好的`tsconfig.json`样本，比如 `@tsconfig/recommended`和`@tsconfig/node16`。
+
+这些模块需要安装，以`@tsconfig/deno`为例。
+
+```
+npm install --save-dev @tsconfig/deno
 ```
 
-ts会提示
+在`tsconfig.json`里面引用这个模块
 
-```text
-找不到名称“Set”。是否需要更改目标库? 请尝试将 “lib” 编译器选项更改为“es2015”或更高版本
-找不到名称“document”。是否需要更改目标库? 请尝试更改 “lib” 编译器选项以包括 “dom”
+```json
+{
+  "extends": "@tsconfig/deno/tsconfig.json"
+}
 ```
 
-因此我们需要加上配置
+@tsconfig/xxx的[github仓库](https://kkgithub.com/tsconfig/bases/tree/main/bases)，能看到目前有的预设
+
+
+
+## 配置详解
+
+### 1、include / exclude 
+
+`include`：指定哪些文件需要编译
+
+`exclude`：必须与`include`属性一起使用，用来从编译列表中去除指定的文件
+
+这2个配置都支持下面的通配符
+
+- `?`：指代单个字符
+- `*`：指代任意字符，不含路径分隔符
+- `**`：指定任意目录层级。
+
+```json
+{
+  "include": ["./src/**/*"],
+  "exclude": []
+}
+```
+
+## 2、extends
+
+继承哪些配置，可以是本地文件，也可以是node_modules
+
+```json
+{
+  "extends": "../tsconfig.base.json"
+}
+```
+
+## 3、files
+
+`files`属性指定编译的文件列表，如果其中有一个文件不存在，就会报错。
+
+它是一个数组，排在前面的文件先编译。
+
+```
+{
+  "files": ["a.ts", "b.ts"]
+}
+```
+
+该属性必须逐一列出文件，不支持文件匹配。如果文件较多，建议使用`include`和`exclude`属性。
+
+## 4、references
+
+`references` 的 `path` 属性，既可以是含有文件 `tsconfig.json` 的目录，也可以直接是该文件
+
+```json
+{
+  "references": [
+    { "path": "../pkg1" },   // 指向文件夹
+    { "path": "../pkg2/tsconfig.json" }  // 指向文件
+  ]
+}
+```
+
+与此同时，被应用的项目的 `tsconfig.json` 必须启用 `composite` 属性，比如上面的 `pkg1/tsconfig.json` 和 `pkg2/tsconfig.json` 都需要配置下面
 
 ```json
 {
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"]
+    "composite": true
   }
 }
 ```
 
-这样ts就认识 `Set/document` 语法
 
-支持的配置如下：
 
-- `ESNext`：es的下一语法糖，会时刻以最新的语法
-- `DOM`：支持了各种DOM相关的api
-
-#### **不配置lib：**
-
-如果不配置lib，会发现上面的代码也是能正常运行的，这是因为ts对 lib 会根据 `target` 设置不同的默认配置
-
-- `ES5`：`["DOM", "ES5", "ScriptHost"]`
-- `ES6`/`ES2015`：`["DOM", "ES6", "DOM.Iterable", "ScriptHost"]`
-- `ES2016`及更高版本：`["DOM", "ES2016", "DOM.Iterable", "ScriptHost"]`
-
-### 2、target
-
-编译后的 js 版本，比如现在有下面代码：
-
-```ts
-class Person {
-  constructor() {}
-  sayHello() {
-    return 'Hello';
-  }
-}
-```
-
-如果我们设置的是 `{ target: "ES2016" }` 则编译后如下：
-
-```js
-class Person {
-  constructor() {}
-  sayHello() {
-    return 'Hello';
-  }
-}
-```
-
-因为es7中已经支持了class语法糖
-
-如果我们设置 `{ target: "ES5" }` 则编译结果如下：
-
-```js
-var Person = /** @class */ (function () {
-  function Person() {}
-  Person.prototype.sayHello = function () {
-    return 'Hello';
-  };
-  return Person;
-})();
-```
-
-### 3、module
-
-编译后要使用什么规范，比如现有代码如下：
-
-```ts
-export const cname = 'xiaoming';
-export default class Person {}
-```
-
-如果配置 `{ module:"commonjs" }` 则编译后代码：
-
-```js
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.cname = void 0;
-exports.cname = 'xiaoming';
-class Person {}
-exports.default = Person;
-```
-
-如果配置 `{ module:"ESNext" }` 则编译后代码：
-
-```js
-export const cname = 'xiaoming';
-export default class Person {}
-```
-
-如果不设置 `module` 选项，而 `target=es6`，那么 `module` 默认值为 `es6`，否则是 `commonjs`
-
-如果配置 `{ module:"Preserve" }` 则告诉ts不要处理代码的导入导出（不要转移esm或commonjs）语法，交给其他编译器处理
-
-
-
-### 4.rootDir / rootDirs / outDir
-
-`rootDir` 配置的是源码的目录，默认值：`./`。如果源代码都放在src目录，就可以配置 `{ rootDir:"./src" }`
-
-`outDir` 配置编译后的 js 存放到哪个目录下。默认值：`./`，会将js和ts放在一起，我们习惯放在dist目录，那么只需要配置 `{ outDir: "./dist" }`
-
-举个例子，现在有下面文件结构
-
-```text
-ts-learn
-├── dist
-├── src
-│   └── index.ts
-└── tsconfig.json
-```
-
-如果是 `{ rootDir: "./" }` 配置。则是以根目录作为源码路径，编译后的dist目录结构如下：
-
-```text
-ts-learn
-├── dist
-│   └── src
-│       └── index.js
-```
-
-可以看到多一层src目录。
-
-如果我们不想要，那么可以配置以 `src` 目录为根目录，修改配置为 `{ rootDir: "./src" }` 配置，编译后dist目录如下
-
-```text
-ts-learn
-├── dist
-│   └── index.js
-```
-
-### 5.moduleResolution
-
-模块查找方式
-
-`{ moduleResolution: "node" }`：就是我们熟知的查找方式，查找node_modules的时候，现在当前目录查找，没有就往上目录找，一直找到全局
-
-`{ moduleResolution: "Classic" }`：和node相反，先从全局目录查找，找不到再往下面查找，这种是 TypeScript 1.6之前的默认解析策略
-
-`{ "moduleResolution": "bundler" }`：是TypeScript 4.7新增的一种方式，TypeScript会尝试模仿打包工具（如Webpack、Rollup、esbuild等）的模块解析方式。
-
-### 6.resolveJsonModule
-
-是否允许在ts中import json文件，**默认：**`false`。
-
-比如现在有一个文件`mock.json`，在ts中引入
-
-```ts
-import mock from './mock.json'; // error报错， 提示 找不到模块“./mock.json”。请考虑使用 "--resolveJsonModule" 导入带 ".json" 扩展的模块
-console.log(mock);
-```
-
-这个时候就需要设置 `{ resolveJsonModule: true }` 即可
-
-### 7.allowJs / checkJs
-
-`{ allowJs: true }` 开启后有2层作用，一个是允许了在 ts 文件中可以引入 js 文件，另一个是会将 js 文件也编译到 dist 目录（即使没有该 js 没有被引入）
-
-`{ checkJs: true }` 开启后，ts 会去解析js文件，分析下是否存在ts问题。
-
-比如现在有个 js 文件：
-
-```js
-let cname = 'sdfsdf';
-cname = 23;
-```
-
-上面将一个本来是string改为了number类型，js是完全没问题
-
-而我们开启`{ checkJs: true }`之后既可以看到有提示 `不能将类型“number”分配给类型“string”`
-
-说明 ts 去解析 js 文件并分析有没有ts语法问题
-
-### 8.declaration / declarationMap / sourceMap
-
-`{ declaration: true }` 设置为true，将为ts文件生成 `d.ts` 声明文件
-
-`{ declarationMap: true }` 设置为true，在生成 `d.ts` 文件的同时生成 `d.ts.map` 的sourcemap文件，在查看并跳转到库的类型声明时非常有用，因为可以直接跳转到源代码，而不是跳转到类型声明文件。
-
-`{ sourceMap: true }` 设置为true，在生成 js 文件的同时生成 `js.map` 的 sourcemap 文件，这个最大的好处，在浏览器中运行的时候，可以直接在浏览器看到对应ts文件的代码，也可以在ts是进行断点调试
-
-### 9.isolatedModules
-
-将每个文件作为单独的模块
-
-### 10.verbatimModuleSyntax
-
-在开发中，我们会将类型export出去，在其他地方import，例如下面代码
-
-```ts
-// a.ts
-interface Aaa {
-  cname: string;
-}
-export { Aaa };
-
-// index.ts
-import { Aaa } from './a.ts';
-```
-
-我们知道 ts 经过处理后变成 js，上面的类型就会没有，但如果对于一些babel，这个时候就无法解析
-
-因此我们更推荐将`{ verbatimModuleSyntax: true }`，开启之后，在类型的export，就需要加上type关键词
-
-```ts
-interface Aaa {
-  cname: string;
-}
-export type { Aaa };
-```
-
-一般推荐开启，一方面语义化更好，一方面解决babel等编译器问题
-
-### 10.esModuleInterop
-
-有些依赖库底层 为了兼容 CommonJs 规范、AMD 规范这二者的规范中相互兼容，使用了 `export =`，将二者规范统一。
-
-`{ esModuleInterop: true }` 表示允许依赖库中出现 `export =` 这种兼容规范导出的格式，TS 可以用`import from`导入
-
-比如现有代码如下：
-
-```ts
-// lib/jquery.ts
-class Jquery {}
-export = Jquery; // 为了CommonJs和AMD规范的导出
-
-// index.ts
-import Jquery from './lib/jquery'; // ts-error: 模块 ""e:/xxx/ts-learn/src/lib/jquery"" 只能在使用 "allowSyntheticDefaultImports" 标志时进行默认导入
-```
-
-可以看到在 `{ esModuleInterop: false }` 的时候提示上面错误
-
-![allowsynthet](./img/allowsynthet.png)
-
-`{ esModuleInterop: true}` 设为true之后，就能正常的import
-
-### 11.strict
-
-一个总的开关，相当于一次性设置：`noImplicitAny/strictNullChecks/strictFunctionTypes/strictBindCallApply/strictPropertyInitialization/noImplicitThis/useUnknownInCatchVariables/alwaysStrict/noUnusedLocals/noUnusedParameters/exactOptionalPropertyTypes/noFallthroughCasesInSwitch/noUncheckedIndexedAccess/noImplicitOverride/noPropertyAccessFromIndexSignature/allowUnusedLabels/allowUnreachableCode/`
-
-一般来说，我们就保持 `{ strict: true}` 即可。
-
-#### 11.1 noImplicitAny
-
-`{ noImplicitAny: true }` 不允许 ts 中有隐形的 any 类型，如果真的需要 any，则要明显的写出
-
-```ts
-function say(a) {} // ts-error 提示 参数“a”隐式具有“any”类型
-```
-
-#### 11.2 strictNullChecks
-
-`{ strictNullChecks: true }` 对null严格要求，比如下面代码
-
-```ts
-// 开启前
-const a: string = null; // 可以
-
-// 开启后
-const a: string = null; // ts-error 提示 不能将类型“null”分配给类型“string”
-```
-
-#### 11.3 strictPropertyInitialization
-
-`{ strictPropertyInitialization: true }` 属性必须要有初始值
-
-```ts
-// 开启前
-class Person {
-  name: string;
-}
-
-// 开启后
-class Person {
-  name: string; // ts-error 提示 属性“name”没有初始化表达式，且未在构造函数中明确赋值
-}
-```
-
-### 12.noImplicitReturns
-
-`{ noImplicitReturns: true }` 开启后，要求函数的所有代码分支都要有返回值
-
-比如现在有下面代码
-
-```ts
-function say(num: number) {
-  if (num < 0) {
-    return 1;
-  } else if (num > 0 && num < 100) {
-    return 2;
-  }
-}
-```
-
-![funreturn](./img/funreturn.png)
-
-从逻辑可以看出除了返回1或2之外，还能在第3个代码分支返回undefined
-
-开启`{ noImplicitReturns: true }` 后，就要求所有代码分支都必须有return
-
-![unreturn](./img/funreturn-2.png)
-
-因此需要改下代码
-
-```ts
-function say(num: number) {
-  if (num < 0) {
-    return 1;
-  } else if (num > 0 && num < 100) {
-    return 2;
-  }
-  return undefined;
-}
-```
-
-### 13.removeComments
-
-`{ removeComments: true }` 开启后，在编译的时候，会删除代码中的注释
-
-### 14.noUnusedLocals / noUnusedParameters
-
-`{ noUnusedLocals: true }` 开启后，如果有定义了但没有使用的，就会给警告
-
-`{ noUnusedParameters: true }` 开启后，函数中的参数定义未使用，就会给警告
-
-```ts
-const cname: string = 'aaa'; // ts-warm 提示 已声明“cname”，但从未读取其值
-
-function say(aname: string) {} // ts-warm 提示 已声明“aname”，但从未读取其值
-```
-
-### 15.skipLibCheck
-
-`{ skipLibCheck: true }` 开启后，不再检查 d.ts 文件的检查
-
-比如现在有一个`a.d.ts`文件，我们特意写错
-
-```ts
-declare const aa: string = '12'; // d.ts 文件中只有类型没有赋值，所以这里不应该有赋值语句
-```
-
-如果我们设置了 `{ skipLibCheck: false }`，那么ts就会检查 d.ts 文件并且给与错误
-
-![skiplib](./img/skiplib.png)
-
-**在实际开发中，**我们一般设置跳过，即`{ skipLibCheck: true }` 这是因为 d.ts 一般来说都是第3方库的 或 自动生成的，没必要去检查
-
-### 16. typeRoots / types
-
-这个基本就保持下面配置既可以
-
-```json
-{
-  "typeRoots": ["./node_modules/@types"],
-  "types": ["node"]
-}
-```
-
-比如我们项目依赖lodash，需要安装`@types/lodash`
-
-```ts
-import lodash from 'lodash';
-```
-
-那么 ts 就在 指定的 `typeRoots` 中去查找是否有lodash相关的声明文件，因此开发中 `{ "typeRoots": ["./node_modules/@types"] }` 就保持这样即可
-
-而`{ types: ["node"] }` 的配置是因为有这么一个问题，如果我们使用commonjs规范开发，会写下面代码
-
-```ts
-const fs = require('fs'); // ts-error 提示 找不到名称“require”。是否需要安装 Node.js 的类型定义? 请尝试运行 `npm i --save-dev @types/node`，然后将 "node" 添加到 tsconfig 的 types 字段
-```
-
-按照这个提示，一方面我们需要安装`pnpm i -D @types/node`，另一方面需要将 tsconfig.json 的 `{ types: ["node"] }` 设置
-
-### 17. baseUrl
-
-配置import的时候省略的前缀路径
-
-比如现在有代码
-
-```text
-learn-ts
-  ├── src
-  │     ├── index.ts
-  │     └── utils.ts
-  └── tsconfig.json
-```
-
-而代码:
-
-```ts
-// src/index.ts
-import { cname } from 'utils';
-console.log(cname);
-```
-
-这样回去找node_module的文件
-
-而配置 `{ baseUrl:'./src' }` 之后，会将`baseUrl`和`utils`组合起来变成`src/utils`查找
