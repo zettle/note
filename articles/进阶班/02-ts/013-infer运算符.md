@@ -1,6 +1,6 @@
-# 深入infer
+# infer运算符
 
-infer是做什么的：infer表示在extends条件语句中以占位符出现，等到使用时才推断出来的数据类型
+infer是做什么的：infer 表示在 extends 条件语句中以占位符出现，等到使用时才推断出来的数据类型
 
 比如下面定义一个函数
 
@@ -25,6 +25,65 @@ type CusnParams = CusnFun extends (params: infer A) => string ? A : never;
 ```ts
 type CusnReturn = CusnFun extends (params: any) => infer R ? R : never;
 ```
+
+
+
+举个例子：
+
+```ts
+type Flatten<Type> = Type extends Array<infer Item> ? Item : Type;
+```
+
+上面示例中，`infer Item` 表示 `Item` 这个参数是 TypeScript 自己推断出来的，不用显式传入，而 `Flatten<Type> `则表示 `Type` 这个类型参数是外部传入的。`Type extends Array<infer Item>` 则表示，如果参数 `Type` 是一个数组，那么就将该数组的成员类型推断为 `Item`，即 `Item` 是从 `Type` 推断出来的。
+
+一旦使用 `Infer Item` 定义了 `Item`，后面的代码就可以直接调用 `Item` 了。下面是上例的泛型 `Flatten<Type>` 的用法
+
+```ts
+type Str = Flatten<string[]>; // string
+type Num = Flatten<number>;   // number
+```
+
+
+
+再举个例子：
+
+```ts
+type ReturnPromise<T> =
+  T extends (...args: infer A) => infer R 
+  ? (...args: A) => Promise<R> 
+  : T;
+```
+
+上面示例中，如果 `T` 是函数，就返回这个函数的 Promise 版本，否则原样返回。`infer A` 表示该函数的参数类型为 `A`，`infer R `表示该函数的返回值类型为 `R`。
+
+
+
+再举个例子，提取对象指定属性的例子：
+
+```ts
+type MyType<T> = T extends {
+  a: infer M,
+  b: infer N
+} ? [M, N] : never;
+
+type Result = MyType<{ a: string; b: number }>; // [string, number]
+```
+
+上面示例中，`infer` 提取了参数对象的属性 `a` 和属性 `b` 的类型
+
+
+
+再举个例子：
+
+```ts
+type Str = 'foo-bar';
+
+type Bar = Str extends `foo-${infer rest}` ? rest : never // 'bar'
+```
+
+上面示例中，`rest` 是从模板字符串提取的类型参数。
+
+
 
 ## 和泛型一起使用
 
