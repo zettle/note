@@ -1,8 +1,24 @@
 # 初始rust
 
-rust是强类型语言，不会自动转化数据类型。
+rust是静态强类型语言，静态即在编译的时候就会检查很多语法，无GC，不会自动转化数据类型。
 
-## win的安装
+### 什么是无GC
+
+GC的全称：`garbage collection`，即我们常说的垃圾回收机制
+
+首先要知道什么是 GC：在所有程序在运行时都必须管理他们使用计算机内存的方式，目前有几种主流的有几种方式
+
+- 具有GC的功能，这种就会在程序**运行时不断**寻找不再使用的内存。正因为这里的不断，意味着会有性能消耗，其中代表语言是`Java / python / Js / Go`
+- 另外一种主流是 `C /C++` 这种语言，需要程序员自己显示的分配内存。这种好处是没有额外的内存消耗，更加精准的手动内存管理，导致也引发一个不安全的问题，程序员随意使用内容
+
+rust 拆用另外一种方式管理内存，做到安全又高效
+
+- rust 通过所有权系统管理内存，该系统具有一组在**编译时**检查的规则，（比如java那些是在**运行时**，rust是在编译时解决的）
+- 程序运行时，相比于GC，所有权机制不会减慢其运行速度，所以运行时rust是和 C++ 同一级别
+
+
+
+### win的安装
 
 从官网下载
 
@@ -14,9 +30,7 @@ rust是强类型语言，不会自动转化数据类型。
 
 ![](./img/001-初识rust/image-20250407212034591.png)
 
-**可能遇到的错误：**
-
-### 依赖visualstudio
+可能遇到的错误，**依赖visualstudio：**
 
 ```text
 Rust Visual C++ prerequisites
@@ -64,7 +78,7 @@ then additionally check the box for English under Language packs.
 
 到这里按 `1` 继续安装，
 
-### 电脑管理员权限问题
+**电脑管理员权限问题**
 
 在公司电脑一直遇到这个下面这个错误
 
@@ -76,7 +90,7 @@ error: could not create link from 'D:\MyData\xiaoming\.cargo\bin\rustup.exe' to 
 
 ![image-20250409140802695](img/001-初识rust/image-20250409140802695.png)
 
-### 国内网络问题
+**国内网络问题**
 
 接着遇到下面的错误信息
 
@@ -108,7 +122,7 @@ $ENV:RUSTUP_UPDATE_ROOT='https://mirrors.ustc.edu.cn/rust-static/rustup'
 
 ![image-20250409143738099](img/001-初识rust/image-20250409143738099.png)
 
-### 验证安装成功
+验证安装成功
 
 在 cmd 中执行下，看到内容即可。
 
