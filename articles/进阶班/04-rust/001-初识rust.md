@@ -16,13 +16,11 @@ rust 拆用另外一种方式管理内存，做到安全又高效
 - rust 通过所有权系统管理内存，该系统具有一组在**编译时**检查的规则，（比如java那些是在**运行时**，rust是在编译时解决的）
 - 程序运行时，相比于GC，所有权机制不会减慢其运行速度，所以运行时rust是和 C++ 同一级别
 
-
-
 ### win的安装
 
 从官网下载
 
-![](./img/001-初识rust/image-20250407204617276.png)
+<img src="./img/001-初识rust/image-20250407204617276.png" style="zoom:50%;" />
 
 遇到下面的提示，我们选择 `1` 自动安装
 
@@ -53,24 +51,25 @@ then additionally check the box for English under Language packs.
 
 意思是rust需要我们提前安装 `Visual Studio`，前往[下载界面](https://visualstudio.microsoft.com/zh-hans/downloads/)，选择“社区版”
 
-![image-20250409084604614](img/001-初识rust/image-20250409084604614.png)
+<img src="img/001-初识rust/image-20250409084604614.png" alt="image-20250409084604614" style="zoom: 50%;" />
 
 下载后双击安装即可，安装完成后，在电脑菜单中 `Visual Studio Installer`，注意不是 `Visual Studio 2022`。
 
-![image-20250409090904235](img/001-初识rust/image-20250409090904235.png)
+<img src="img/001-初识rust/image-20250409090904235.png" alt="image-20250409090904235" style="zoom: 67%;" />
 
 然后选择 `修改 - 工作负荷 - 勾选上《使用C++的桌面开发》`
 
-![image-20250409091138777](img/001-初识rust/image-20250409091138777.png)
+<img src="img/001-初识rust/image-20250409091138777.png" alt="image-20250409091138777" style="zoom:67%;" />
 
-![image-20250409091218702](img/001-初识rust/image-20250409091218702.png)
+<img src="img/001-初识rust/image-20250409091218702.png" alt="image-20250409091218702" style="zoom: 67%;" />
 
 然后 `语音包 - 勾选《英语》`
 
 ![image-20250409091353962](img/001-初识rust/image-20250409091353962.png)
 
 确认之后，会自动下载对应的插件包，等待安装完成
-![image-20250409091419596](img/001-初识rust/image-20250409091419596.png)
+
+<img src="img/001-初识rust/image-20250409091419596.png" alt="image-20250409091419596" style="zoom:50%;" />
 
 再重新安装 rust 的安装包 `rustup-init.exe` 就能看到正常的界面了
 
@@ -129,6 +128,34 @@ $ENV:RUSTUP_UPDATE_ROOT='https://mirrors.ustc.edu.cn/rust-static/rustup'
 ```shell
 rustc --version
 cargo --version
+```
+
+### cargo切到国内源
+
+在 window 中启动 cmd 之后看到的就是用户目录，在这个目录下 `.cargo` 里面是 cargo 的配置文件
+
+![image-20250426082904445](img/001-初识rust/image-20250426082904445.png)
+
+删除 `.package-cache` 这个文件，然后再新建 `.cargo/config`，内容如下：
+
+```shell
+[source.crates-io]
+replace-with = 'aliyun' # 指定使用下面哪个源，修改为source.后面的内容即可
+#阿里云
+[source.aliyun]
+registry = "sparse+https://mirrors.aliyun.com/crates.io-index/"
+# 中国科学技术大学
+[source.ustc]
+registry = "https://mirrors.ustc.edu.cn/crates.io-index"
+# 上海交通大学
+[source.sjtu]
+registry = "https://mirrors.sjtug.sjtu.edu.cn/git/crates.io-index/"
+# 清华大学
+[source.tuna]
+registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git"
+# rustcc社区
+[source.rustcc]
+registry = "https://code.aliyun.com/rustcc/crates.io-index.git"
 ```
 
 

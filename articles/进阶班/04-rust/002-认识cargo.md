@@ -4,17 +4,21 @@ cargo是rust的包管理器，类似node中的npm的作用。
 
 ### 创建项目
 
-在 cmd 执行 `cargo new <项目名称>` 即可创建
+在 cmd 执行 `cargo new <项目名称>` 即可创建，这条命令其实完整是 `cargo new --bin <项目名称>`，`--bin` 可以省略
 
 ```text
 ├───📁 src/
 │   └───📄 main.rs
 ├───📄 .gitignore
-├───📄 Cargo.lock
-└───📄 Cargo.toml
+├───📄 Cargo.lock  # 由toml生成的
+└───📄 Cargo.toml  # 管理依赖的
 ```
 
-如果我们想要开发的是一个库，可以执行 `cargo new --lib <文件夹名>`，这种创建出来的是一个第3方库，以后可以发布市场
+如果我们想要开发的是一个库，可以执行 `cargo new --lib <文件夹名>`，这种创建出来的是一个第3方库，以后可以发布市场。
+
+
+
+
 
 
 

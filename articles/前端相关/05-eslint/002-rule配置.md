@@ -9,6 +9,14 @@ export default [
 ]
 ```
 
+可以通过执行
+
+```shell
+npx @eslint/config-inspector@latest
+```
+
+查看整个项目的rule情况
+
 ## 配置对象
 
 ```js
