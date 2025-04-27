@@ -20,7 +20,7 @@ rust 拆用另外一种方式管理内存，做到安全又高效
 
 从官网下载
 
-<img src="./img/001-初识rust/image-20250407204617276.png" style="zoom:50%;" />
+![image-20250407204617276](./img/001-初识rust/image-20250407204617276.png)
 
 遇到下面的提示，我们选择 `1` 自动安装
 
@@ -51,17 +51,17 @@ then additionally check the box for English under Language packs.
 
 意思是rust需要我们提前安装 `Visual Studio`，前往[下载界面](https://visualstudio.microsoft.com/zh-hans/downloads/)，选择“社区版”
 
-<img src="img/001-初识rust/image-20250409084604614.png" alt="image-20250409084604614" style="zoom: 50%;" />
+![image-20250409084604614](img/001-初识rust/image-20250409084604614.png)
 
 下载后双击安装即可，安装完成后，在电脑菜单中 `Visual Studio Installer`，注意不是 `Visual Studio 2022`。
 
-<img src="img/001-初识rust/image-20250409090904235.png" alt="image-20250409090904235" style="zoom: 67%;" />
+![image-20250409090904235](img/001-初识rust/image-20250409090904235.png)
 
 然后选择 `修改 - 工作负荷 - 勾选上《使用C++的桌面开发》`
 
-<img src="img/001-初识rust/image-20250409091138777.png" alt="image-20250409091138777" style="zoom:67%;" />
+![image-20250409091138777](img/001-初识rust/image-20250409091138777.png)
 
-<img src="img/001-初识rust/image-20250409091218702.png" alt="image-20250409091218702" style="zoom: 67%;" />
+![image-20250409091218702](img/001-初识rust/image-20250409091218702.png)
 
 然后 `语音包 - 勾选《英语》`
 
@@ -69,7 +69,7 @@ then additionally check the box for English under Language packs.
 
 确认之后，会自动下载对应的插件包，等待安装完成
 
-<img src="img/001-初识rust/image-20250409091419596.png" alt="image-20250409091419596" style="zoom:50%;" />
+![image-20250409091419596](img/001-初识rust/image-20250409091419596.png)
 
 再重新安装 rust 的安装包 `rustup-init.exe` 就能看到正常的界面了
 
