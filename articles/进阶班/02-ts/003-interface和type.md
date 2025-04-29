@@ -67,3 +67,25 @@ const c: C = { cname: "c", age: 18 };
 
 一般情况下，可以优先用interface
 
+## 类型兼容
+
+记住小类能赋值给大类（大类需要的方法小类都有，所以可以赋值），大类不能反过来赋值给小类（小类需要的方法大类没有，所以不行）
+
+```ts
+// 动物 大类
+interface Animal {
+	name: string;
+}
+
+// 狗 小类，继承了大类
+interface Dog extends Animal {
+	bark(): void;
+}
+
+let animal: Animal;
+let dog: Dog;
+
+animal = dog; // Dog类型兼容Animal类型，因为Dog包含了Animal的所有属性
+dog = animal; // // 但Animal类型不兼容Dog类型，因为Animal缺少bark方法，这行会报错
+```
+
