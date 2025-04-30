@@ -113,7 +113,7 @@ $ENV:RUSTUP_DIST_SERVER='https://mirrors.ustc.edu.cn/rust-static'
 $ENV:RUSTUP_UPDATE_ROOT='https://mirrors.ustc.edu.cn/rust-static/rustup'
 ```
 
-然后还是继续在这个 Powershell 窗口（因为上面的配置是临时性的）,可以看到下面已经从国内镜像的url下载了
+然后还是**继续在这个 Powershell 窗口**（因为上面的配置是临时性的）,可以看到下面已经从国内镜像的url下载了
 
 ![image-20250409142601145](img/001-初识rust/image-20250409142601145.png)
 
@@ -158,7 +158,30 @@ registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git"
 registry = "https://code.aliyun.com/rustcc/crates.io-index.git"
 ```
 
+## 更新rust
 
+安装完之后，以后想要更新rust，只需要执行下面2条命令
+
+```shell
+# 设置国内源 
+set RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static
+set RUSTUP_UPDATE_ROOT=https://mirrors.ustc.edu.cn/rust-static/rustup
+
+# 更新
+rustup self update
+# 更新
+rustup update
+```
+
+![image-20250430105413948](img/001-初识rust/image-20250430105413948.png)
+
+## 卸载rust
+
+执行下面命令即可
+
+```rust
+rustup self uninstall
+```
 
 
 
