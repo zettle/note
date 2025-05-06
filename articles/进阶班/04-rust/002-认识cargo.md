@@ -54,6 +54,16 @@ hello.exe
 
 如果执行 `carge build --release` 将打包出更小体积的包（去掉了debug信息）生成在 `./target/release` 目录中。
 
+有时候，我们希望实现这种效果，当用户执行 `cargo run` 的时候，就打印一些 `debug` 信息，而当用户执行 `cargo run --release` 就不要打印信息。
+
+可以通过 `cfg!(debug_assertions)` 来实现，代码如下：
+
+```rust
+if cfg!(debug_assertions) {
+  println!("debug: 某些信息");
+}
+```
+
 ### 快速检查
 
 当项目大了后，`cargo run` 和 `cargo build` 不可避免的会变慢，这个时候就需要 `cargo check`
