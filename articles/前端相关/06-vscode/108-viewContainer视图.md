@@ -21,15 +21,10 @@ ViewContainer容器值的是vscode最左侧的菜单栏，需要配置 `contribu
       ]
     },
     "views": {
+      // key要和viewsContainers的id对应
       "school": [
-        {
-          "id": "yiNianJi",
-          "name": "一年级"
-        },
-        {
-          "id": "liuNianji",
-          "name": "6年级"
-        }
+        { "id": "yiNianJi", "name": "一年级" },
+        { "id": "liuNianji", "name": "6年级" }
       ]
     }
   }

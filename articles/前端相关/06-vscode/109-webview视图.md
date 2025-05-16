@@ -150,7 +150,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.ViewColumn.One,
         {}
       );
-
+			// 资源在本扩展插件目录中
       const onDiskPath = vscode.Uri.joinPath(context.extensionUri, 'media', 'cat.gif');
       const catGifSrc = panel.webview.asWebviewUri(onDiskPath);
       panel.webview.html = getWebviewContent(catGifSrc);
@@ -172,8 +172,6 @@ function getWebviewContent(catGifSrc: vscode.Uri) {
 </html>`;
 }
 ```
-
-
 
 如果资源不在插件目录中，则需要通过 `WebviewOptions.localResourceRoots` 访问额外的本地资源。
 

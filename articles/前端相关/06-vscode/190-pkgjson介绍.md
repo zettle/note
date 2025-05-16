@@ -4,21 +4,19 @@
 
 整个 `package.json` 配置介绍可见[官网](https://code.visualstudio.com/api/references/extension-manifest)
 
-```json
-
-```
-
 
 
 ## 字段介绍
 
 ### name / displayName
 
+`name`有比较严格的格式要求：不能有空格、只能小写。因为 `name` 有比较高的格式要求。因此才有 `displayName`，这个没什么格式要求
+
 会展示在插件的name属性，即下图位置，如果 `displayName` 没有定义就会取 `name`
 
 ![image-20250121161126833](img/image-20250121161126833.png)
 
-`name`有比较严格的格式要求：不能有空格、只能小写。因为 `name` 有比较高的格式要求。因此才有 `displayName`，这个没什么格式要求
+
 
 ## description
 
@@ -28,7 +26,7 @@
 
 ## keywords 和 categories
 
-`keywords`是一个数组，最多5个关键词，所用文案主要用来在插件市场搜索用
+`keywords`是一个数组，最多5个关键词，所用文案主要用来在插件市场搜索用，没什么格式要求
 
 `categories`是一个数组，只要用在插件市场分类的时候用到，[可选值](https://code.visualstudio.com/api/references/extension-manifest)：`[Programming Languages, Snippets, Linters, Themes, Debuggers, Formatters, Keymaps, SCM Providers, Other, Extension Packs, Language Packs, Data Science, Machine Learning, Visualization, Notebooks, Education, Testing]`
 
@@ -66,7 +64,22 @@ png格式，要求至少 `128x128` 像素，将展示下面位置
 * `onLanguage:$`：
 * `onCommand:$`：
 * `onDebug`：
-* `workspaceContains:$`：
+* `workspaceContains:$`：当用户打开的工作区含有某个文件的时候激活该插件
+
+比如用户安装了我们的插件后，当打开的项目中有 `.vscode/my-es-settings.yaml` 的之后，我们的插件就激活起来，那么就可以这么配置
+
+```json
+{
+  "activationEvents": [
+		"workspaceContains:./.vscode/my-es-settings.yaml"
+	]
+}
+```
+
+若配置为 `"workspaceContains:**/.vscode/my-es-settings.yaml"`，则会在工作区的任意 `.vscode` 子目录中匹配该文件。
+
+若配置为 `"workspaceContains:my-es-settings.yaml"`，则工作区中任何位置的 `my-es-settings` 文件都会触发激活。
+
 * `onFileSystem:$`：
 * `onView:$`：
 * `onUri`：
@@ -88,13 +101,11 @@ export function activate(context: vscode.ExtensionContext) {
 }
 ```
 
-
-
 * `*`：*号表示，所有功能都会在vscode启动的时候激活，但vscode不推荐配置成这个，需要什么才配置
 
 ### 2.contributes配置
 
-`contributes` 支持下面配置，[官方文档](https://code.visualstudio.com/api/references/contribution-points)
+`contributes` 整个配置最多的地方，支持下面配置，[官方文档](https://code.visualstudio.com/api/references/contribution-points)
 
 * `contributes.configuration`：该插件能有哪些配置项，可以通过vscode的settings进行配置
 * `contributes.commands`：命令信息
@@ -106,6 +117,9 @@ export function activate(context: vscode.ExtensionContext) {
   * `explorer/context`：资源管理器右键菜单
 * `contributes.snippets`：代码片段
 * `contributes.viewsContainers`：新的activitybar图标，也就是左侧侧边栏大的图标
+
+![image-20250516100024858](img/190-pkgjson介绍/image-20250516100024858.png)
+
 * `contributes.views`：自定义侧边栏内view的实现
 * `contributes.iconThemes`：图标主题
 * `contributes.languages`：新语言支持

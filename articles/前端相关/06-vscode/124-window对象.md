@@ -1,4 +1,4 @@
-# vscode对象
+# window对象
 
 vscode.window对象
 
