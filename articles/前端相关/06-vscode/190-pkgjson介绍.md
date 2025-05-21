@@ -108,7 +108,10 @@ export function activate(context: vscode.ExtensionContext) {
 `contributes` 整个配置最多的地方，支持下面配置，[官方文档](https://code.visualstudio.com/api/references/contribution-points)
 
 * `contributes.configuration`：该插件能有哪些配置项，可以通过vscode的settings进行配置
-* `contributes.commands`：命令信息
+* `contributes.commands`：命令信息，是一个数组，每一个元素支持下面配置
+  * `command`：命令id
+  * `title`：命令的标题
+  * `category`：命令的分类，会展示在命令面板以 `<category>: <title>` 方式展示
 * `contributes.keybindings`：快捷键绑定
 * `contributes.menus`：配置菜单
   * `editor/context`：中间代码编辑区域的右键菜单

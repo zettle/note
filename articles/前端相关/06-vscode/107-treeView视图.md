@@ -1,8 +1,10 @@
 # treeView视图
 
+如果是想要让左侧的某个主菜单中新增一个tree视图，需要和 `contributes.viewsContainers.[viewContainerType]` 搭配使用
+
 Tree View Api 定义vscode侧边栏的显示内容，以tree型结构展示
 
-需要设置在 `contributes.views.explorer` ，比如设置下面
+比如设置在 `contributes.views.explorer` ，比如设置下面
 
 ```json
 {
@@ -10,11 +12,11 @@ Tree View Api 定义vscode侧边栏的显示内容，以tree型结构展示
     "views": {
       "explorer": [
         {
-          "id": "nodeDependencies",
-          "name": "Node Dependencies"
+          "id": "nodeDependencies", // 这个ID需要和代码的vscode.window.registerTreeDataProvider('nodeDependencies')的id保持一致
+          "name": "NODE依赖分析"
         }
       ]
-    }
+    },
   }
 }
 ```
@@ -27,11 +29,11 @@ Tree View Api 定义vscode侧边栏的显示内容，以tree型结构展示
 
 可以为视图指定一个标识符和名称，并可以向以下位置做出贡献
 
-* `explorer` : 侧边栏中的资源管理器视图
-* `debug` : 侧边栏中的运行和调试视图
-* `scm` : 侧边栏中的源代码控制视图
-* `test` : 侧边栏中的测试探索视图
-* `自定义`：需要和 `contributes.viewsContainers` 配合使用就可以实现添加指定菜单的图标
+* `explorer` :  在侧边栏中的资源管理器视图新增treeView视图
+* `debug` : 在侧边栏中的运行和调试视图新增treeView视图
+* `scm` :  在侧边栏中的源代码控制视图新增treeView视图
+* `test` :  在侧边栏中的测试探索视图新增treeView视图
+* `自定义`：需要先使用 `contributes.viewsContainers.activitybar` 在侧边栏新增一个菜单出来，然后将这个treeView视图添加指定菜单的图标
 
 指定上面的值，就可以控制treeView去到对应bar里面
 
@@ -48,6 +50,7 @@ import * as vscode from 'vscode';
 import { TreeItemCollapsibleState } from 'vscode';
 
 export function activate(context: vscode.ExtensionContext) {
+  // 这个ID需要和package.json中的id保持一致
 	vscode.window.registerTreeDataProvider('nodeDependencies', {
 		getTreeItem(element: vscode.TreeItem) {
 			return element;
@@ -156,7 +159,7 @@ treeView.onDidChangeVisibility(event => {
       "view/title": [
         {
           "command": "nodeDependencies.refreshEntry",
-          "when": "view == nodeDependencies"
+          "when": "view == nodeDependencies" // 这里的id是treeView视图的ID
         }
       ]
     },
@@ -192,7 +195,7 @@ treeView.onDidChangeVisibility(event => {
       {
         "command": "nodeDependencies.refreshEntry",
 				"title": "刷新",
-        "icon": {    // 加上这icon配置
+        "icon": {     // 加上这icon配置
 					"light": "resources/light/refresh.svg",
 					"dark": "resources/dark/refresh.svg"
 				}
@@ -244,7 +247,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 ## 控制操作栏的位置
 
-在 `package.json` 中，通过 `view/title` 控制显示操作的位置，可选值有 `"group": "navigation"`，其余都会放在 `...` 菜单中
+在 `package.json` 中，通过 `view/title` 控制显示操作的位置，可选值有 `{ group: "navigation" }`，其余都会放在 `...` 菜单中
 
 比如下面配置：
 
@@ -290,13 +293,13 @@ export function activate(context: vscode.ExtensionContext) {
   "menus": {
     "view/item/context": [
       {
-        "command": "nodeDependencies.remove",
-        "when": "view == nodeDependencies"
-      },
-      {
         "command": "nodeDependencies.edit",
         "when": "view == nodeDependencies",
-        "group": "inline"
+        "group": "inline"                 // 设置group的，会作为图标展示在每一行的最后
+      },
+      {
+        "command": "nodeDependencies.remove",
+        "when": "view == nodeDependencies" // 没设置group的，需要再每一行右键才看得到操作
       }
     ]
   },
@@ -327,14 +330,16 @@ export function activate(context: vscode.ExtensionContext) {
 > 注意：如果您想为特定的树项显示一个操作，可以通过使用 `TreeItem.contextValue` 定义树项的上下文来实现，并可以在 `when` 表达式中为键 `viewItem` 指定上下文值。
 >
 > ```json
-> "contributes": {
->   "menus": {
->     "view/item/context": [
->       {
->         "command": "nodeDependencies.deleteEntry",
->         "when": "view == nodeDependencies && viewItem == dependency"
->       }
->     ]
+> {
+>   "contributes": {
+>     "menus": {
+>       "view/item/context": [
+>         {
+>           "command": "nodeDependencies.deleteEntry",
+>           "when": "view == nodeDependencies && viewItem == dependency"
+>         }
+>       ]
+>     }
 >   }
 > }
 > ```
@@ -346,16 +351,19 @@ export function activate(context: vscode.ExtensionContext) {
 如果您的视图可以为空，或者您想向另一个扩展的空视图添加欢迎内容，您可以贡献 `viewsWelcome` 内容。空视图是没有 `TreeView.message` 和空树的视图。
 
 ```json
-"contributes": {
-  "viewsWelcome": [
-    {
-      "view": "nodeDependencies",
-      "contents": "No node dependencies found [learn more](https://www.npmjs.com/).\n[Add Dependency](command:nodeDependencies.addEntry)"
-    }
-  ]
+{
+  "contributes": {
+    "viewsWelcome": [
+      {
+        "view": "nodeDependencies",
+        // contents支持md，通过`command:<命令ID>`执行某条命令
+        "contents": "No node dependencies found [learn more](https://www.npmjs.com/).\n[Add Dependency](command:nodeDependencies.addEntry)"
+      }
+    ]
+  }
 }
 ```
 
-当我们的treeView数据为空的时候，就会展示成 contents 的内容，支持md格式
+当我们的treeView数据为空的时候，就会展示成 contents 的内容，支持md格式，通过点击链接执行 `command:<命令ID>` 的方式，可以让我们执行某条命令
 
 ![image-20250113103103251](img/image-20250113103103251.png)
