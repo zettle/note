@@ -2,8 +2,6 @@
 
 vscode运行我们指定定义一个webview窗口，就像iframe一样
 
-
-
 ## 自定义webview
 
 `vscode.window.createWebviewPanel` 函数在编辑器中创建并显示一个 webview
